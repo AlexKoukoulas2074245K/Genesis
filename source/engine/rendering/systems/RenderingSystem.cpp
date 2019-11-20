@@ -7,23 +7,21 @@
 
 #include "RenderingSystem.h"
 #include "../components/CameraSingletonComponent.h"
-#include "../components/PreviousRenderingStateSingletonComponent.h"
 #include "../components/RenderableComponent.h"
 #include "../components/RenderingContextSingletonComponent.h"
 #include "../components/ShaderStoreSingletonComponent.h"
 #include "../components/WindowSingletonComponent.h"
 #include "../opengl/Context.h"
 #include "../utils/CameraUtils.h"
-#include "../utils/RenderingUtils.h"
 #include "../../common/components/TransformComponent.h"
 #include "../../common/utils/FileUtils.h"
 #include "../../common/utils/Logging.h"
 #include "../../common/utils/MathUtils.h"
 #include "../../common/utils/OSMessageBox.h"
 #include "../../resources/MeshResource.h"
+#include "../../resources/ResourceLoadingService.h"
 #include "../../resources/TextureResource.h"
-#include "../../services/ResourceLoadingService.h"
-#include "../../services/SoundService.h"
+#include "../../sound/SoundService.h"
 
 #include <algorithm> // sort
 #include <cstdlib>   // exit
@@ -42,10 +40,18 @@ namespace
 {
     const StringId WORLD_MARIX_UNIFORM_NAME      = StringId("world");
     const StringId VIEW_MARIX_UNIFORM_NAME       = StringId("view");
-    const StringId PROJECTION_MARIX_UNIFORM_NAME = StringId("proj");
-
-    const float TARGET_ASPECT_RATIO = 1.5993266f;
+    const StringId PROJECTION_MARIX_UNIFORM_NAME = StringId("proj");    
 }
+
+///-----------------------------------------------------------------------------------------------
+
+bool IsMeshInsideCameraFrustum
+(
+    const glm::vec3& meshPosition,
+    const glm::vec3& meshScale,
+    const glm::vec3& meshDimensions,
+    const CameraFrustum& cameraFrustum
+);
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -66,25 +72,26 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     const auto& windowComponent               = mWorld.GetSingletonComponent<WindowSingletonComponent>();
     const auto& shaderStoreComponent          = mWorld.GetSingletonComponent<ShaderStoreSingletonComponent>();        
     auto& cameraComponent                     = mWorld.GetSingletonComponent<CameraSingletonComponent>();
-    auto& renderingContextComponent           = mWorld.GetSingletonComponent<RenderingContextSingletonComponent>();
-    auto& previousRenderingStateComponent     = mWorld.GetSingletonComponent<PreviousRenderingStateSingletonComponent>();
+    auto& renderingContextComponent           = mWorld.GetSingletonComponent<RenderingContextSingletonComponent>();    
     
     // Calculate render-constant camera view matrix
     cameraComponent.mViewMatrix = glm::lookAtLH(cameraComponent.mPosition, cameraComponent.mFocusPosition, cameraComponent.mUpVector);
     
     // Calculate the camera frustum for this frame
     cameraComponent.mFrustum = CalculateCameraFrustum(cameraComponent.mViewMatrix, cameraComponent.mProjectionMatrix);
-        
-    // Debug statistics
-    renderingContextComponent.mFrustumCulledEntities = 0U;
-    renderingContextComponent.mRenderedEntities      = 0U;
     
     // Collect all entities that need to be processed
     auto activeEntities = mWorld.GetActiveEntities();
     std::vector<genesis::ecs::EntityId> guiEntities;    
     
     // Set background color
-    //GL_CHECK(glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w));
+    GL_CHECK(glClearColor
+    (
+        renderingContextComponent.mClearColor.x,
+        renderingContextComponent.mClearColor.y,
+        renderingContextComponent.mClearColor.z,
+        renderingContextComponent.mClearColor.w
+    ));
     
     // Clear buffers
     GL_CHECK(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -106,16 +113,13 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
         if (ShouldProcessEntity(entityId))
         {
             const auto& renderableComponent = mWorld.GetComponent<RenderableComponent>(entityId);
-            /*
-            // Separate GUI entities to render them last
-            if (GUI_SHADERS.count(renderableComponent.mShaderNameId) != 0)
+            if (renderableComponent.mIsGuiComponent)
             {
                 guiEntities.push_back(entityId);
                 continue;
-            }
+            }            
             else
-            {
-            */
+            {            
                 const auto& transformComponent = mWorld.GetComponent<TransformComponent>(entityId);
                 const auto& activeMeshes       = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
                 const auto& currentMesh        = ResourceLoadingService::GetInstance().GetResource<MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
@@ -128,8 +132,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
                     currentMesh.GetDimensions(),
                     cameraComponent.mFrustum
                 ))
-                {
-                    renderingContextComponent.mFrustumCulledEntities++;
+                {                    
                     continue;
                 }
 
@@ -140,21 +143,11 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
                     cameraComponent,
                     shaderStoreComponent,
                     windowComponent,                    
-                    renderingContextComponent,
-                    previousRenderingStateComponent
+                    renderingContextComponent
                 );
             }            
-        //}
+        }
     }
- 
-    // Sort GUI elements based on z
-    std::sort(guiEntities.begin(), guiEntities.end(), [this](const genesis::ecs::EntityId& lhs, const genesis::ecs::EntityId& rhs)
-    {
-        const auto& lhsTransformComponent = mWorld.GetComponent<TransformComponent>(lhs);
-        const auto& rhsTransformComponent = mWorld.GetComponent<TransformComponent>(rhs);
-                  
-        return lhsTransformComponent.mPosition.z > rhsTransformComponent.mPosition.z;
-    });
     
     // Execute GUI render pass
     GL_CHECK(glDisable(GL_DEPTH_TEST));
@@ -169,8 +162,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
             cameraComponent,
             shaderStoreComponent,
             windowComponent,            
-            renderingContextComponent,
-            previousRenderingStateComponent
+            renderingContextComponent
         );
     }
 
@@ -187,8 +179,7 @@ void RenderingSystem::RenderEntityInternal
     const CameraSingletonComponent& cameraComponent, 
     const ShaderStoreSingletonComponent& shaderStoreComponent,
     const WindowSingletonComponent& windowComponent,    
-    RenderingContextSingletonComponent& renderingContextComponent,
-    PreviousRenderingStateSingletonComponent& previousRenderingStateComponent
+    RenderingContextSingletonComponent& renderingContextComponent    
 ) const
 {
     if (!renderableComponent.mVisibility)
@@ -198,17 +189,17 @@ void RenderingSystem::RenderEntityInternal
 
     // Update Shader is necessary
     const ShaderResource* currentShader = nullptr;
-    if (renderableComponent.mShaderNameId != previousRenderingStateComponent.previousShaderNameId)
+    if (renderableComponent.mShaderNameId != renderingContextComponent.previousShaderNameId)
     {
         currentShader = &shaderStoreComponent.mShaders.at(renderableComponent.mShaderNameId);
         GL_CHECK(glUseProgram(currentShader->GetProgramId()));
 
-        previousRenderingStateComponent.previousShaderNameId = renderableComponent.mShaderNameId;
-        previousRenderingStateComponent.previousShader       = currentShader;        
+        renderingContextComponent.previousShaderNameId = renderableComponent.mShaderNameId;
+        renderingContextComponent.previousShader       = currentShader;
     }
     else
     {
-        currentShader = previousRenderingStateComponent.previousShader;
+        currentShader = renderingContextComponent.previousShader;
     }
 
     // Get currently active mesh for this entity
@@ -217,17 +208,17 @@ void RenderingSystem::RenderEntityInternal
 
     // Update current mesh if necessary
     const MeshResource* currentMesh = nullptr;
-    if (activeMeshes[renderableComponent.mActiveMeshIndex] != previousRenderingStateComponent.previousMeshResourceId)
+    if (activeMeshes[renderableComponent.mActiveMeshIndex] != renderingContextComponent.previousMeshResourceId)
     {
         currentMesh = &ResourceLoadingService::GetInstance().GetResource<MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
         GL_CHECK(glBindVertexArray(currentMesh->GetVertexArrayObject()));
 
-        previousRenderingStateComponent.previousMesh           = currentMesh;
-        previousRenderingStateComponent.previousMeshResourceId = activeMeshes[renderableComponent.mActiveMeshIndex];
+        renderingContextComponent.previousMesh           = currentMesh;
+        renderingContextComponent.previousMeshResourceId = activeMeshes[renderableComponent.mActiveMeshIndex];
     }
     else
     {
-        currentMesh = previousRenderingStateComponent.previousMesh;
+        currentMesh = renderingContextComponent.previousMesh;
     }
         
     // Calculate world matrix for entity
@@ -238,12 +229,12 @@ void RenderingSystem::RenderEntityInternal
     glm::vec3 scale    = transformComponent.mScale;
     glm::vec3 rotation = transformComponent.mRotation;
 
-    if (!renderableComponent.mAffectedByPerspective)
+    if (renderableComponent.mIsGuiComponent)
     {        
         scale.x /= windowComponent.mAspectRatio;        
     }  
 
-    world = glm::translate(world, position + cameraComponent.mGlobalScreenOffset);
+    world = glm::translate(world, position);
     world = glm::rotate(world, rotation.x, math::X_AXIS);
     world = glm::rotate(world, rotation.y, math::Y_AXIS);
     world = glm::rotate(world, rotation.z, math::Z_AXIS);
@@ -251,25 +242,23 @@ void RenderingSystem::RenderEntityInternal
         
     // Update texture if necessary
     const TextureResource* currentTexture = nullptr;
-    if (renderableComponent.mTextureResourceId != previousRenderingStateComponent.previousTextureResourceId)
+    if (renderableComponent.mTextureResourceId != renderingContextComponent.previousTextureResourceId)
     {
         currentTexture = &ResourceLoadingService::GetInstance().GetResource<TextureResource>(renderableComponent.mTextureResourceId);
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, currentTexture->GetGLTextureId()));
 
-        previousRenderingStateComponent.previousTexture = currentTexture;
-        previousRenderingStateComponent.previousTextureResourceId = renderableComponent.mTextureResourceId;        
+        renderingContextComponent.previousTexture = currentTexture;
+        renderingContextComponent.previousTextureResourceId = renderableComponent.mTextureResourceId;
     }
     else
     {
-        currentTexture = previousRenderingStateComponent.previousTexture;
+        currentTexture = renderingContextComponent.previousTexture;
     }      
 
     // Set uniforms    
     GL_CHECK(glUniformMatrix4fv(currentShader->GetUniformNamesToLocations().at(WORLD_MARIX_UNIFORM_NAME), 1, GL_FALSE, (GLfloat*)&world));
     GL_CHECK(glUniformMatrix4fv(currentShader->GetUniformNamesToLocations().at(VIEW_MARIX_UNIFORM_NAME), 1, GL_FALSE, (GLfloat*)&cameraComponent.mViewMatrix));
-    GL_CHECK(glUniformMatrix4fv(currentShader->GetUniformNamesToLocations().at(PROJECTION_MARIX_UNIFORM_NAME), 1, GL_FALSE, (GLfloat*)&cameraComponent.mProjectionMatrix));    
-
-    renderingContextComponent.mRenderedEntities++;
+    GL_CHECK(glUniformMatrix4fv(currentShader->GetUniformNamesToLocations().at(PROJECTION_MARIX_UNIFORM_NAME), 1, GL_FALSE, (GLfloat*)&cameraComponent.mProjectionMatrix));        
     
     // Perform draw call
     GL_CHECK(glDrawElements(GL_TRIANGLES, currentMesh->GetElementCount(), GL_UNSIGNED_SHORT, (void*)0));
@@ -278,50 +267,12 @@ void RenderingSystem::RenderEntityInternal
 ///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::InitializeRenderingWindowAndContext() const
-{
-    // Initialize SDL
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
-    {
-        ShowMessageBox(MessageBoxType::ERROR, "Error initializing SDL", "An error has occurred while trying to initialize SDL");
-        exit(1);
-    }
-
-    // Set SDL GL attributes        
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    
-    // MS
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
-
-    // Get Current Display Mode Resolution
-    SDL_DisplayMode displayMode;
-    SDL_GetCurrentDisplayMode(0, &displayMode);
-    
-    const auto desiredWindowWidth  = static_cast<int>(displayMode.w * 0.66f);
-    const auto desiredWindowHeight = static_cast<int>(desiredWindowWidth/TARGET_ASPECT_RATIO);
-
-    // Create SDL window
-    auto windowComponent           = std::make_unique<WindowSingletonComponent>();   
-    windowComponent->mWindowTitle  = "Genesis";
-    windowComponent->mWindowHandle = SDL_CreateWindow(windowComponent->mWindowTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, desiredWindowWidth, desiredWindowHeight, SDL_WINDOW_OPENGL);
-   
-    if (windowComponent->mWindowHandle == nullptr)
-    {
-        ShowMessageBox(MessageBoxType::ERROR, "Error creating SDL window", "An error has occurred while trying to create an SDL_Window");
-        exit(1);
-    }
-
-    // Make window non-resizable and display
-    SDL_SetWindowResizable(windowComponent->mWindowHandle, SDL_FALSE);
-    SDL_ShowWindow(windowComponent->mWindowHandle);
-
+{    
     // Create SDL GL context
     auto renderingContextComponent = std::make_unique<RenderingContextSingletonComponent>();
-    renderingContextComponent->mGLContext = SDL_GL_CreateContext(windowComponent->mWindowHandle);
+    auto& windowComponent = mWorld.GetSingletonComponent<WindowSingletonComponent>();
+
+    renderingContextComponent->mGLContext = SDL_GL_CreateContext(windowComponent.mWindowHandle);
     if (renderingContextComponent->mGLContext == nullptr)
     {
         ShowMessageBox(MessageBoxType::ERROR, "Error creating SDL context", "An error has occurred while trying to create an SDL_Context");
@@ -329,7 +280,7 @@ void RenderingSystem::InitializeRenderingWindowAndContext() const
     }
 
     // Commit context 
-    SDL_GL_MakeCurrent(windowComponent->mWindowHandle, renderingContextComponent->mGLContext);
+    SDL_GL_MakeCurrent(windowComponent.mWindowHandle, renderingContextComponent->mGLContext);
     SDL_GL_SetSwapInterval(0);
 
 #ifdef _WIN32
@@ -340,11 +291,11 @@ void RenderingSystem::InitializeRenderingWindowAndContext() const
     // Get actual render buffer width/height
     auto renderableWidth  = 0;
     auto renderableHeight = 0;
-    SDL_GL_GetDrawableSize(windowComponent->mWindowHandle, &renderableWidth, &renderableHeight);
+    SDL_GL_GetDrawableSize(windowComponent.mWindowHandle, &renderableWidth, &renderableHeight);
 
-    windowComponent->mRenderableWidth  = static_cast<float>(renderableWidth);
-    windowComponent->mRenderableHeight = static_cast<float>(renderableHeight);
-    windowComponent->mAspectRatio      = windowComponent->mRenderableWidth/windowComponent->mRenderableHeight;
+    windowComponent.mRenderableWidth  = static_cast<float>(renderableWidth);
+    windowComponent.mRenderableHeight = static_cast<float>(renderableHeight);
+    windowComponent.mAspectRatio      = windowComponent.mRenderableWidth/windowComponent.mRenderableHeight;
     
     // Log GL driver info
     Log(LogType::INFO, "Vendor     : %s", GL_NO_CHECK(glGetString(GL_VENDOR)));
@@ -353,18 +304,14 @@ void RenderingSystem::InitializeRenderingWindowAndContext() const
 
     // Configure Blending
     GL_CHECK(glEnable(GL_BLEND));
-    GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-    renderingContextComponent->mBlending = true;
+    GL_CHECK(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));    
     
     // Configure Depth
     GL_CHECK(glEnable(GL_DEPTH_TEST));
-    GL_CHECK(glDepthFunc(GL_LESS));
-    renderingContextComponent->mDepthTest = true;
+    GL_CHECK(glDepthFunc(GL_LESS));    
     
-    // Transfer ownership of singleton components to world
-    mWorld.SetSingletonComponent<WindowSingletonComponent>(std::move(windowComponent));
-    mWorld.SetSingletonComponent<RenderingContextSingletonComponent>(std::move(renderingContextComponent));
-    mWorld.SetSingletonComponent<PreviousRenderingStateSingletonComponent>(std::make_unique<PreviousRenderingStateSingletonComponent>());
+    // Transfer ownership of singleton components to world    
+    mWorld.SetSingletonComponent<RenderingContextSingletonComponent>(std::move(renderingContextComponent));    
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -433,6 +380,31 @@ std::set<std::string> RenderingSystem::GetAndFilterShaderNames() const
 }
 
 ///-----------------------------------------------------------------------------------------------
+
+bool IsMeshInsideCameraFrustum
+(
+    const glm::vec3& meshPosition,
+    const glm::vec3& meshScale,
+    const glm::vec3& meshDimensions,
+    const CameraFrustum& cameraFrustum
+)
+{
+    const auto scaledMeshDimensions = meshDimensions * meshScale;
+    const auto frustumCheckSphereRadius = math::Max(scaledMeshDimensions.x, math::Max(scaledMeshDimensions.y, scaledMeshDimensions.z));
+
+    for (auto i = 0U; i < 6U; ++i)
+    {
+        float dist =
+            cameraFrustum[i].x * meshPosition.x +
+            cameraFrustum[i].y * meshPosition.y +
+            cameraFrustum[i].z * meshPosition.z +
+            cameraFrustum[i].w - frustumCheckSphereRadius;
+
+        if (dist > 0) return false;
+    }
+
+    return true;
+}
 
 }
 

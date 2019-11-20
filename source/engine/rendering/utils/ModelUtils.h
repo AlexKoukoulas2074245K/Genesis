@@ -1,17 +1,19 @@
 ///------------------------------------------------------------------------------------------------
-///  MeshUtils.h
+///  ModelUtils.h
 ///  Genesis
 ///
 ///  Created by Alex Koukoulas on 20/11/2019.
 ///------------------------------------------------------------------------------------------------
 
-#ifndef MeshUtils_h
-#define MeshUtils_h
+#ifndef ModelUtils_h
+#define ModelUtils_h
 
 ///------------------------------------------------------------------------------------------------
 
-#include "../common/utils/StringUtils.h"
-#include "../services/ResourceLoadingService.h"
+#include "../../ECS.h"
+#include "../../common/utils/MathUtils.h"
+#include "../../common/utils/StringUtils.h"
+#include "../../resources/ResourceLoadingService.h"
 
 ///------------------------------------------------------------------------------------------------
 
@@ -21,6 +23,15 @@ namespace genesis
 ///------------------------------------------------------------------------------------------------
 
 class RenderableComponent;
+
+///------------------------------------------------------------------------------------------------
+
+ecs::EntityId LoadAndCreateModelByName
+(
+    const std::string& modelName,
+    const glm::vec3& initialPosition,
+    ecs::World& world
+);
 
 ///------------------------------------------------------------------------------------------------
 
@@ -54,4 +65,4 @@ ResourceId LoadMeshFromAtlasTexCoordsAndAddToRenderableAnimations
 
 ///------------------------------------------------------------------------------------------------
 
-#endif /* MeshUtils_h */
+#endif /* ModelUtils_h */

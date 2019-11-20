@@ -6,13 +6,16 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "GenesisEngine.h"
+#include "common/utils/OSMessageBox.h"
 #include "input/components/InputStateSingletonComponent.h"
 #include "input/systems/RawInputHandlingSystem.h"
 #include "input/utils/InputUtils.h"
+#include "rendering/components/WindowSingletonComponent.h"
 #include "rendering/systems/RenderingSystem.h"
-#include "services/ResourceLoadingService.h"
-#include "services/SoundService.h"
+#include "resources/ResourceLoadingService.h"
+#include "sound/SoundService.h"
 
+#include <SDL.h> 
 #include <SDL_events.h> 
 #include <SDL_timer.h>
 
@@ -28,14 +31,15 @@ bool AppShouldQuit();
 ///------------------------------------------------------------------------------------------------
 
 GenesisEngine::GenesisEngine()
-{
-    Initialize();
+{    
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void GenesisEngine::RunGame(IGame& game)
+void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGame& game)
 {
+    Initialize(startupParameters);
+
     game.VOnInit(mWorld);
 
     float elapsedTicks          = 0.0f;
@@ -72,17 +76,76 @@ void GenesisEngine::RunGame(IGame& game)
 
 ///------------------------------------------------------------------------------------------------
 
-void GenesisEngine::Initialize()
-{    
-    auto renderingSystem = std::make_unique<RenderingSystem>(mWorld);
-    mWorld.AddSystem(std::make_unique<RawInputHandlingSystem>(mWorld));
-    mWorld.AddSystem(std::move(renderingSystem));    
+void GenesisEngine::Initialize(const GameStartupParameters& startupParameters)
+{       
+    InitializeSdlContextAndWindow(startupParameters);
+    InitializeServices();
+    InitializeSystems();
+}
 
+///------------------------------------------------------------------------------------------------
+
+void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& startupParameters)
+{
+    // Initialize SDL
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+    {
+        ShowMessageBox(MessageBoxType::ERROR, "Error initializing SDL", "An error has occurred while trying to initialize SDL");
+        exit(1);
+    }
+
+    // Set SDL GL attributes        
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);    
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+
+    // Create SDL window
+    auto windowComponent = std::make_unique<WindowSingletonComponent>();
+    windowComponent->mWindowTitle = startupParameters.mGameTitle;
+    windowComponent->mWindowHandle = SDL_CreateWindow
+    (
+        windowComponent->mWindowTitle.c_str(),
+        SDL_WINDOWPOS_CENTERED, 
+        SDL_WINDOWPOS_CENTERED, 
+        startupParameters.mGameWindowWidth, 
+        startupParameters.mGameWindowHeight,
+        SDL_WINDOW_OPENGL
+    );
+
+    if (windowComponent->mWindowHandle == nullptr)
+    {
+        ShowMessageBox(MessageBoxType::ERROR, "Error creating SDL window", "An error has occurred while trying to create an SDL_Window");
+        exit(1);
+    }
+
+    // Make window non-resizable and display
+    SDL_SetWindowResizable(windowComponent->mWindowHandle, SDL_FALSE);
+    SDL_ShowWindow(windowComponent->mWindowHandle);
+
+    mWorld.SetSingletonComponent<WindowSingletonComponent>(std::move(windowComponent));
+}
+
+///------------------------------------------------------------------------------------------------
+
+void GenesisEngine::InitializeSystems()
+{    
+    mWorld.AddSystem(std::make_unique<RawInputHandlingSystem>(mWorld));
+    mWorld.AddSystem(std::make_unique<RenderingSystem>(mWorld));
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void GenesisEngine::InitializeServices() const
+{
     ResourceLoadingService::GetInstance().Initialize();
     SoundService::GetInstance().Initialize();
 }
 
-///------------------------------------------------------------------------------------------------
+///-----------------------------------------------------------------------------------------------
 
 bool AppShouldQuit()
 {

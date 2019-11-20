@@ -1,14 +1,14 @@
 ///------------------------------------------------------------------------------------------------
-///  MeshUtils.cpp
+///  ModelUtils.cpp
 ///  Genesis
 ///
 ///  Created by Alex Koukoulas on 20/11/2019.
 ///------------------------------------------------------------------------------------------------
 
-#include "MeshUtils.h"
-#include "../services/ResourceLoadingService.h"
-#include "../rendering/components/RenderableComponent.h"
-#include "../common/utils/MathUtils.h"
+#include "ModelUtils.h"
+#include "../components/RenderableComponent.h"
+#include "../../common/components/TransformComponent.h"
+#include "../../common/utils/MathUtils.h"
 
 #include <vector>
 
@@ -16,6 +16,41 @@
 
 namespace genesis
 {
+
+///------------------------------------------------------------------------------------------------
+
+ecs::EntityId LoadAndCreateModelByName
+(
+    const std::string& modelName,
+    const glm::vec3& initialPosition,
+    ecs::World& world
+)
+{
+    const auto modelEntity = world.CreateEntity();
+
+    auto transformComponent = std::make_unique<TransformComponent>();
+    transformComponent->mPosition = initialPosition;
+
+    auto renderableComponent = std::make_unique<RenderableComponent>();    
+    renderableComponent->mActiveAnimationNameId = StringId("default");        
+    renderableComponent->mShaderNameId = StringId("basic");
+
+    renderableComponent->mAnimationsToMeshes[StringId("default")].push_back
+    (
+        ResourceLoadingService::GetInstance().
+        LoadResource(ResourceLoadingService::RES_MODELS_ROOT + modelName + ".obj"
+    ));
+        
+    renderableComponent->mTextureResourceId = ResourceLoadingService::GetInstance().LoadResource
+    (
+        ResourceLoadingService::RES_TEXTURES_ROOT + modelName + ".png"
+    );
+    
+    world.AddComponent<RenderableComponent>(modelEntity, std::move(renderableComponent));
+    world.AddComponent<TransformComponent>(modelEntity, std::move(transformComponent));
+
+    return modelEntity;
+}
 
 ///------------------------------------------------------------------------------------------------
 

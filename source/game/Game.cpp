@@ -6,11 +6,13 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "Game.h"
+#include "../engine/rendering/utils/ModelUtils.h"
 
 ///------------------------------------------------------------------------------------------------
 
-void Game::VOnInit(genesis::ecs::World&)
+void Game::VOnInit(genesis::ecs::World& world)
 {
+    genesis::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), world);
 }
 
 ///------------------------------------------------------------------------------------------------

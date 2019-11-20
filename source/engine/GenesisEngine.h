@@ -10,8 +10,9 @@
 
 ///------------------------------------------------------------------------------------------------
 
-#include "IGame.h"
 #include "ECS.h"
+#include "GameStartupParameters.h"
+#include "IGame.h"
 
 ///------------------------------------------------------------------------------------------------
 
@@ -23,10 +24,13 @@ class GenesisEngine final
 public:
     GenesisEngine();
 
-    void RunGame(IGame& game);
+    void RunGame(const GameStartupParameters& startupParameters, IGame& game);
 
 private:
-    void Initialize();
+    void Initialize(const GameStartupParameters& startupParameters);
+    void InitializeSdlContextAndWindow(const GameStartupParameters& startupParameters);
+    void InitializeSystems();
+    void InitializeServices() const;
 
 private:
     ecs::World mWorld;

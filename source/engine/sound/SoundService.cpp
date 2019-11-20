@@ -6,7 +6,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "SoundService.h"
-#include "ResourceLoadingService.h"
+#include "../resources/ResourceLoadingService.h"
 #include "../common/utils/Logging.h"
 #include "../common/utils/OSMessageBox.h"
 #include "../resources/MusicResource.h"

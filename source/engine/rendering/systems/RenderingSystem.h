@@ -26,7 +26,6 @@ namespace genesis
 ///-----------------------------------------------------------------------------------------------
 
 class CameraSingletonComponent;
-class PreviousRenderingStateSingletonComponent;
 class RenderableComponent;
 class RenderingContextSingletonComponent;
 class ShaderStoreSingletonComponent;
@@ -49,8 +48,7 @@ private:
         const CameraSingletonComponent& globalCameraComponent,
         const ShaderStoreSingletonComponent& globalShaderStoreComponent,
         const WindowSingletonComponent& globalWindowComponent,        
-        RenderingContextSingletonComponent& renderingContextComponent,
-        PreviousRenderingStateSingletonComponent& globalPreviousRenderingStateComponent
+        RenderingContextSingletonComponent& renderingContextComponent        
     ) const;
         
     void InitializeRenderingWindowAndContext() const;

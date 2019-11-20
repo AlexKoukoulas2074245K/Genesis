@@ -37,7 +37,7 @@ public:
     StringId mActiveAnimationNameId        = StringId();
     size_t mActiveMeshIndex                = 0;
     ResourceId mTextureResourceId          = 0;            
-    bool mAffectedByPerspective            = false;
+    bool mIsGuiComponent                   = false;
     bool mVisibility                       = true;    
 };
 

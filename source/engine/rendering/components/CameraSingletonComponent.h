@@ -22,10 +22,19 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
-const unsigned int CAMERA_FRUSTUM_SIDES = 6;
-const float CAMERA_FIELD_OF_VIEW        = math::PI/7.0f;
-const float CAMERA_Z_NEAR               = 13.0f;
-const float CAMERA_Z_FAR                = 40.0f;
+namespace 
+{
+    const unsigned int CAMERA_FRUSTUM_SIDES = 6;
+
+    const glm::vec3 DEFAULT_CAMERA_FOCUS_POSITION = glm::vec3(0.0f, 0.0f, 0.0f);
+    const glm::vec3 DEFAULT_CAMERA_POSITION       = glm::vec3(0.0f, 18.04f, 0.0f);
+    const glm::vec3 DEFAULT_CAMERA_UP_VECTOR      = math::Y_AXIS;
+
+    const float DEFAULT_CAMERA_FIELD_OF_VIEW = math::PI / 2.0f;
+    const float DEFAULT_CAMERA_Z_NEAR        = 0.1f;
+    const float DEFAULT_CAMERA_Z_FAR         = 100.0f;
+}
+
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -37,15 +46,14 @@ class CameraSingletonComponent final: public ecs::IComponent
 {
 public:
     CameraFrustum mFrustum;
-    glm::mat4 mViewMatrix         = glm::mat4(1.0f);
-    glm::mat4 mProjectionMatrix   = glm::mat4(1.0f);
-    glm::vec3 mPosition           = glm::vec3(0.0f, 18.4f, 0.0f);
-    glm::vec3 mFocusPosition      = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 mUpVector           = glm::vec3(0.0f, 1.0f, 0.0f);
-    glm::vec3 mGlobalScreenOffset = glm::vec3(0.0f, 0.0f, 0.0f);
-    float mFieldOfView            = CAMERA_FIELD_OF_VIEW;
-    float mZNear                  = CAMERA_Z_NEAR;
-    float mZFar                   = CAMERA_Z_FAR;
+    glm::mat4 mViewMatrix       = glm::mat4(1.0f);
+    glm::mat4 mProjectionMatrix = glm::mat4(1.0f);    
+    glm::vec3 mUpVector         = DEFAULT_CAMERA_UP_VECTOR;
+    glm::vec3 mPosition         = DEFAULT_CAMERA_POSITION;
+    glm::vec3 mFocusPosition    = DEFAULT_CAMERA_FOCUS_POSITION;
+    float mFieldOfView          = DEFAULT_CAMERA_FIELD_OF_VIEW;
+    float mZNear                = DEFAULT_CAMERA_Z_NEAR;
+    float mZFar                 = DEFAULT_CAMERA_Z_FAR;
 };
 
 ///-----------------------------------------------------------------------------------------------

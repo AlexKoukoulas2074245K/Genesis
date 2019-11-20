@@ -11,7 +11,6 @@
 #include "../common/utils/OSMessageBox.h"
 #include "../common/utils/StringUtils.h"
 #include "../rendering/opengl/Context.h"
-#include "../rendering/utils/RenderingUtils.h"
 
 #include <algorithm>
 #include <fstream>     // ifstream
@@ -105,8 +104,8 @@ std::unique_ptr<IResource> TextureLoader::VCreateAndLoadResource(const std::stri
         sdlSurface->pixels
      ));
     
-    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+    GL_CHECK(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
     
     Log(LogType::INFO, "Loaded %s", resourcePath.c_str());
     
