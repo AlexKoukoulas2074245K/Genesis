@@ -1,21 +1,14 @@
-//
-//  ResourceLoadingService.h
-//  Genesis
-//
-//  Created by Alex Koukoulas on 29/03/2019.
-//
-
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  ResourceLoadingService.h
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///------------------------------------------------------------------------------------------------
 
 #ifndef ResourceLoadingService_h
 #define ResourceLoadingService_h
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
 
 #include "../common/utils/StringUtils.h"
 
@@ -24,17 +17,18 @@
 #include <unordered_map>
 #include <vector>
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+
+namespace genesis
+{ 
+
+///------------------------------------------------------------------------------------------------
 
 using ResourceId = unsigned int;
 class IResource;
 class IResourceLoader;
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
 
 struct ResourceIdHasher
 {
@@ -44,12 +38,12 @@ struct ResourceIdHasher
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
+///------------------------------------------------------------------------------------------------
+/// A service class aimed at providing resource loading, simple file IO, etc.
 class ResourceLoadingService final
 {
+    friend class GenesisEngine;
+
 public:
     static const std::string RES_ROOT;
     static const std::string RES_ATLASES_ROOT;
@@ -62,6 +56,11 @@ public:
     static const std::string RES_SHADERS_ROOT;
     static const std::string RES_TEXTURES_ROOT;        
     
+    /// The default method of getting a hold of this singleton.
+    ///
+    /// The single instance of this class will be lazily initialized
+    /// the first time it is needed.
+    /// @returns a reference to the single instance of this class.    
     static ResourceLoadingService& GetInstance();
 
     ~ResourceLoadingService();
@@ -69,56 +68,94 @@ public:
     ResourceLoadingService(ResourceLoadingService&&) = delete;
     const ResourceLoadingService& operator = (const ResourceLoadingService&) = delete;
     ResourceLoadingService& operator = (ResourceLoadingService&&) = delete;
-
-    // Initializes loaders for different types of assets. 
-    // Should be called after the SDL/GL context has been initialized
-    void InitializeResourceLoaders();
     
-    // Calculates a resource id from a given path
+    /// Computes the hashed resource id, for a given file path.
+    ///
+    /// Both full paths, relative paths including the Resource Root, and relative
+    /// paths excluding the Resource Root are supported.
+    /// @param[in] resourcePath the path of the resource file.
+    /// @returns the computed resource id.
     ResourceId GetResourceIdFromPath(const std::string& resourcePath);
 
-    // Loads a single or number of resources based on the relative path(s) supplied
-    // respectively. Both full paths, relative paths including the Resource Root, and relative
-    // paths excluding the Resource Root are supported
+    /// Loads and returns the resource id of the loaded resource that lives on the given path.
+    ///
+    /// Both full paths, relative paths including the Resource Root, and relative
+    /// paths excluding the Resource Root are supported.
+    /// @param[in] resourcePath the path of the resource file.
+    /// @returns the loaded resource's id.
     ResourceId LoadResource(const std::string& resourcePath);
+
+    /// Loads a collection of resources based on a given vector with their paths.
+    ///
+    /// Both full paths, relative paths including the Resource Root, and relative
+    /// paths excluding the Resource Root are supported.
+    /// @param[in] resourcePaths a vector containing the paths of the resource files.    
     void LoadResources(const std::vector<std::string>& resourcePaths);
     
-    // Checks whether the resource with the given path exists
+    /// Checks whether a resource file exists under the given path.
+    ///
+    /// Both full paths, relative paths including the Resource Root, and relative
+    /// paths excluding the Resource Root are supported.
+    /// @param[in] resourcePath the path of the resource file.
+    /// @returns whether or not a physical file exists in the specified path.
     bool DoesResourceExist(const std::string& resourcePath) const;
     
-    // Checks whether the given resource has been loaded.
-    // Both full paths, relative paths including the Resource Root, and relative
-    // paths not including the Resource Root are supported
+    /// Checks whether a resource has been loaded based on a file that exists under the given path.
+    ///
+    /// Both full paths, relative paths including the Resource Root, and relative
+    /// paths excluding the Resource Root are supported.
+    /// @param[in] resourcePath the path of the resource file.
+    /// @returns whether or not the resource has been loaded.
     bool HasLoadedResource(const std::string& resourcePath) const;
     
-    // Unloads the specified resource. Any subsequent calls to get that 
-    // resource will need to be preceeded by another Load to get the resource 
-    // back to the map of resources held by this service
+    /// Unloads the specified resource loaded based on the given path.
+    ///
+    /// Any subsequent calls to get that
+    /// resource will need to be preceeded by another Load to get the resource 
+    /// back to the map of resources held by this service.
+    /// Both full paths, relative paths including the Resource Root, and relative
+    /// paths excluding the Resource Root are supported.
+    /// @param[in] resourcePath the path of the resource file.        
     void UnloadResource(const std::string& resourcePath);
+
+    /// Unloads the specified resource loaded based on the given path.
+    ///
+    /// Any subsequent calls to get that
+    /// resource will need to be preceeded by another Load to get the resource
+    /// back to the map of resources held by this service.  
+    /// @param[in] resourceId the id of the resource to unload.    
     void UnloadResource(const ResourceId resourceId);
     
-    // Both full paths, relative paths including the Resource Root, and relative
-    // paths not including the Resource Root are supported
+    /// Gets the concrete type of the resource that was loaded based on the given path.
+    ///    
+    /// Both full paths, relative paths including the Resource Root, and relative
+    /// paths excluding the Resource Root are supported.
+    /// @tparam ResourceType the derived type of the requested resource.
+    /// @param[in] resourcePath the path of the resource file.  
+    /// returns the derived type of the resource.
     template<class ResourceType>
     inline ResourceType& GetResource(const std::string& resourcePath)
     {
         return static_cast<ResourceType&>(GetResource(resourcePath));
     }
 
+    /// Gets the concrete type of the resource based on a given resource id.
+    ///        
+    /// @tparam ResourceType the derived type of the requested resource.
+    /// @param[in] resourceId the id of the resource. 
+    /// returns the derived type of the resource.
     template<class ResourceType>
     inline ResourceType& GetResource(const ResourceId resourceId)
     {
         return static_cast<ResourceType&>(GetResource(resourceId));
     }
-
-    // Opens a file based on the relative file path given, and writes the string str to it
-    void WriteStringToFile(const std::string& str, const std::string& relativeFilePath);
-
-    // Checks whether a file with the given relative file path exists
-    bool DoesFileExist(const std::string& relativeFilePath);
     
 private:    
     ResourceLoadingService() = default;
+
+    // Initializes loaders for different types of assets. 
+    // Called internally by the engine.
+    void Initialize();
 
     IResource& GetResource(const std::string& resourceRelativePath);
     IResource& GetResource(const ResourceId resourceId);    
@@ -133,8 +170,10 @@ private:
     std::vector<std::unique_ptr<IResourceLoader>> mResourceLoaders;
 };
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+
+}
+
+///------------------------------------------------------------------------------------------------
 
 #endif /* ResourceLoadingService_h */

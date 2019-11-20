@@ -69,57 +69,63 @@ $(function() {
 <div class="title">TextureResource.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">//  TextureResource.h</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">//  Genesis</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">//  Created by Alex Koukoulas on 29/03/2019.</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef TextureResource_h</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define TextureResource_h</span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef TextureResource_h</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#define TextureResource_h</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;IResource.h&quot;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;SDL_stdinc.h&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;IResource.h&quot;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;SDL_stdinc.h&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">using</span> GLuint = <span class="keywordtype">unsigned</span> int;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="class_texture_resource.html">   33</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_texture_resource.html">TextureResource</a> final: <span class="keyword">public</span> <a class="code" href="class_i_resource.html">IResource</a></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="class_texture_loader.html">TextureLoader</a>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    ~<a class="code" href="class_texture_resource.html">TextureResource</a>();</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    GLuint GetGLTextureId() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">int</span> GetWidth() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">int</span> GetHeight() <span class="keyword">const</span>;    </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="class_texture_resource.html">TextureResource</a></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    (</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> width, </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> height,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        GLuint glTextureId        </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    );</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> mWidth;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> mHeight;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">const</span> GLuint mGLTextureId;    </div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* TextureResource_h */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacegenesis.html">genesis</a></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">using</span> GLuint = <span class="keywordtype">unsigned</span> int;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classgenesis_1_1_texture_resource.html">   28</a></span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_texture_resource.html">TextureResource</a> final: <span class="keyword">public</span> <a class="code" href="classgenesis_1_1_i_resource.html">IResource</a></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classgenesis_1_1_texture_loader.html">TextureLoader</a>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <a class="code" href="classgenesis_1_1_texture_resource.html#afcbce455ddc955fc9315562ce016945b">~TextureResource</a>();</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <a class="code" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">GLuint</a> <a class="code" href="classgenesis_1_1_texture_resource.html#a080a1bc91acebbac42a5f4a398853d56">GetGLTextureId</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classgenesis_1_1_texture_resource.html#a7af24e0ae1f16489cf746299dd427f65">GetWidth</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="classgenesis_1_1_texture_resource.html#ae16fb2fd6f4b7ab06550ad2f05d96746">GetHeight</a>() <span class="keyword">const</span>;    </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="classgenesis_1_1_texture_resource.html">TextureResource</a></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    (</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> width, </div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">int</span> height,</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">GLuint</a> glTextureId        </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    );</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> mWidth;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> mHeight;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">const</span> <a class="code" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">GLuint</a> mGLTextureId;    </div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;};</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* TextureResource_h */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclass_texture_resource_html"><div class="ttname"><a href="class_texture_resource.html">TextureResource</a></div><div class="ttdef"><b>Definition:</b> TextureResource.h:33</div></div>
-<div class="ttc" id="aclass_texture_loader_html"><div class="ttname"><a href="class_texture_loader.html">TextureLoader</a></div><div class="ttdef"><b>Definition:</b> TextureLoader.h:36</div></div>
-<div class="ttc" id="aclass_i_resource_html"><div class="ttname"><a href="class_i_resource.html">IResource</a></div><div class="ttdef"><b>Definition:</b> IResource.h:20</div></div>
+<div class="ttc" id="aclassgenesis_1_1_texture_resource_html"><div class="ttname"><a href="classgenesis_1_1_texture_resource.html">genesis::TextureResource</a></div><div class="ttdef"><b>Definition:</b> TextureResource.h:28</div></div>
+<div class="ttc" id="anamespacegenesis_html_a7fb6f72280ff7080bba64707e75af542"><div class="ttname"><a href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">genesis::GLuint</a></div><div class="ttdeci">unsigned int GLuint</div><div class="ttdef"><b>Definition:</b> RenderingContextSingletonComponent.h:24</div></div>
+<div class="ttc" id="aclassgenesis_1_1_texture_resource_html_a080a1bc91acebbac42a5f4a398853d56"><div class="ttname"><a href="classgenesis_1_1_texture_resource.html#a080a1bc91acebbac42a5f4a398853d56">genesis::TextureResource::GetGLTextureId</a></div><div class="ttdeci">GLuint GetGLTextureId() const</div><div class="ttdef"><b>Definition:</b> TextureResource.cpp:27</div></div>
+<div class="ttc" id="aclassgenesis_1_1_texture_resource_html_afcbce455ddc955fc9315562ce016945b"><div class="ttname"><a href="classgenesis_1_1_texture_resource.html#afcbce455ddc955fc9315562ce016945b">genesis::TextureResource::~TextureResource</a></div><div class="ttdeci">~TextureResource()</div><div class="ttdef"><b>Definition:</b> TextureResource.cpp:20</div></div>
+<div class="ttc" id="anamespacegenesis_html"><div class="ttname"><a href="namespacegenesis.html">genesis</a></div><div class="ttdef"><b>Definition:</b> TransformComponent.h:26</div></div>
+<div class="ttc" id="aclassgenesis_1_1_texture_loader_html"><div class="ttname"><a href="classgenesis_1_1_texture_loader.html">genesis::TextureLoader</a></div><div class="ttdef"><b>Definition:</b> TextureLoader.h:30</div></div>
+<div class="ttc" id="aclassgenesis_1_1_texture_resource_html_ae16fb2fd6f4b7ab06550ad2f05d96746"><div class="ttname"><a href="classgenesis_1_1_texture_resource.html#ae16fb2fd6f4b7ab06550ad2f05d96746">genesis::TextureResource::GetHeight</a></div><div class="ttdeci">int GetHeight() const</div><div class="ttdef"><b>Definition:</b> TextureResource.cpp:41</div></div>
+<div class="ttc" id="aclassgenesis_1_1_texture_resource_html_a7af24e0ae1f16489cf746299dd427f65"><div class="ttname"><a href="classgenesis_1_1_texture_resource.html#a7af24e0ae1f16489cf746299dd427f65">genesis::TextureResource::GetWidth</a></div><div class="ttdeci">int GetWidth() const</div><div class="ttdef"><b>Definition:</b> TextureResource.cpp:34</div></div>
+<div class="ttc" id="aclassgenesis_1_1_i_resource_html"><div class="ttname"><a href="classgenesis_1_1_i_resource.html">genesis::IResource</a></div><div class="ttdef"><b>Definition:</b> IResource.h:18</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

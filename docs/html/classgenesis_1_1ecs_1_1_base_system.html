@@ -69,6 +69,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classgenesis_1_1ecs_1_1_base_system-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">genesis::ecs::BaseSystem Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
@@ -82,9 +83,9 @@ Inheritance diagram for genesis::ecs::BaseSystem:</div>
  <div class="center">
   <img src="classgenesis_1_1ecs_1_1_base_system.png" usemap="#genesis::ecs::BaseSystem_map" alt=""/>
   <map id="genesis::ecs::BaseSystem_map" name="genesis::ecs::BaseSystem_map">
-<area href="class_animation_system.html" alt="AnimationSystem" shape="rect" coords="0,56,155,80"/>
-<area href="class_raw_input_handling_system.html" alt="RawInputHandlingSystem" shape="rect" coords="165,56,320,80"/>
-<area href="class_rendering_system.html" alt="RenderingSystem" shape="rect" coords="330,56,485,80"/>
+<area href="classgenesis_1_1_animation_system.html" alt="genesis::AnimationSystem" shape="rect" coords="0,56,202,80"/>
+<area href="classgenesis_1_1_raw_input_handling_system.html" alt="genesis::RawInputHandlingSystem" shape="rect" coords="212,56,414,80"/>
+<area href="classgenesis_1_1_rendering_system.html" alt="genesis::RenderingSystem" shape="rect" coords="424,56,626,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -98,9 +99,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4213bfd265cc1252a81e5906e85b9742"><td class="memItemLeft" align="right" valign="top"><a id="a4213bfd265cc1252a81e5906e85b9742"></a>
 const <a class="el" href="classgenesis_1_1ecs_1_1_base_system.html">BaseSystem</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classgenesis_1_1ecs_1_1_base_system.html">BaseSystem</a> &amp;)=delete</td></tr>
 <tr class="separator:a4213bfd265cc1252a81e5906e85b9742"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16c1b3c72600c4d923ed6684b3146e63"><td class="memItemLeft" align="right" valign="top"><a id="a16c1b3c72600c4d923ed6684b3146e63"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>VUpdateAssociatedComponents</b> (const float dt) const =0</td></tr>
-<tr class="separator:a16c1b3c72600c4d923ed6684b3146e63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -120,6 +118,12 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:aede3aa90a9bf12b1739a2675c48449e4"><td class="memItemLeft" align="right" valign="top"><a id="aede3aa90a9bf12b1739a2675c48449e4"></a>
 <a class="el" href="classgenesis_1_1ecs_1_1_world.html">World</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>mWorld</b></td></tr>
 <tr class="separator:aede3aa90a9bf12b1739a2675c48449e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a7b4bcdf992c21ae83363f25df05b1d25"><td class="memItemLeft" align="right" valign="top"><a id="a7b4bcdf992c21ae83363f25df05b1d25"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>World</b></td></tr>
+<tr class="separator:a7b4bcdf992c21ae83363f25df05b1d25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><hr  />

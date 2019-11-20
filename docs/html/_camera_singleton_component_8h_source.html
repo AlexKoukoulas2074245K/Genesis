@@ -69,53 +69,55 @@ $(function() {
 <div class="title">CameraSingletonComponent.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">//  CameraSingletonComponent.h</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">//  Genesis</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">//  Created by Alex Koukoulas on 28/03/2019.</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef CameraSingletonComponent_h</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define CameraSingletonComponent_h</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &quot;../../ECS.h&quot;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;../../common/utils/MathUtils.h&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> CAMERA_FRUSTUM_SIDES = 6;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">const</span> <span class="keywordtype">float</span> CAMERA_FIELD_OF_VIEW        = math::PI/7.0f;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">const</span> <span class="keywordtype">float</span> CAMERA_Z_NEAR               = 13.0f;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">const</span> <span class="keywordtype">float</span> CAMERA_Z_FAR                = 40.0f;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">using</span> CameraFrustum = std::array&lt;glm::vec4, CAMERA_FRUSTUM_SIDES&gt;;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="class_camera_singleton_component.html">   43</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_camera_singleton_component.html">CameraSingletonComponent</a> final: <span class="keyword">public</span> <a class="code" href="classgenesis_1_1ecs_1_1_i_component.html">genesis::ecs::IComponent</a></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;{</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    CameraFrustum mFrustum;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    glm::mat4 mViewMatrix         = glm::mat4(1.0f);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    glm::mat4 mProjectionMatrix   = glm::mat4(1.0f);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    glm::vec3 mPosition           = glm::vec3(0.0f, 18.4f, 0.0f);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    glm::vec3 mFocusPosition      = glm::vec3(0.0f, 0.0f, 0.0f);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    glm::vec3 mUpVector           = glm::vec3(0.0f, 1.0f, 0.0f);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    glm::vec3 mGlobalScreenOffset = glm::vec3(0.0f, 0.0f, 0.0f);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">float</span> mFieldOfView            = CAMERA_FIELD_OF_VIEW;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">float</span> mZNear                  = CAMERA_Z_NEAR;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">float</span> mZFar                   = CAMERA_Z_FAR;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* CameraSingletonComponent_h */</span><span class="preprocessor"></span></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef CameraSingletonComponent_h</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#define CameraSingletonComponent_h</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;../../ECS.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;../../common/utils/MathUtils.h&quot;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacegenesis.html">genesis</a></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="namespacegenesis.html#aab303ae103d5dc579d22bbbb1146c9e0">   25</a></span>&#160;<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="namespacegenesis.html#aab303ae103d5dc579d22bbbb1146c9e0">CAMERA_FRUSTUM_SIDES</a> = 6;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">const</span> <span class="keywordtype">float</span> CAMERA_FIELD_OF_VIEW        = math::PI/7.0f;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">const</span> <span class="keywordtype">float</span> CAMERA_Z_NEAR               = 13.0f;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">const</span> <span class="keywordtype">float</span> CAMERA_Z_FAR                = 40.0f;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="namespacegenesis.html#a3322e715992b80a1149182f984053559">   32</a></span>&#160;<span class="keyword">using</span> <a class="code" href="namespacegenesis.html#a3322e715992b80a1149182f984053559">CameraFrustum</a> = std::array&lt;glm::vec4, CAMERA_FRUSTUM_SIDES&gt;;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classgenesis_1_1_camera_singleton_component.html">   36</a></span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_camera_singleton_component.html">CameraSingletonComponent</a> final: <span class="keyword">public</span> <a class="code" href="classgenesis_1_1ecs_1_1_i_component.html">ecs::IComponent</a></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="namespacegenesis.html#a3322e715992b80a1149182f984053559">CameraFrustum</a> mFrustum;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    glm::mat4 mViewMatrix         = glm::mat4(1.0f);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    glm::mat4 mProjectionMatrix   = glm::mat4(1.0f);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    glm::vec3 mPosition           = glm::vec3(0.0f, 18.4f, 0.0f);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    glm::vec3 mFocusPosition      = glm::vec3(0.0f, 0.0f, 0.0f);</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    glm::vec3 mUpVector           = glm::vec3(0.0f, 1.0f, 0.0f);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    glm::vec3 mGlobalScreenOffset = glm::vec3(0.0f, 0.0f, 0.0f);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">float</span> mFieldOfView            = CAMERA_FIELD_OF_VIEW;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">float</span> mZNear                  = CAMERA_Z_NEAR;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">float</span> mZFar                   = CAMERA_Z_FAR;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;};</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;}</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* CameraSingletonComponent_h */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclassgenesis_1_1ecs_1_1_i_component_html"><div class="ttname"><a href="classgenesis_1_1ecs_1_1_i_component.html">genesis::ecs::IComponent</a></div><div class="ttdef"><b>Definition:</b> ECS.h:85</div></div>
-<div class="ttc" id="aclass_camera_singleton_component_html"><div class="ttname"><a href="class_camera_singleton_component.html">CameraSingletonComponent</a></div><div class="ttdef"><b>Definition:</b> CameraSingletonComponent.h:43</div></div>
+<div class="ttc" id="anamespacegenesis_html_aab303ae103d5dc579d22bbbb1146c9e0"><div class="ttname"><a href="namespacegenesis.html#aab303ae103d5dc579d22bbbb1146c9e0">genesis::CAMERA_FRUSTUM_SIDES</a></div><div class="ttdeci">const unsigned int CAMERA_FRUSTUM_SIDES</div><div class="ttdef"><b>Definition:</b> CameraSingletonComponent.h:25</div></div>
+<div class="ttc" id="anamespacegenesis_html_a3322e715992b80a1149182f984053559"><div class="ttname"><a href="namespacegenesis.html#a3322e715992b80a1149182f984053559">genesis::CameraFrustum</a></div><div class="ttdeci">std::array&lt; glm::vec4, CAMERA_FRUSTUM_SIDES &gt; CameraFrustum</div><div class="ttdef"><b>Definition:</b> CameraSingletonComponent.h:32</div></div>
+<div class="ttc" id="aclassgenesis_1_1_camera_singleton_component_html"><div class="ttname"><a href="classgenesis_1_1_camera_singleton_component.html">genesis::CameraSingletonComponent</a></div><div class="ttdef"><b>Definition:</b> CameraSingletonComponent.h:36</div></div>
+<div class="ttc" id="anamespacegenesis_html"><div class="ttname"><a href="namespacegenesis.html">genesis</a></div><div class="ttdef"><b>Definition:</b> TransformComponent.h:26</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

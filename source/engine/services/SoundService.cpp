@@ -1,14 +1,9 @@
-//
-//  SoundService.cpp
-//  Genesis
-//
-//  Created by Alex Koukoulas on 29/08/2019.
-//
-
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  SoundService.cpp
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///------------------------------------------------------------------------------------------------
 
 #include "SoundService.h"
 #include "ResourceLoadingService.h"
@@ -21,47 +16,51 @@
 #include <fstream>
 #include <SDL_mixer.h>
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
 
 namespace genesis
+{
+
+///------------------------------------------------------------------------------------------------{ 
+
+namespace
 { 
 
-const std::string SoundService::MUSIC_FILE_EXTENSION = ".ogg";
-const std::string SoundService::SFX_FILE_EXTENSION   = ".wav";
+///------------------------------------------------------------------------------------------------
 
-const int SoundService::SFX_CHANNEL_NUMBER               = 1;
-const int SoundService::SOUND_FREQUENCY                  = 44100;
-const int SoundService::HARDWARE_CHANNELS                = 2;
-const int SoundService::CHUNK_SIZE_IN_BYTES              = 1024;
-const int SoundService::FADE_OUT_DURATION_IN_MILISECONDS = 1000;
+const std::string MUSIC_FILE_EXTENSION = ".ogg";
+const std::string SFX_FILE_EXTENSION   = ".wav";
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+const int SFX_CHANNEL_NUMBER               = 1;
+const int SOUND_FREQUENCY                  = 44100;
+const int HARDWARE_CHANNELS                = 2;
+const int CHUNK_SIZE_IN_BYTES              = 1024;
+const int FADE_OUT_DURATION_IN_MILISECONDS = 1000;
+
+///------------------------------------------------------------------------------------------------
+
+}
+
+///------------------------------------------------------------------------------------------------
 
 static void OnMusicFinishedHook()
 {
     SoundService::GetInstance().OnMusicFinished();
 }
 
-static void OnMusicIntroFinishedHook()
-{
-    SoundService::GetInstance().OnMusicIntroFinished();
-}
+///------------------------------------------------------------------------------------------------
 
+/*
 static void OnSfxFinishedHook(const int channel)
 {
-    if (channel == SoundService::SFX_CHANNEL_NUMBER)
+    if (channel == SFX_CHANNEL_NUMBER)
     {
         SoundService::GetInstance().OnSfxFinished();
     }
 }
+*/
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
 
 SoundService& SoundService::GetInstance()
 {
@@ -69,12 +68,16 @@ SoundService& SoundService::GetInstance()
     return instance;
 }
 
+///------------------------------------------------------------------------------------------------
+
 SoundService::~SoundService()
 {
     Mix_HookMusicFinished(nullptr);
 }
 
-void SoundService::InitializeSdlMixer() const
+///------------------------------------------------------------------------------------------------
+
+void SoundService::Initialize() const
 {
     SDL_version mixerCompiledVersion;
     SDL_MIXER_VERSION(&mixerCompiledVersion);
@@ -100,7 +103,9 @@ void SoundService::InitializeSdlMixer() const
     Log(LogType::INFO, "Successfully initialized SDL_Mixer version %d.%d.%d", mixerCompiledVersion.major, mixerCompiledVersion.minor, mixerCompiledVersion.patch);
 }
 
-void SoundService::PlaySfx(const StringId sfxName, const bool overrideCurrentPlaying /* true */, const bool shouldMuteMusicWhilePlaying /* false */)
+///------------------------------------------------------------------------------------------------
+
+void SoundService::PlaySfx(const StringId sfxName, const bool overrideCurrentPlaying /* true */)
 {
     auto& resourceLoadingService = ResourceLoadingService::GetInstance();
 
@@ -116,21 +121,12 @@ void SoundService::PlaySfx(const StringId sfxName, const bool overrideCurrentPla
     auto& sfxResource = resourceLoadingService.GetResource<SfxResource>(sfxFilePathWithExtension);
 
     if (overrideCurrentPlaying || Mix_Playing(1) == false)
-    {
-        mLastPlayedSfxName = sfxName;
-        Mix_PlayChannel(SFX_CHANNEL_NUMBER, sfxResource.GetSdlSfxHandle(), 0);
-        
-        if (shouldMuteMusicWhilePlaying)
-        {
-            MuteMusic();
-            Mix_ChannelFinished(OnSfxFinishedHook);
-        }
-        else
-        {
-            Mix_ChannelFinished(nullptr);
-        }
+    {        
+        Mix_PlayChannel(SFX_CHANNEL_NUMBER, sfxResource.GetSdlSfxHandle(), 0);                
     }    
 }
+
+///------------------------------------------------------------------------------------------------
 
 void SoundService::PlayMusic(const StringId musicTrackName, const bool fadeOutEnabled /* true */)
 {    
@@ -145,50 +141,11 @@ void SoundService::PlayMusic(const StringId musicTrackName, const bool fadeOutEn
         resourceLoadingService.LoadResource(musicFilePathWithExtension);
     }
 
-    // If music track has an intro part, the intro 
-    // gets played first, and the core part is saved
-    const auto hasIntro = HasIntro(musicFilePath);
-    if (hasIntro)
-    {        
-        musicFilePathWithExtension = musicFilePath + "_intro" + MUSIC_FILE_EXTENSION;
-        if (resourceLoadingService.HasLoadedResource(musicFilePathWithExtension) == false)
-        {
-            Log(LogType::WARNING, "Music intro file %s requested not preloaded", musicFilePathWithExtension.c_str());
-            resourceLoadingService.LoadResource(musicFilePathWithExtension);
-        }
-
-        mCoreMusicTrackResourceId = resourceLoadingService.GetResourceIdFromPath(musicFilePath + MUSIC_FILE_EXTENSION);
-    }
-    else
-    {
-        mCoreMusicTrackResourceId = 0;
-    }
-    
     auto& musicResource = resourceLoadingService.GetResource<MusicResource>(musicFilePathWithExtension);
     
-    if (mCurrentlyPlayingMusicResourceId == 0 || fadeOutEnabled == false)
-    {
-        mCurrentlyPlayingMusicResourceId = resourceLoadingService.GetResourceIdFromPath(musicFilePathWithExtension);
-
-        if (hasIntro)
-        {   
-            Mix_HookMusicFinished(OnMusicIntroFinishedHook);               
-            Mix_PlayMusic(musicResource.GetSdlMusicHandle(), 0);
-        }
-        else
-        {            
-            Mix_PlayMusic(musicResource.GetSdlMusicHandle(), -1);
-        }               
-
-        if (!mAllAudioDisabled)
-        {
-            if (mMusicVolumePriorToMuting == -1)
-            {
-                mMusicVolumePriorToMuting = Mix_VolumeMusic(-1);
-            }
-            
-            Mix_VolumeMusic(mMusicVolumePriorToMuting);
-        }
+    if (fadeOutEnabled == false)
+    {        
+        Mix_PlayMusic(musicResource.GetSdlMusicHandle(), -1);        
     }
     else
     {        
@@ -197,6 +154,8 @@ void SoundService::PlayMusic(const StringId musicTrackName, const bool fadeOutEn
         Mix_HookMusicFinished(OnMusicFinishedHook);
     }    
 }
+
+///------------------------------------------------------------------------------------------------
 
 void SoundService::MuteMusic()
 {
@@ -211,6 +170,8 @@ void SoundService::MuteMusic()
     }    
 }
 
+///------------------------------------------------------------------------------------------------
+
 void SoundService::UnmuteMusic()
 {
     if (!mAllAudioDisabled)
@@ -219,10 +180,7 @@ void SoundService::UnmuteMusic()
     }
 }
 
-void SoundService::ResetCurrentlyPlayingMusic()
-{    
-    mCurrentlyPlayingMusicResourceId = 0;    
-}
+///------------------------------------------------------------------------------------------------
 
 void SoundService::MuteSfx()
 {
@@ -233,6 +191,8 @@ void SoundService::MuteSfx()
     }    
 }
 
+///------------------------------------------------------------------------------------------------
+
 void SoundService::UnmuteSfx()
 {
     if (!mAllAudioDisabled)
@@ -241,7 +201,9 @@ void SoundService::UnmuteSfx()
     }
 }
 
-void SoundService::ToggleAudioOnOff()
+///------------------------------------------------------------------------------------------------
+
+void SoundService::ToggleAllAudioOnOff()
 {
     mAllAudioDisabled = !mAllAudioDisabled;
     if (!mAllAudioDisabled)
@@ -258,76 +220,40 @@ void SoundService::ToggleAudioOnOff()
     }
 }
 
-void SoundService::OnMusicFinished()
-{
-    assert(mQueuedMusicResourceId != 0 && "No queued music to play");
-
-    auto& resourceLoadingService = ResourceLoadingService::GetInstance();
-    auto& musicResource = resourceLoadingService.GetResource<MusicResource>(mQueuedMusicResourceId);
-
-    mCurrentlyPlayingMusicResourceId = mQueuedMusicResourceId;
-    if (mCoreMusicTrackResourceId != 0)
-    {
-        Mix_HookMusicFinished(OnMusicIntroFinishedHook);
-        Mix_PlayMusic(musicResource.GetSdlMusicHandle(), 0);
-    }
-    else
-    {
-        Mix_PlayMusic(musicResource.GetSdlMusicHandle(), -1);
-    }        
-
-    if (!mAllAudioDisabled)
-    {
-        Mix_VolumeMusic(mMusicVolumePriorToMuting);
-    }
-}
-
-void SoundService::OnMusicIntroFinished()
-{
-    auto& resourceLoadingService = ResourceLoadingService::GetInstance();
-    auto& musicResource = resourceLoadingService.GetResource<MusicResource>(mCoreMusicTrackResourceId);
-
-    mCurrentlyPlayingMusicResourceId = mCoreMusicTrackResourceId;
-    Mix_PlayMusic(musicResource.GetSdlMusicHandle(), -1);
-
-    if (!mAllAudioDisabled)
-    {
-        Mix_VolumeMusic(mMusicVolumePriorToMuting);
-    }
-}
-
-void SoundService::OnSfxFinished()
-{
-    UnmuteMusic();
-}
+///------------------------------------------------------------------------------------------------
 
 bool SoundService::IsPlayingMusic() const
 {
     return Mix_PlayingMusic() != 0;
 }
 
+///------------------------------------------------------------------------------------------------
+
 bool SoundService::IsPlayingSfx() const
 {
     return Mix_Playing(SFX_CHANNEL_NUMBER) != 0;
 }
 
-StringId SoundService::GetLastPlayedSfxName() const
+///------------------------------------------------------------------------------------------------
+
+void SoundService::OnMusicFinished()
 {
-    return mLastPlayedSfxName;
+    if (mQueuedMusicResourceId != 0)
+    {
+        auto& resourceLoadingService = ResourceLoadingService::GetInstance();
+        auto& musicResource = resourceLoadingService.GetResource<MusicResource>(mQueuedMusicResourceId);
+
+        Mix_PlayMusic(musicResource.GetSdlMusicHandle(), -1);
+    }
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
 
-bool SoundService::HasIntro(const std::string& musicTrackPath) const
+void SoundService::OnSfxFinished()
 {
-    std::ifstream file(musicTrackPath + "_intro" + MUSIC_FILE_EXTENSION);
-    return file.good();
+    UnmuteMusic();
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
 
 }

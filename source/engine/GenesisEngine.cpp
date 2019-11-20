@@ -10,6 +10,8 @@
 #include "input/systems/RawInputHandlingSystem.h"
 #include "input/utils/InputUtils.h"
 #include "rendering/systems/RenderingSystem.h"
+#include "services/ResourceLoadingService.h"
+#include "services/SoundService.h"
 
 #include <SDL_events.h> 
 #include <SDL_timer.h>
@@ -75,6 +77,9 @@ void GenesisEngine::Initialize()
     auto renderingSystem = std::make_unique<RenderingSystem>(mWorld);
     mWorld.AddSystem(std::make_unique<RawInputHandlingSystem>(mWorld));
     mWorld.AddSystem(std::move(renderingSystem));    
+
+    ResourceLoadingService::GetInstance().Initialize();
+    SoundService::GetInstance().Initialize();
 }
 
 ///------------------------------------------------------------------------------------------------

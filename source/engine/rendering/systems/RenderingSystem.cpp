@@ -1,13 +1,9 @@
-//
-//  RenderingSystem.cpp
-//  Genesis
-//
-//  Created by Alex Koukoulas on 28/03/2019.
-//
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  RenderingSystem.cpp
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///-----------------------------------------------------------------------------------------------
 
 #include "RenderingSystem.h"
 #include "../components/CameraSingletonComponent.h"
@@ -35,9 +31,12 @@
 #include <vector>
 #include <iterator>
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
+
+namespace genesis
+{
+
+///-----------------------------------------------------------------------------------------------
 
 namespace
 {
@@ -48,9 +47,7 @@ namespace
     const float TARGET_ASPECT_RATIO = 1.5993266f;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
 
 RenderingSystem::RenderingSystem(genesis::ecs::World& world)
     : genesis::ecs::BaseSystem(world)
@@ -60,6 +57,8 @@ RenderingSystem::RenderingSystem(genesis::ecs::World& world)
     CompileAndLoadShaders();
     CalculateAndSetComponentUsageMask<RenderableComponent, TransformComponent>();
 }
+
+///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::VUpdateAssociatedComponents(const float) const
 {
@@ -179,9 +178,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     SDL_GL_SwapWindow(windowComponent.mWindowHandle);
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::RenderEntityInternal
 (
@@ -278,6 +275,8 @@ void RenderingSystem::RenderEntityInternal
     GL_CHECK(glDrawElements(GL_TRIANGLES, currentMesh->GetElementCount(), GL_UNSIGNED_SHORT, (void*)0));
 }
 
+///-----------------------------------------------------------------------------------------------
+
 void RenderingSystem::InitializeRenderingWindowAndContext() const
 {
     // Initialize SDL
@@ -366,12 +365,9 @@ void RenderingSystem::InitializeRenderingWindowAndContext() const
     mWorld.SetSingletonComponent<WindowSingletonComponent>(std::move(windowComponent));
     mWorld.SetSingletonComponent<RenderingContextSingletonComponent>(std::move(renderingContextComponent));
     mWorld.SetSingletonComponent<PreviousRenderingStateSingletonComponent>(std::make_unique<PreviousRenderingStateSingletonComponent>());
-
-    // Now that the GL context has been initialized, the ResourceLoadingService
-    // can be properly initialized (given that many of them call SDL services)
-    ResourceLoadingService::GetInstance().InitializeResourceLoaders();
-    genesis::SoundService::GetInstance().InitializeSdlMixer();
 }
+
+///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::InitializeCamera() const
 {
@@ -388,6 +384,8 @@ void RenderingSystem::InitializeCamera() const
     
     mWorld.SetSingletonComponent<CameraSingletonComponent>(std::move(cameraComponent));
 }
+
+///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::CompileAndLoadShaders() const
 {
@@ -420,6 +418,8 @@ void RenderingSystem::CompileAndLoadShaders() const
     mWorld.SetSingletonComponent<ShaderStoreSingletonComponent>(std::move(shaderStoreComponent));
 }
 
+///-----------------------------------------------------------------------------------------------
+
 std::set<std::string> RenderingSystem::GetAndFilterShaderNames() const
 {
     const auto vertexAndFragmentShaderFilenames = GetAllFilenamesInDirectory(ResourceLoadingService::RES_SHADERS_ROOT);
@@ -432,6 +432,7 @@ std::set<std::string> RenderingSystem::GetAndFilterShaderNames() const
     return shaderNames;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
+
+}
+

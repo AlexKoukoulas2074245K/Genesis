@@ -1,21 +1,14 @@
-//
-//  FileUtils.h
-//  Genesis
-//
-//  Created by Alex Koukoulas on 29/03/2019.
-//
-
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  FileUtils.h
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///-----------------------------------------------------------------------------------------------
 
 #ifndef FileUtils_h
 #define FileUtils_h
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
 
 #include <algorithm>  // sort
 #include <string>
@@ -27,11 +20,8 @@
 #include <filesystem> // directory_iterator
 #endif
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Extracts the file extension from the given file path (filePath)
+///-----------------------------------------------------------------------------------------------
+/// Extracts the file extension from the given file path (filePath)
 inline std::string GetFileExtension(const std::string& filePath)
 {
     std::string pathExt;
@@ -47,11 +37,8 @@ inline std::string GetFileExtension(const std::string& filePath)
     return pathExt;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Extracts, and returns the file name from the given file path(filePath)
+///-----------------------------------------------------------------------------------------------
+/// Extracts, and returns the file name from the given file path(filePath)
 inline std::string GetFileName(const std::string& filePath)
 {    
     std::string fileName;
@@ -66,11 +53,8 @@ inline std::string GetFileName(const std::string& filePath)
     return fileName;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Extracts, Trims and returns the file name from the given file path (filePath) without the extension
+///-----------------------------------------------------------------------------------------------
+/// Extracts, Trims and returns the file name from the given file path (filePath) without the extension
 inline std::string GetFileNameWithoutExtension(const std::string& filePath)
 {
     std::string fileName = "";
@@ -95,11 +79,8 @@ inline std::string GetFileNameWithoutExtension(const std::string& filePath)
     return fileName;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Returns a vector of filenames (not absolute paths) in a given directory (directory)
+///-----------------------------------------------------------------------------------------------
+/// Returns a vector of filenames (not absolute paths) in a given directory (directory)
 inline std::vector<std::string> GetAllFilenamesInDirectory(const std::string& directory)
 {
     std::vector<std::string> fileNames;
@@ -133,8 +114,6 @@ inline std::vector<std::string> GetAllFilenamesInDirectory(const std::string& di
     return fileNames;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
 
 #endif /* FileUtils_h */

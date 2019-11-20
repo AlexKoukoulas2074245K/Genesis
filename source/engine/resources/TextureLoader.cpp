@@ -1,14 +1,9 @@
-//
-//  TextureLoader.cpp
-//  Genesis
-//
-//  Created by Alex Koukoulas on 29/03/2019.
-//
-
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  TextureLoader.cpp
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///------------------------------------------------------------------------------------------------
 
 #include "TextureLoader.h"
 #include "TextureResource.h"
@@ -26,9 +21,12 @@
 #include <unordered_map>
 #include <vector>
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+
+namespace genesis
+{ 
+
+///------------------------------------------------------------------------------------------------
 
 void TextureLoader::VInitialize()
 {
@@ -50,6 +48,8 @@ void TextureLoader::VInitialize()
     
     Log(LogType::INFO, "Successfully initialized SDL_image version %d.%d.%d", imgCompiledVersion.major, imgCompiledVersion.minor, imgCompiledVersion.patch);        
 }
+
+///------------------------------------------------------------------------------------------------
 
 std::unique_ptr<IResource> TextureLoader::VCreateAndLoadResource(const std::string& resourcePath) const
 {
@@ -116,4 +116,8 @@ std::unique_ptr<IResource> TextureLoader::VCreateAndLoadResource(const std::stri
     SDL_FreeSurface(sdlSurface);
     
     return std::unique_ptr<IResource>(new TextureResource(surfaceWidth, surfaceHeight, glTextureId));
+}
+
+///------------------------------------------------------------------------------------------------
+
 }

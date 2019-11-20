@@ -120,13 +120,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af90b893a8d81e07111aaa3b7dad409ce"><td class="memTemplParams" colspan="2">template&lt;class SystemType &gt; </td></tr>
 <tr class="memitem:af90b893a8d81e07111aaa3b7dad409ce"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classgenesis_1_1ecs_1_1_world.html#af90b893a8d81e07111aaa3b7dad409ce">RemoveSystem</a> ()</td></tr>
 <tr class="separator:af90b893a8d81e07111aaa3b7dad409ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a73968b2214b1dde7a452622e00e447d6"><td class="memTemplParams" colspan="2"><a id="a73968b2214b1dde7a452622e00e447d6"></a>
-template&lt;class FirstUtilizedComponentType &gt; </td></tr>
-<tr class="memitem:a73968b2214b1dde7a452622e00e447d6"><td class="memTemplItemLeft" align="right" valign="top">ComponentMask&#160;</td><td class="memTemplItemRight" valign="bottom"><b>CalculateComponentUsageMask</b> ()</td></tr>
+<tr class="memitem:a73968b2214b1dde7a452622e00e447d6"><td class="memTemplParams" colspan="2">template&lt;class FirstUtilizedComponentType &gt; </td></tr>
+<tr class="memitem:a73968b2214b1dde7a452622e00e447d6"><td class="memTemplItemLeft" align="right" valign="top">ComponentMask&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classgenesis_1_1ecs_1_1_world.html#a73968b2214b1dde7a452622e00e447d6">CalculateComponentUsageMask</a> ()</td></tr>
 <tr class="separator:a73968b2214b1dde7a452622e00e447d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e28c355c22ff682ec5110cb374d1be9"><td class="memTemplParams" colspan="2"><a id="a5e28c355c22ff682ec5110cb374d1be9"></a>
-template&lt;class FirstUtilizedComponentType , class SecondUtilizedComponentType , class ... RestUtilizedComponentTypes&gt; </td></tr>
-<tr class="memitem:a5e28c355c22ff682ec5110cb374d1be9"><td class="memTemplItemLeft" align="right" valign="top">ComponentMask&#160;</td><td class="memTemplItemRight" valign="bottom"><b>CalculateComponentUsageMask</b> ()</td></tr>
+<tr class="memitem:a5e28c355c22ff682ec5110cb374d1be9"><td class="memTemplParams" colspan="2">template&lt;class FirstUtilizedComponentType , class SecondUtilizedComponentType , class ... RestUtilizedComponentTypes&gt; </td></tr>
+<tr class="memitem:a5e28c355c22ff682ec5110cb374d1be9"><td class="memTemplItemLeft" align="right" valign="top">ComponentMask&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classgenesis_1_1ecs_1_1_world.html#a5e28c355c22ff682ec5110cb374d1be9">CalculateComponentUsageMask</a> ()</td></tr>
 <tr class="separator:a5e28c355c22ff682ec5110cb374d1be9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -230,7 +228,74 @@ template&lt;class ComponentType &gt; </div>
 </div><div class="memdoc">
 <p>Adds a system to the world and takes ownership of it </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">system</td><td>the system instance to add to the world and take ownership over. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">system</td><td>the system instance to add to the world and take ownership over. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a73968b2214b1dde7a452622e00e447d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73968b2214b1dde7a452622e00e447d6">&#9670;&nbsp;</a></span>CalculateComponentUsageMask() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FirstUtilizedComponentType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ComponentMask genesis::ecs::World::CalculateComponentUsageMask </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Calculates the bit mask of the given template arguments. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">FirstUtilizedComponentType</td><td>a component's type class </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a5e28c355c22ff682ec5110cb374d1be9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e28c355c22ff682ec5110cb374d1be9">&#9670;&nbsp;</a></span>CalculateComponentUsageMask() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class FirstUtilizedComponentType , class SecondUtilizedComponentType , class ... RestUtilizedComponentTypes&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ComponentMask genesis::ecs::World::CalculateComponentUsageMask </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Calculates the bit mask of the given template arguments. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">FirstUtilizedComponentType</td><td>a component's type class </td></tr>
+    <tr><td class="paramname">SecondUtilizedComponentType</td><td>a component's type class </td></tr>
   </table>
   </dd>
 </dl>
@@ -630,7 +695,7 @@ template&lt;class ComponentType &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">component</td><td>the singleton component instance to take ownership of. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">component</td><td>the singleton component instance to take ownership of. </td></tr>
   </table>
   </dd>
 </dl>

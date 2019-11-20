@@ -1,20 +1,19 @@
-//
-//  RawInputHandlingSystem.cpp
-//  Genesis
-//
-//  Created by Alex Koukoulas on 01/04/2019.
-//
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  RawInputHandlingSystem.cpp
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///-----------------------------------------------------------------------------------------------
 
 #include "RawInputHandlingSystem.h"
 #include "../components/InputStateSingletonComponent.h"
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
+
+namespace genesis
+{
+
+///-----------------------------------------------------------------------------------------------
 
 RawInputHandlingSystem::RawInputHandlingSystem(genesis::ecs::World& world)
     : BaseSystem(world)
@@ -24,6 +23,8 @@ RawInputHandlingSystem::RawInputHandlingSystem(genesis::ecs::World& world)
 
     mWorld.SetSingletonComponent<InputStateSingletonComponent>(std::move(inputStateComponent));
 }
+
+///-----------------------------------------------------------------------------------------------
 
 void RawInputHandlingSystem::VUpdateAssociatedComponents(const float) const
 {   
@@ -57,6 +58,6 @@ void RawInputHandlingSystem::VUpdateAssociatedComponents(const float) const
     inputStateComponent.mPreviousRawKeyboardState.assign(currentKeyboardState, currentKeyboardState + keyboardStateLength);
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
+
+}

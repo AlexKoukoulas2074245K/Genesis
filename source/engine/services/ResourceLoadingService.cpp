@@ -1,14 +1,9 @@
-//
-//  ResourceLoadingService.cpp
-//  Genesis
-//
-//  Created by Alex Koukoulas on 29/03/2019.
-//
-
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  ResourceLoadingService.cpp
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///------------------------------------------------------------------------------------------------
 
 #include "ResourceLoadingService.h"
 #include "../resources/DataFileLoader.h"
@@ -27,9 +22,12 @@
 #include <fstream>
 #include <cassert>
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+
+namespace genesis
+{
+
+///------------------------------------------------------------------------------------------------
 
 #ifdef _WIN32
 const std::string ResourceLoadingService::RES_ROOT = "../res/";
@@ -47,9 +45,7 @@ const std::string ResourceLoadingService::RES_SFX_ROOT        = RES_ROOT + "sfx/
 const std::string ResourceLoadingService::RES_SHADERS_ROOT    = RES_ROOT + "shaders/";
 const std::string ResourceLoadingService::RES_TEXTURES_ROOT   = RES_ROOT + "textures/";
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
 
 ResourceLoadingService& ResourceLoadingService::GetInstance()
 {
@@ -57,11 +53,15 @@ ResourceLoadingService& ResourceLoadingService::GetInstance()
     return instance;
 }
 
+///------------------------------------------------------------------------------------------------
+
 ResourceLoadingService::~ResourceLoadingService()
 {
 }
 
-void ResourceLoadingService::InitializeResourceLoaders()
+///------------------------------------------------------------------------------------------------
+
+void ResourceLoadingService::Initialize()
 {
     // No make unique due to constructing the loaders with their private constructors
     // via friendship
@@ -88,10 +88,14 @@ void ResourceLoadingService::InitializeResourceLoaders()
     }
 }
 
+///------------------------------------------------------------------------------------------------
+
 ResourceId ResourceLoadingService::GetResourceIdFromPath(const std::string& path)
 {    
     return GetStringHash(AdjustResourcePath(path));
 }
+
+///------------------------------------------------------------------------------------------------
 
 ResourceId ResourceLoadingService::LoadResource(const std::string& resourcePath)
 {
@@ -109,13 +113,17 @@ ResourceId ResourceLoadingService::LoadResource(const std::string& resourcePath)
     }
 }
 
+///------------------------------------------------------------------------------------------------
+
 void ResourceLoadingService::LoadResources(const std::vector<std::string>& resourcePaths)
 {
-    for (const auto path: resourcePaths)
+    for (const auto& path: resourcePaths)
     {
         LoadResource(path);
     }
 }
+
+///------------------------------------------------------------------------------------------------
 
 bool ResourceLoadingService::DoesResourceExist(const std::string& resourcePath) const
 {
@@ -123,6 +131,8 @@ bool ResourceLoadingService::DoesResourceExist(const std::string& resourcePath) 
     std::fstream resourceFileCheck(resourcePath);
     return resourceFileCheck.operator bool();
 }
+
+///------------------------------------------------------------------------------------------------
 
 bool ResourceLoadingService::HasLoadedResource(const std::string& resourcePath) const
 {
@@ -132,6 +142,8 @@ bool ResourceLoadingService::HasLoadedResource(const std::string& resourcePath) 
     return mResourceMap.count(resourceId) != 0;
 }
 
+///------------------------------------------------------------------------------------------------
+
 void ResourceLoadingService::UnloadResource(const std::string& resourcePath)
 {
     const auto adjustedPath = AdjustResourcePath(resourcePath);
@@ -139,27 +151,14 @@ void ResourceLoadingService::UnloadResource(const std::string& resourcePath)
     mResourceMap.erase(resourceId);
 }
 
+///------------------------------------------------------------------------------------------------
+
 void ResourceLoadingService::UnloadResource(const ResourceId resourceId)
 {
     mResourceMap.erase(resourceId);
 }
 
-void ResourceLoadingService::WriteStringToFile(const std::string& str, const std::string& fileRelativePath)
-{
-    std::ofstream file(fileRelativePath);
-    file << str;
-    file.close();   
-}
-
-bool ResourceLoadingService::DoesFileExist(const std::string& fileRelativePath)
-{
-    std::ifstream file(fileRelativePath);
-    return file.good();
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
 
 IResource& ResourceLoadingService::GetResource(const std::string& resourcePath)
 {
@@ -167,6 +166,8 @@ IResource& ResourceLoadingService::GetResource(const std::string& resourcePath)
     const auto resourceId = GetStringHash(adjustedPath);
     return GetResource(resourceId);
 }
+
+///------------------------------------------------------------------------------------------------
 
 IResource& ResourceLoadingService::GetResource(const ResourceId resourceId)
 {
@@ -178,6 +179,8 @@ IResource& ResourceLoadingService::GetResource(const ResourceId resourceId)
     assert(false && "Resource could not be found");
     return *mResourceMap[resourceId];
 }
+
+///------------------------------------------------------------------------------------------------
 
 void ResourceLoadingService::LoadResourceInternal(const std::string& resourcePath, const ResourceId resourceId)
 {
@@ -192,11 +195,13 @@ void ResourceLoadingService::LoadResourceInternal(const std::string& resourcePat
     mResourceMap[resourceId] = std::move(loadedResource);
 }
 
+///------------------------------------------------------------------------------------------------
+
 std::string ResourceLoadingService::AdjustResourcePath(const std::string& resourcePath) const
 {    
     return !StringStartsWith(resourcePath, RES_ROOT) ? resourcePath : resourcePath.substr(RES_ROOT.size(), resourcePath.size() - RES_ROOT.size());
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+
+}

@@ -14,7 +14,7 @@
 
 ///------------------------------------------------------------------------------------------------
 
-class Game final: public IGame
+class Game final: public genesis::IGame
 {
 public:    
     void VOnInit(genesis::ecs::World& world) override;

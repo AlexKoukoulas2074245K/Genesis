@@ -14,15 +14,24 @@
 
 ///------------------------------------------------------------------------------------------------
 
+namespace genesis
+{
+
+///------------------------------------------------------------------------------------------------
+
 class IGame
 {
 public:    
     virtual ~IGame() = default;
 
-    virtual void VOnInit(genesis::ecs::World& world) = 0;
+    virtual void VOnInit(ecs::World& world) = 0;
 
-    virtual void VOnUpdate(const float dt, genesis::ecs::World& world) = 0;
+    virtual void VOnUpdate(const float dt, ecs::World& world) = 0;
 };
+
+///------------------------------------------------------------------------------------------------
+
+}
 
 ///------------------------------------------------------------------------------------------------
 

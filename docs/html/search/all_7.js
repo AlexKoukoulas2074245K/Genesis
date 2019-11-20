@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['icomponent_23',['IComponent',['../classgenesis_1_1ecs_1_1_i_component.html',1,'genesis::ecs']]],
-  ['igame_24',['IGame',['../class_i_game.html',1,'']]],
-  ['inputstatesingletoncomponent_25',['InputStateSingletonComponent',['../class_input_state_singleton_component.html',1,'']]],
-  ['iresource_26',['IResource',['../class_i_resource.html',1,'']]],
-  ['iresourceloader_27',['IResourceLoader',['../class_i_resource_loader.html',1,'']]]
+  ['hascomponent_53',['HasComponent',['../classgenesis_1_1ecs_1_1_world.html#af375891c6e44d4ee7e320997929b6c48',1,'genesis::ecs::World']]],
+  ['hasloadedresource_54',['HasLoadedResource',['../classgenesis_1_1_resource_loading_service.html#a2618f41f709955844a75dffed63c4612',1,'genesis::ResourceLoadingService']]],
+  ['hassingletoncomponent_55',['HasSingletonComponent',['../classgenesis_1_1ecs_1_1_world.html#a09894051013d4be9b2d8a72de3bb3cfa',1,'genesis::ecs::World']]],
+  ['hasticked_56',['HasTicked',['../class_timer.html#a56c092c696b20e7c45568ebca670fce1',1,'Timer']]]
 ];

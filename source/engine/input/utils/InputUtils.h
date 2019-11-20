@@ -1,48 +1,50 @@
-//
-//  InputUtils.h
-//  Genesis
-//
-//  Created by Alex Koukoulas on 14/04/2019.
-//
-
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  InputUtils.h
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///-----------------------------------------------------------------------------------------------
 
 #ifndef InputUtils_h
 #define InputUtils_h
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
 
 #include "../components/InputStateSingletonComponent.h"
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
 
-inline bool IsActionTypeKeyTapped(const VirtualActionType actionType, const genesis::ecs::World& world)
+namespace genesis
+{
+
+///-----------------------------------------------------------------------------------------------
+
+inline bool IsActionTypeKeyTapped(const VirtualActionType actionType, const ecs::World& world)
 {
     const auto& inputStateComponent = world.GetSingletonComponent<InputStateSingletonComponent>();
     return inputStateComponent.mCurrentInputState.at(actionType) == VirtualActionInputState::TAPPED;
 }
 
-inline bool IsActionTypeKeyPressed(const VirtualActionType actionType, const genesis::ecs::World& world)
+///-----------------------------------------------------------------------------------------------
+
+inline bool IsActionTypeKeyPressed(const VirtualActionType actionType, const ecs::World& world)
 {
     const auto& inputStateComponent = world.GetSingletonComponent<InputStateSingletonComponent>();
     return inputStateComponent.mCurrentInputState.at(actionType) == VirtualActionInputState::PRESSED;
 }
 
-inline bool IsActionTypeKeyReleased(const VirtualActionType actionType, const genesis::ecs::World& world)
+///-----------------------------------------------------------------------------------------------
+
+inline bool IsActionTypeKeyReleased(const VirtualActionType actionType, const ecs::World& world)
 {
     const auto& inputStateComponent = world.GetSingletonComponent<InputStateSingletonComponent>();
     return inputStateComponent.mCurrentInputState.at(actionType) == VirtualActionInputState::RELEASED;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
+
+}
+
+///-----------------------------------------------------------------------------------------------
 
 #endif /* InputUtils_h */

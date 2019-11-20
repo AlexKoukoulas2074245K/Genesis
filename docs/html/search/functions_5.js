@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['hascomponent_118',['HasComponent',['../classgenesis_1_1ecs_1_1_world.html#af375891c6e44d4ee7e320997929b6c48',1,'genesis::ecs::World']]],
-  ['hassingletoncomponent_119',['HasSingletonComponent',['../classgenesis_1_1ecs_1_1_world.html#a09894051013d4be9b2d8a72de3bb3cfa',1,'genesis::ecs::World']]]
+  ['floatssufficientlyclose_221',['FloatsSufficientlyClose',['../namespacemath.html#ae6042580d4e291d1aaf8b2275c40a920',1,'math']]]
 ];

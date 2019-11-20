@@ -246,7 +246,7 @@ public:
     ///
     /// It is intended that there should be only <b>1</b> singleton component of a given type in the world at all times.
     /// @tparam ComponentType the singleton component type class to take ownership of.
-    /// @param component the singleton component instance to take ownership of.
+    /// @param[in] component the singleton component instance to take ownership of.
     template<class ComponentType>
     inline void SetSingletonComponent(std::unique_ptr<IComponent> component)
     {
@@ -276,7 +276,7 @@ public:
     }
         
     /// Adds a system to the world and takes ownership of it
-    /// @param system the system instance to add to the world and take ownership over.
+    /// @param[in] system the system instance to add to the world and take ownership over.
     inline void AddSystem(std::unique_ptr<BaseSystem> system)
     {
         mSystems.push_back(std::move(system));
@@ -293,8 +293,8 @@ public:
         mSystemHashesToRemove.push_back(GetStringHash(typeid(SystemType).name()));
     }
 
-    // Calculates the bit mask of the given template argument (FirstUtilizedComponentType).
-    // Registers the given component type if not already registered in the world
+    /// Calculates the bit mask of the given template arguments.
+    /// @tparam FirstUtilizedComponentType a component's type class
     template<class FirstUtilizedComponentType>
     [[nodiscard]] inline ComponentMask CalculateComponentUsageMask()
     {
@@ -310,8 +310,9 @@ public:
         return mComponentMasks.at(componentTypeId);
     }
 
-    // Recursively calculates the bit mask formed of all given templates arguments
-    // Registers the given component types if not already registered in the world
+    /// Calculates the bit mask of the given template arguments.
+    /// @tparam FirstUtilizedComponentType a component's type class
+    /// @tparam SecondUtilizedComponentType a component's type class
     template<class FirstUtilizedComponentType, class SecondUtilizedComponentType, class ...RestUtilizedComponentTypes>
     inline ComponentMask CalculateComponentUsageMask()
     {
@@ -389,14 +390,14 @@ private:
 /// Base class of all systems in the ECS engine. All systems need to inherit from this class.
 class BaseSystem
 {
+    friend class World;
+
 public:
     BaseSystem(World&);
         
     virtual ~BaseSystem() = default;
     BaseSystem(const BaseSystem&) = delete;
-    const BaseSystem& operator = (const BaseSystem&) = delete;
-        
-    virtual void VUpdateAssociatedComponents(const float dt) const = 0;
+    const BaseSystem& operator = (const BaseSystem&) = delete;  
         
 protected:
     // Determines whether the given entity (entityId) should be processed by this system
@@ -416,8 +417,12 @@ protected:
         mWorld.CalculateComponentUsageMask<SecondUtilizedComponentType, RestUtilizedComponentTypes...>();
     }
     
+protected:
     World& mWorld;
         
+private:    
+    virtual void VUpdateAssociatedComponents(const float dt) const = 0;
+
 private:
     ComponentMask mComponentUsageMask;
 };

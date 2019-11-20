@@ -69,41 +69,43 @@ $(function() {
 <div class="title">SfxLoader.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">//  SfxLoader.h</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">//  Genesis</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">//  Created by Alex Koukoulas on 29/08/2019.</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef SfxLoader_h</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#define SfxLoader_h</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef SfxLoader_h</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define SfxLoader_h</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;IResourceLoader.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacegenesis.html">genesis</a></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;IResourceLoader.h&quot;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="classgenesis_1_1_sfx_loader.html">   22</a></span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_sfx_loader.html">SfxLoader</a> final: <span class="keyword">public</span> <a class="code" href="classgenesis_1_1_i_resource_loader.html">IResourceLoader</a></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="class_sfx_loader.html">   26</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_sfx_loader.html">SfxLoader</a> final: <span class="keyword">public</span> <a class="code" href="class_i_resource_loader.html">IResourceLoader</a></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classgenesis_1_1_sfx_loader.html#a62632626ac2a68db4f0a462e2b9dfb5e">VInitialize</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    std::unique_ptr&lt;IResource&gt; <a class="code" href="classgenesis_1_1_sfx_loader.html#a4bcf9ab94819ba6b611f2f7706cb0f44">VCreateAndLoadResource</a>(<span class="keyword">const</span> std::string&amp; path) <span class="keyword">const override</span>;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">void</span> VInitialize() <span class="keyword">override</span>;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    std::unique_ptr&lt;IResource&gt; VCreateAndLoadResource(<span class="keyword">const</span> std::string&amp; path) <span class="keyword">const override</span>;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <a class="code" href="class_sfx_loader.html">SfxLoader</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <a class="code" href="classgenesis_1_1_sfx_loader.html">SfxLoader</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;};</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;};</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;}</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SfxLoader_h */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* SfxLoader_h */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="aclass_sfx_loader_html"><div class="ttname"><a href="class_sfx_loader.html">SfxLoader</a></div><div class="ttdef"><b>Definition:</b> SfxLoader.h:26</div></div>
-<div class="ttc" id="aclass_i_resource_loader_html"><div class="ttname"><a href="class_i_resource_loader.html">IResourceLoader</a></div><div class="ttdef"><b>Definition:</b> IResourceLoader.h:33</div></div>
-<div class="ttc" id="aclass_resource_loading_service_html"><div class="ttname"><a href="class_resource_loading_service.html">ResourceLoadingService</a></div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:51</div></div>
+<div class="ttc" id="aclassgenesis_1_1_i_resource_loader_html"><div class="ttname"><a href="classgenesis_1_1_i_resource_loader.html">genesis::IResourceLoader</a></div><div class="ttdef"><b>Definition:</b> IResourceLoader.h:27</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html">genesis::ResourceLoadingService</a></div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:43</div></div>
+<div class="ttc" id="anamespacegenesis_html"><div class="ttname"><a href="namespacegenesis.html">genesis</a></div><div class="ttdef"><b>Definition:</b> TransformComponent.h:26</div></div>
+<div class="ttc" id="aclassgenesis_1_1_sfx_loader_html_a62632626ac2a68db4f0a462e2b9dfb5e"><div class="ttname"><a href="classgenesis_1_1_sfx_loader.html#a62632626ac2a68db4f0a462e2b9dfb5e">genesis::SfxLoader::VInitialize</a></div><div class="ttdeci">void VInitialize() override</div><div class="ttdef"><b>Definition:</b> SfxLoader.cpp:21</div></div>
+<div class="ttc" id="aclassgenesis_1_1_sfx_loader_html_a4bcf9ab94819ba6b611f2f7706cb0f44"><div class="ttname"><a href="classgenesis_1_1_sfx_loader.html#a4bcf9ab94819ba6b611f2f7706cb0f44">genesis::SfxLoader::VCreateAndLoadResource</a></div><div class="ttdeci">std::unique_ptr&lt; IResource &gt; VCreateAndLoadResource(const std::string &amp;path) const override</div><div class="ttdef"><b>Definition:</b> SfxLoader.cpp:27</div></div>
+<div class="ttc" id="aclassgenesis_1_1_sfx_loader_html"><div class="ttname"><a href="classgenesis_1_1_sfx_loader.html">genesis::SfxLoader</a></div><div class="ttdef"><b>Definition:</b> SfxLoader.h:22</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

@@ -1,21 +1,14 @@
-//
-//  StringUtils.h
-//  Genesis
-//
-//  Created by Alex Koukoulas on 29/03/2019.
-//
-
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///------------------------------------------------------------------------------------------------
+///  StringUtils.h
+///  Genesis
+///
+///  Created by Alex Koukoulas on 20/11/2019.
+///-----------------------------------------------------------------------------------------------
 
 #ifndef StringUtils_h
 #define StringUtils_h
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
 
 #include "TypeTraits.h"
 
@@ -26,11 +19,8 @@
 #include <string>
 #include <vector>
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Checks whether the given string (s) starts with a given pattern (pattern)
+///-----------------------------------------------------------------------------------------------
+/// Checks whether the given string (s) starts with a given pattern (pattern)
 inline bool StringStartsWith(const std::string& s, const std::string& pattern)
 {
     if (s.size() < pattern.size()) return false;
@@ -43,11 +33,8 @@ inline bool StringStartsWith(const std::string& s, const std::string& pattern)
     return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Checks whether the given string (s) ends with a given pattern (pattern)
+///-----------------------------------------------------------------------------------------------
+/// Checks whether the given string (s) ends with a given pattern (pattern)
 inline bool StringEndsWith(const std::string& s, const std::string& pattern)
 {
     if (s.size() < pattern.size()) return false;
@@ -60,11 +47,8 @@ inline bool StringEndsWith(const std::string& s, const std::string& pattern)
     return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Returns a copy of the given string (s) in uppercase
+///-----------------------------------------------------------------------------------------------
+/// Returns a copy of the given string (s) in uppercase
 inline std::string StringToUpper(const std::string& s)
 {
     auto stringCopy = s;
@@ -74,11 +58,8 @@ inline std::string StringToUpper(const std::string& s)
     return stringCopy;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Returns a copy of the given string (s) in lowercase
+///-----------------------------------------------------------------------------------------------
+/// Returns a copy of the given string (s) in lowercase
 inline std::string StringToLower(const std::string& s)
 {
     auto stringCopy = s;
@@ -88,12 +69,8 @@ inline std::string StringToLower(const std::string& s)
     return stringCopy;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-
-// Splits the given string (s) based on a delimiter character (delim)
+///-----------------------------------------------------------------------------------------------
+/// Splits the given string (s) based on a delimiter character (delim)
 inline std::vector<std::string> StringSplit(const std::string& s, char delim)
 {
     std::vector<std::string> elems;
@@ -107,11 +84,8 @@ inline std::vector<std::string> StringSplit(const std::string& s, char delim)
     return elems;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Returns the formatted time string HH:MM from the given number of seconds
+///-----------------------------------------------------------------------------------------------
+/// Returns the formatted time string HH:MM from the given number of seconds
 inline std::string GetHoursMinutesStringFromSeconds(const int seconds)
 {
     const auto minutes = seconds / 60;
@@ -128,21 +102,15 @@ inline std::string GetHoursMinutesStringFromSeconds(const int seconds)
     return hoursString + ":" + minutesString;
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Replace all occurences of pattern with the replacement string in the original string
+///-----------------------------------------------------------------------------------------------
+/// Replace all occurences of pattern with the replacement string in the original string
 inline void StringReplaceAllOccurences(std::string& s, const std::string& pattern, const std::string& replacement)
 {
     s = regex_replace(s, std::regex(pattern), replacement);
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Provides a unique identifier for a string, aimed at optimizing string comparisons
+///-----------------------------------------------------------------------------------------------
+/// Provides a unique identifier for a string, aimed at optimizing string comparisons
 class StringId final
 {
 public:
@@ -170,21 +138,15 @@ private:
     size_t      mStringId;
 };
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Custom less operator for StringIds to be used indirectly by stl containers
+///-----------------------------------------------------------------------------------------------
+/// Custom less operator for StringIds to be used indirectly by stl containers
 inline bool operator < (const StringId& lhs, const StringId& rhs)
 {
     return lhs.GetStringId() < rhs.GetStringId();
 }
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// Custom StringId hasher to be used in stl containers
+///-----------------------------------------------------------------------------------------------
+/// Custom StringId hasher to be used in stl containers
 struct StringIdHasher
 {
     std::size_t operator()(const StringId& key) const
@@ -193,8 +155,6 @@ struct StringIdHasher
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
+///-----------------------------------------------------------------------------------------------
 
 #endif /* StringUtils_h */

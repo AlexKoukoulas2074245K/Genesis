@@ -69,133 +69,129 @@ $(function() {
 <div class="title">ResourceLoadingService.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">//  ResourceLoadingService.h</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">//  Genesis</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">//  Created by Alex Koukoulas on 29/03/2019.</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment">//</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#ifndef ResourceLoadingService_h</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#define ResourceLoadingService_h</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#ifndef ResourceLoadingService_h</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#define ResourceLoadingService_h</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;../common/utils/StringUtils.h&quot;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span>        </div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;../common/utils/StringUtils.h&quot;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span>        </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacegenesis.html">genesis</a></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{ </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">using</span> <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> = <span class="keywordtype">unsigned</span> int;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">class </span>IResource;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">class </span>IResourceLoader;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">using</span> ResourceId = <span class="keywordtype">unsigned</span> int;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">class </span><a class="code" href="class_i_resource.html">IResource</a>;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">class </span><a class="code" href="class_i_resource_loader.html">IResourceLoader</a>;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="struct_resource_id_hasher.html">   39</a></span>&#160;<span class="keyword">struct </span><a class="code" href="struct_resource_id_hasher.html">ResourceIdHasher</a></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    std::size_t operator()(<span class="keyword">const</span> ResourceId&amp; key)<span class="keyword"> const</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">return</span> static_cast&lt;std::size_t&gt;(key);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;};</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structgenesis_1_1_resource_id_hasher.html">   33</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structgenesis_1_1_resource_id_hasher.html">ResourceIdHasher</a></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    std::size_t operator()(<span class="keyword">const</span> <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a>&amp; key)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keywordflow">return</span> static_cast&lt;std::size_t&gt;(key);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;};</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="classgenesis_1_1_resource_loading_service.html">   43</a></span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a> final</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;{</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classgenesis_1_1_genesis_engine.html">GenesisEngine</a>;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="class_resource_loading_service.html">   51</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a> final</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;{</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_ROOT;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_ATLASES_ROOT;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_DATA_ROOT;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string ENCOUNTER_DATA_ROOT;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_LEVELS_ROOT;    </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_MODELS_ROOT;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_MUSIC_ROOT;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_SFX_ROOT;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_SHADERS_ROOT;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_TEXTURES_ROOT;        </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">static</span> <a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>&amp; GetInstance();</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160; </div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    ~<a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>();</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>(<span class="keyword">const</span> <a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>(<a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>&amp;&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keyword">const</span> <a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>&amp; operator = (<span class="keyword">const</span> <a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>&amp; operator = (<a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>&amp;&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">// Initializes loaders for different types of assets. </span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    <span class="comment">// Should be called after the SDL/GL context has been initialized</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordtype">void</span> InitializeResourceLoaders();</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="comment">// Calculates a resource id from a given path</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    ResourceId GetResourceIdFromPath(<span class="keyword">const</span> std::string&amp; resourcePath);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classgenesis_1_1_resource_loading_service.html#acb55fe058a993e4fb8d283fdd232c59c">   48</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string <a class="code" href="classgenesis_1_1_resource_loading_service.html#acb55fe058a993e4fb8d283fdd232c59c">RES_ROOT</a>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_ATLASES_ROOT;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_DATA_ROOT;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string ENCOUNTER_DATA_ROOT;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_LEVELS_ROOT;    </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_MODELS_ROOT;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_MUSIC_ROOT;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_SFX_ROOT;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_SHADERS_ROOT;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> std::string RES_TEXTURES_ROOT;        </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keyword">static</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>&amp; <a class="code" href="classgenesis_1_1_resource_loading_service.html#a7fa4551a52fe1133b68eac1a6400bf34">GetInstance</a>();</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160; </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <a class="code" href="classgenesis_1_1_resource_loading_service.html#a164e74c9ee17c2a543b322908c5cf016">~ResourceLoadingService</a>();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>(<span class="keyword">const</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>(<a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>&amp;&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">const</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>&amp; operator = (<span class="keyword">const</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>&amp; operator = (<a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>&amp;&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    </div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> <a class="code" href="classgenesis_1_1_resource_loading_service.html#a92852f189711e2187aade07cd4ddb870">GetResourceIdFromPath</a>(<span class="keyword">const</span> std::string&amp; resourcePath);</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="comment">// Loads a single or number of resources based on the relative path(s) supplied</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="comment">// respectively. Both full paths, relative paths including the Resource Root, and relative</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="comment">// paths excluding the Resource Root are supported</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    ResourceId LoadResource(<span class="keyword">const</span> std::string&amp; resourcePath);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">void</span> LoadResources(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; resourcePaths);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    </div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="comment">// Checks whether the resource with the given path exists</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keywordtype">bool</span> DoesResourceExist(<span class="keyword">const</span> std::string&amp; resourcePath) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="comment">// Checks whether the given resource has been loaded.</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="comment">// Both full paths, relative paths including the Resource Root, and relative</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="comment">// paths not including the Resource Root are supported</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">bool</span> HasLoadedResource(<span class="keyword">const</span> std::string&amp; resourcePath) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="comment">// Unloads the specified resource. Any subsequent calls to get that </span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="comment">// resource will need to be preceeded by another Load to get the resource </span></div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="comment">// back to the map of resources held by this service</span></div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordtype">void</span> UnloadResource(<span class="keyword">const</span> std::string&amp; resourcePath);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordtype">void</span> UnloadResource(<span class="keyword">const</span> ResourceId resourceId);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    </div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="comment">// Both full paths, relative paths including the Resource Root, and relative</span></div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="comment">// paths not including the Resource Root are supported</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> ResourceType&gt;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keyword">inline</span> ResourceType&amp; GetResource(<span class="keyword">const</span> std::string&amp; resourcePath)</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    {</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        <span class="keywordflow">return</span> static_cast&lt;ResourceType&amp;&gt;(GetResource(resourcePath));</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> ResourceType&gt;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keyword">inline</span> ResourceType&amp; GetResource(<span class="keyword">const</span> ResourceId resourceId)</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keywordflow">return</span> static_cast&lt;ResourceType&amp;&gt;(GetResource(resourceId));</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    }</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160; </div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="comment">// Opens a file based on the relative file path given, and writes the string str to it</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <span class="keywordtype">void</span> WriteStringToFile(<span class="keyword">const</span> std::string&amp; str, <span class="keyword">const</span> std::string&amp; relativeFilePath);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    <span class="comment">// Checks whether a file with the given relative file path exists</span></div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="keywordtype">bool</span> DoesFileExist(<span class="keyword">const</span> std::string&amp; relativeFilePath);</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">private</span>:    </div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <a class="code" href="class_resource_loading_service.html">ResourceLoadingService</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160; </div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <a class="code" href="class_i_resource.html">IResource</a>&amp; GetResource(<span class="keyword">const</span> std::string&amp; resourceRelativePath);</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <a class="code" href="class_i_resource.html">IResource</a>&amp; GetResource(<span class="keyword">const</span> ResourceId resourceId);    </div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keywordtype">void</span> LoadResourceInternal(<span class="keyword">const</span> std::string&amp; resourceRelativePath, <span class="keyword">const</span> ResourceId resourceId);</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;   </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="comment">// Strips the leading RES_ROOT from the resourcePath given, if present</span></div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    std::string AdjustResourcePath(<span class="keyword">const</span> std::string&amp; resourcePath) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    </div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::unordered_map&lt;ResourceId, std::unique_ptr&lt;IResource&gt;, <a class="code" href="struct_resource_id_hasher.html">ResourceIdHasher</a>&gt; mResourceMap;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    std::unordered_map&lt;StringId, IResourceLoader*, StringIdHasher&gt; mResourceExtensionsToLoadersMap;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    std::vector&lt;std::unique_ptr&lt;IResourceLoader&gt;&gt; mResourceLoaders;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;};</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ResourceLoadingService_h */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> <a class="code" href="classgenesis_1_1_resource_loading_service.html#aee744b2d42a0e72ff7764d6bf74c9fe1">LoadResource</a>(<span class="keyword">const</span> std::string&amp; resourcePath);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html#aa1f041f592fb99a110011cbe547c11d5">LoadResources</a>(<span class="keyword">const</span> std::vector&lt;std::string&gt;&amp; resourcePaths);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html#a264f63925ee363357ef4367926bd46b4">DoesResourceExist</a>(<span class="keyword">const</span> std::string&amp; resourcePath) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    </div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html#a2618f41f709955844a75dffed63c4612">HasLoadedResource</a>(<span class="keyword">const</span> std::string&amp; resourcePath) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    </div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html#a4bcd3ace10d21a37797e1aec48da87ee">UnloadResource</a>(<span class="keyword">const</span> std::string&amp; resourcePath);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classgenesis_1_1_resource_loading_service.html#a4bcd3ace10d21a37797e1aec48da87ee">UnloadResource</a>(<span class="keyword">const</span> <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> resourceId);</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    </div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> ResourceType&gt;</div>
+<div class="line"><a name="l00137"></a><span class="lineno"><a class="line" href="classgenesis_1_1_resource_loading_service.html#a4d4fe1c5951455d26995a88129cf1d2c">  137</a></span>&#160;    <span class="keyword">inline</span> ResourceType&amp; <a class="code" href="classgenesis_1_1_resource_loading_service.html#a4d4fe1c5951455d26995a88129cf1d2c">GetResource</a>(<span class="keyword">const</span> std::string&amp; resourcePath)</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    {</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordflow">return</span> static_cast&lt;ResourceType&amp;&gt;(<a class="code" href="classgenesis_1_1_resource_loading_service.html#a4d4fe1c5951455d26995a88129cf1d2c">GetResource</a>(resourcePath));</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    }</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> ResourceType&gt;</div>
+<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="classgenesis_1_1_resource_loading_service.html#adb5ae5dc302b4aaa4b05fd3f188bea22">  148</a></span>&#160;    <span class="keyword">inline</span> ResourceType&amp; <a class="code" href="classgenesis_1_1_resource_loading_service.html#adb5ae5dc302b4aaa4b05fd3f188bea22">GetResource</a>(<span class="keyword">const</span> <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> resourceId)</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    {</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        <span class="keywordflow">return</span> static_cast&lt;ResourceType&amp;&gt;(<a class="code" href="classgenesis_1_1_resource_loading_service.html#a4d4fe1c5951455d26995a88129cf1d2c">GetResource</a>(resourceId));</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    }</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    </div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="keyword">private</span>:    </div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <a class="code" href="classgenesis_1_1_resource_loading_service.html">ResourceLoadingService</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160; </div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <span class="comment">// Initializes loaders for different types of assets. </span></div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="comment">// Called internally by the engine.</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keywordtype">void</span> Initialize();</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <a class="code" href="classgenesis_1_1_i_resource.html">IResource</a>&amp; <a class="code" href="classgenesis_1_1_resource_loading_service.html#a4d4fe1c5951455d26995a88129cf1d2c">GetResource</a>(<span class="keyword">const</span> std::string&amp; resourceRelativePath);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <a class="code" href="classgenesis_1_1_i_resource.html">IResource</a>&amp; <a class="code" href="classgenesis_1_1_resource_loading_service.html#a4d4fe1c5951455d26995a88129cf1d2c">GetResource</a>(<span class="keyword">const</span> <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> resourceId);    </div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordtype">void</span> LoadResourceInternal(<span class="keyword">const</span> std::string&amp; resourceRelativePath, <span class="keyword">const</span> <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> resourceId);</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;   </div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="comment">// Strips the leading RES_ROOT from the resourcePath given, if present</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    std::string AdjustResourcePath(<span class="keyword">const</span> std::string&amp; resourcePath) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    std::unordered_map&lt;ResourceId, std::unique_ptr&lt;IResource&gt;, <a class="code" href="structgenesis_1_1_resource_id_hasher.html">ResourceIdHasher</a>&gt; mResourceMap;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    std::unordered_map&lt;StringId, IResourceLoader*, StringIdHasher&gt; mResourceExtensionsToLoadersMap;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    std::vector&lt;std::unique_ptr&lt;IResourceLoader&gt;&gt; mResourceLoaders;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;};</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160; </div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;}</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* ResourceLoadingService_h */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
-<div class="ttc" id="astruct_resource_id_hasher_html"><div class="ttname"><a href="struct_resource_id_hasher.html">ResourceIdHasher</a></div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:39</div></div>
-<div class="ttc" id="aclass_i_resource_loader_html"><div class="ttname"><a href="class_i_resource_loader.html">IResourceLoader</a></div><div class="ttdef"><b>Definition:</b> IResourceLoader.h:33</div></div>
-<div class="ttc" id="aclass_i_resource_html"><div class="ttname"><a href="class_i_resource.html">IResource</a></div><div class="ttdef"><b>Definition:</b> IResource.h:20</div></div>
-<div class="ttc" id="aclass_resource_loading_service_html"><div class="ttname"><a href="class_resource_loading_service.html">ResourceLoadingService</a></div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:51</div></div>
+<div class="ttc" id="aclassgenesis_1_1_genesis_engine_html"><div class="ttname"><a href="classgenesis_1_1_genesis_engine.html">genesis::GenesisEngine</a></div><div class="ttdef"><b>Definition:</b> GenesisEngine.h:21</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_a2618f41f709955844a75dffed63c4612"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#a2618f41f709955844a75dffed63c4612">genesis::ResourceLoadingService::HasLoadedResource</a></div><div class="ttdeci">bool HasLoadedResource(const std::string &amp;resourcePath) const</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.cpp:137</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_aee744b2d42a0e72ff7764d6bf74c9fe1"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#aee744b2d42a0e72ff7764d6bf74c9fe1">genesis::ResourceLoadingService::LoadResource</a></div><div class="ttdeci">ResourceId LoadResource(const std::string &amp;resourcePath)</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.cpp:100</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_a164e74c9ee17c2a543b322908c5cf016"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#a164e74c9ee17c2a543b322908c5cf016">genesis::ResourceLoadingService::~ResourceLoadingService</a></div><div class="ttdeci">~ResourceLoadingService()</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.cpp:58</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_aa1f041f592fb99a110011cbe547c11d5"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#aa1f041f592fb99a110011cbe547c11d5">genesis::ResourceLoadingService::LoadResources</a></div><div class="ttdeci">void LoadResources(const std::vector&lt; std::string &gt; &amp;resourcePaths)</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.cpp:118</div></div>
+<div class="ttc" id="astructgenesis_1_1_resource_id_hasher_html"><div class="ttname"><a href="structgenesis_1_1_resource_id_hasher.html">genesis::ResourceIdHasher</a></div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:33</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_a264f63925ee363357ef4367926bd46b4"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#a264f63925ee363357ef4367926bd46b4">genesis::ResourceLoadingService::DoesResourceExist</a></div><div class="ttdeci">bool DoesResourceExist(const std::string &amp;resourcePath) const</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.cpp:128</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_a7fa4551a52fe1133b68eac1a6400bf34"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#a7fa4551a52fe1133b68eac1a6400bf34">genesis::ResourceLoadingService::GetInstance</a></div><div class="ttdeci">static ResourceLoadingService &amp; GetInstance()</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.cpp:50</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html">genesis::ResourceLoadingService</a></div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:43</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_a4d4fe1c5951455d26995a88129cf1d2c"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#a4d4fe1c5951455d26995a88129cf1d2c">genesis::ResourceLoadingService::GetResource</a></div><div class="ttdeci">ResourceType &amp; GetResource(const std::string &amp;resourcePath)</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:137</div></div>
+<div class="ttc" id="anamespacegenesis_html"><div class="ttname"><a href="namespacegenesis.html">genesis</a></div><div class="ttdef"><b>Definition:</b> TransformComponent.h:26</div></div>
+<div class="ttc" id="anamespacegenesis_html_a12081366aafd55cb677b4780bfbc7056"><div class="ttname"><a href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">genesis::ResourceId</a></div><div class="ttdeci">unsigned int ResourceId</div><div class="ttdef"><b>Definition:</b> RenderableComponent.h:27</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_adb5ae5dc302b4aaa4b05fd3f188bea22"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#adb5ae5dc302b4aaa4b05fd3f188bea22">genesis::ResourceLoadingService::GetResource</a></div><div class="ttdeci">ResourceType &amp; GetResource(const ResourceId resourceId)</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:148</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_a4bcd3ace10d21a37797e1aec48da87ee"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#a4bcd3ace10d21a37797e1aec48da87ee">genesis::ResourceLoadingService::UnloadResource</a></div><div class="ttdeci">void UnloadResource(const std::string &amp;resourcePath)</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.cpp:147</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_a92852f189711e2187aade07cd4ddb870"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#a92852f189711e2187aade07cd4ddb870">genesis::ResourceLoadingService::GetResourceIdFromPath</a></div><div class="ttdeci">ResourceId GetResourceIdFromPath(const std::string &amp;resourcePath)</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.cpp:93</div></div>
+<div class="ttc" id="aclassgenesis_1_1_resource_loading_service_html_acb55fe058a993e4fb8d283fdd232c59c"><div class="ttname"><a href="classgenesis_1_1_resource_loading_service.html#acb55fe058a993e4fb8d283fdd232c59c">genesis::ResourceLoadingService::RES_ROOT</a></div><div class="ttdeci">static const std::string RES_ROOT</div><div class="ttdef"><b>Definition:</b> ResourceLoadingService.h:48</div></div>
+<div class="ttc" id="aclassgenesis_1_1_i_resource_html"><div class="ttname"><a href="classgenesis_1_1_i_resource.html">genesis::IResource</a></div><div class="ttdef"><b>Definition:</b> IResource.h:18</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
