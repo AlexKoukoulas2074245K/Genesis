@@ -27,7 +27,7 @@ namespace
     const unsigned int CAMERA_FRUSTUM_SIDES = 6;
 
     const glm::vec3 DEFAULT_CAMERA_FOCUS_POSITION = glm::vec3(0.0f, 0.0f, 0.0f);
-    const glm::vec3 DEFAULT_CAMERA_POSITION       = glm::vec3(0.0f, 18.04f, 0.0f);
+    const glm::vec3 DEFAULT_CAMERA_POSITION       = glm::vec3(5.0f, 5.0f, 5.0f);
     const glm::vec3 DEFAULT_CAMERA_UP_VECTOR      = math::Y_AXIS;
 
     const float DEFAULT_CAMERA_FIELD_OF_VIEW = math::PI / 2.0f;
