@@ -122,7 +122,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
             {            
                 const auto& transformComponent = mWorld.GetComponent<TransformComponent>(entityId);
                 const auto& activeMeshes       = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
-                const auto& currentMesh        = ResourceLoadingService::GetInstance().GetResource<MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
+                const auto& currentMesh        = res::ResourceLoadingService::GetInstance().GetResource<res::MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
 
                 // Frustum culling
                 if (!IsMeshInsideCameraFrustum
@@ -188,7 +188,7 @@ void RenderingSystem::RenderEntityInternal
     }
 
     // Update Shader is necessary
-    const ShaderResource* currentShader = nullptr;
+    const res::ShaderResource* currentShader = nullptr;
     if (renderableComponent.mShaderNameId != renderingContextComponent.previousShaderNameId)
     {
         currentShader = &shaderStoreComponent.mShaders.at(renderableComponent.mShaderNameId);
@@ -207,10 +207,10 @@ void RenderingSystem::RenderEntityInternal
     const auto& activeMeshes       = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
 
     // Update current mesh if necessary
-    const MeshResource* currentMesh = nullptr;
+    const res::MeshResource* currentMesh = nullptr;
     if (activeMeshes[renderableComponent.mActiveMeshIndex] != renderingContextComponent.previousMeshResourceId)
     {
-        currentMesh = &ResourceLoadingService::GetInstance().GetResource<MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
+        currentMesh = &res::ResourceLoadingService::GetInstance().GetResource<res::MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
         GL_CHECK(glBindVertexArray(currentMesh->GetVertexArrayObject()));
 
         renderingContextComponent.previousMesh           = currentMesh;
@@ -241,10 +241,10 @@ void RenderingSystem::RenderEntityInternal
     world = glm::scale(world, scale);
         
     // Update texture if necessary
-    const TextureResource* currentTexture = nullptr;
+    const res::TextureResource* currentTexture = nullptr;
     if (renderableComponent.mTextureResourceId != renderingContextComponent.previousTextureResourceId)
     {
-        currentTexture = &ResourceLoadingService::GetInstance().GetResource<TextureResource>(renderableComponent.mTextureResourceId);
+        currentTexture = &res::ResourceLoadingService::GetInstance().GetResource<res::TextureResource>(renderableComponent.mTextureResourceId);
         GL_CHECK(glBindTexture(GL_TEXTURE_2D, currentTexture->GetGLTextureId()));
 
         renderingContextComponent.previousTexture = currentTexture;
@@ -349,14 +349,14 @@ void RenderingSystem::CompileAndLoadShaders() const
     {
         // By signaling to load either a .vs or a .fs, the ShaderLoader will load the pair automatically,
         // hence why the addition of the .vs here
-        auto shaderResourceId = ResourceLoadingService::GetInstance().LoadResource(ResourceLoadingService::RES_SHADERS_ROOT + shaderName + ".vs");
-        auto& shaderResource  = ResourceLoadingService::GetInstance().GetResource<ShaderResource>(shaderResourceId);
+        auto shaderResourceId = res::ResourceLoadingService::GetInstance().LoadResource(res::ResourceLoadingService::RES_SHADERS_ROOT + shaderName + ".vs");
+        auto& shaderResource  = res::ResourceLoadingService::GetInstance().GetResource<res::ShaderResource>(shaderResourceId);
         
         // Save a copy of the shader to the ShaderStoreComponent
         shaderStoreComponent->mShaders[StringId(shaderName)] = shaderResource;
         
         // And unload the resource
-        ResourceLoadingService::GetInstance().UnloadResource(shaderResourceId);
+        res::ResourceLoadingService::GetInstance().UnloadResource(shaderResourceId);
     }
     
     // Unbind any VAO currently bound
@@ -369,7 +369,7 @@ void RenderingSystem::CompileAndLoadShaders() const
 
 std::set<std::string> RenderingSystem::GetAndFilterShaderNames() const
 {
-    const auto vertexAndFragmentShaderFilenames = GetAllFilenamesInDirectory(ResourceLoadingService::RES_SHADERS_ROOT);
+    const auto vertexAndFragmentShaderFilenames = GetAllFilenamesInDirectory(res::ResourceLoadingService::RES_SHADERS_ROOT);
 
     std::set<std::string> shaderNames;
     for (const auto& shaderFilename : vertexAndFragmentShaderFilenames)

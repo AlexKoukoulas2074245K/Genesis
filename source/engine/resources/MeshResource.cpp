@@ -14,6 +14,11 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------
 
+namespace res
+{
+
+///------------------------------------------------------------------------------------------------
+
 GLuint MeshResource::GetVertexArrayObject() const
 {
     return mVertexArrayObject;
@@ -40,6 +45,8 @@ MeshResource::MeshResource(const GLuint vertexArrayObject, const GLuint elementC
     , mElementCount(elementCount)
     , mDimensions(meshDimensions)
 {
+}
+
 }
 
 }

@@ -27,6 +27,11 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------
 
+namespace res
+{
+
+///------------------------------------------------------------------------------------------------
+
 void MeshLoader::VInitialize()
 {
 }
@@ -221,6 +226,8 @@ std::string MeshLoader::ExtractAndRemoveInjectedTexCoordsIfAny(std::string& path
     
     path = cleanPath;
     return injectedTexCoordString;
+}
+
 }
 
 ///------------------------------------------------------------------------------------------------

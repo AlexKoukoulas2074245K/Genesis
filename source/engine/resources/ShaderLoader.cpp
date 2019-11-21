@@ -22,6 +22,11 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------
 
+namespace res
+{
+
+///------------------------------------------------------------------------------------------------
+
 const std::string ShaderLoader::VERTEX_SHADER_FILE_EXTENSION = ".vs";
 const std::string ShaderLoader::FRAGMENT_SHADER_FILE_EXTENSION = ".fs";
 
@@ -202,5 +207,7 @@ std::unordered_map<StringId, GLuint, StringIdHasher> ShaderLoader::GetUniformNam
 }
 
 ///------------------------------------------------------------------------------------------------
+
+}
 
 }

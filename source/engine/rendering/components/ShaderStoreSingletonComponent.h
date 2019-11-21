@@ -26,7 +26,7 @@ namespace genesis
 class ShaderStoreSingletonComponent final: public ecs::IComponent
 {
 public:
-    std::unordered_map<StringId, ShaderResource, StringIdHasher> mShaders;
+    std::unordered_map<StringId, res::ShaderResource, StringIdHasher> mShaders;
 };
 
 ///-----------------------------------------------------------------------------------------------

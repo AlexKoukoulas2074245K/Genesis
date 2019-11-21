@@ -15,6 +15,11 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------
 
+namespace res
+{
+
+///------------------------------------------------------------------------------------------------
+
 ShaderResource::ShaderResource
 (
     const std::unordered_map<StringId, GLuint, StringIdHasher> uniformNamesToLocations,
@@ -85,6 +90,8 @@ void ShaderResource::CopyConstruction(const ShaderResource& rhs)
 }
 
 ///------------------------------------------------------------------------------------------------
+
+}
 
 }
 

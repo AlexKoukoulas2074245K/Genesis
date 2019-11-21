@@ -156,8 +156,8 @@ void GenesisEngine::InitializeSystems()
 
 void GenesisEngine::InitializeServices() const
 {
-    ResourceLoadingService::GetInstance().Initialize();
-    SoundService::GetInstance().Initialize();
+    res::ResourceLoadingService::GetInstance().Initialize();
+    sound::SoundService::GetInstance().Initialize();
 }
 
 ///-----------------------------------------------------------------------------------------------

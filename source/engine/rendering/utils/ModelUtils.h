@@ -35,7 +35,7 @@ ecs::EntityId LoadAndCreateModelByName
 
 ///------------------------------------------------------------------------------------------------
 
-ResourceId LoadMeshFromAtlasTexCoords
+res::ResourceId LoadMeshResourceFromAtlasTexCoords
 (
     const int meshAtlasCol,
     const int meshAtlasRow,
@@ -47,7 +47,7 @@ ResourceId LoadMeshFromAtlasTexCoords
 
 ///------------------------------------------------------------------------------------------------
 
-ResourceId LoadMeshFromAtlasTexCoordsAndAddToRenderableAnimations
+res::ResourceId LoadMeshFromAtlasTexCoordsAndAddToRenderableAnimations
 (
     const int meshAtlasCol,
     const int meshAtlasRow,
