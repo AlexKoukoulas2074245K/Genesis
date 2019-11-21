@@ -22,7 +22,9 @@ enum class LogType
 };
 
 ///-----------------------------------------------------------------------------------------------
-/// Logs a message to the std out, with a custom log type tag (see LogType)
+/// Logs a message to the std out, with a custom log type tag \see LogType
+/// @param[in] logType the category of logging message 
+/// @param[in] message the message itself as a c-string
 #ifndef NDEBUG
 inline void Log(const LogType logType, const char* message, ...)
 {

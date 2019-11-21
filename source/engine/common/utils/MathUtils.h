@@ -35,7 +35,11 @@ static const glm::vec3 Y_AXIS = glm::vec3(0.0f, 1.0f, 0.0f);
 static const glm::vec3 Z_AXIS = glm::vec3(0.0f, 0.0f, 1.0f);
 
 ///-----------------------------------------------------------------------------------------------
-/// Returns the minimum of the 2 values given
+/// Returns the minimum of the 2 given values.
+/// @tparam T type class of the arguments given (can be inferred from the parameters passed in).
+/// @param[in] a the first value.
+/// @param[in] b the second value.
+/// @returns the strictly smallest value.
 template<class T>
 inline T Min(T a, T b)
 {
@@ -43,7 +47,11 @@ inline T Min(T a, T b)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Returns the maximum of the 2 values given
+/// Returns the maximum of the 2 given values.
+/// @tparam T type class of the arguments given (can be inferred from the parameters passed in).
+/// @param[in] a the first value.
+/// @param[in] b the second value.
+/// @returns the strictly largest value.
 template<class T>
 inline T Max(T a, T b)
 {
@@ -51,7 +59,10 @@ inline T Max(T a, T b)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Returns the absolute value of the value given
+/// Returns the absolute value.
+/// @tparam T type class of the argument given (can be inferred from the parameter passed in).
+/// @param[in] val the value.
+/// @returns the absolute value of the parameter passed in.
 template<class T>
 inline T Abs(const T val)
 {
@@ -59,7 +70,12 @@ inline T Abs(const T val)
 }
     
 ///-----------------------------------------------------------------------------------------------
-/// Returns the interpolated value between x and y, based on the parametric t
+/// Returns the interpolated value between two values and the parametric argument
+/// @tparam T type class of the arguments given (can be inferred from the parameters passed in).
+/// @param[in] x the start value.
+/// @param[in] y the end value.
+/// @param[in] t the parametric float value.
+/// @returns the interpolated value between the two values and the parametric t.
 template <class T>
 inline T Lerp(const T x, const T y, const float t)
 {
@@ -67,42 +83,58 @@ inline T Lerp(const T x, const T y, const float t)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Returns the square roat of the value duh
+/// Returns the square root of the value passed in.
+/// @param[in] val the value.
+/// @returns the square root of the value.
 inline float Sqrt(const float val)
 {
     return std::sqrtf(val);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Tests whether 2 floats are sufficiently close
+/// Tests whether 2 floats are sufficiently close.
+/// @param[in] a the first float value
+/// @param[in] b the second float value
+/// @returns whether or not the 2 float values are close enough to be considered equal based
+/// on a constant threshold
 inline bool FloatsSufficientlyClose(const float a, const float b)
 {
     return Abs(a - b) <= EQ_THRESHOLD;
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Clamps the given value to a maximum cap
+/// Clamps the given 3d  vector to a maximum cap.
+/// @param[in] vec the vector to clamp.
+/// @param[in] maxVec the vector holding the maximum values.
+/// @returns the input vector vec clamped based on the values of the vector maxVec.
 inline glm::vec3 ClampToMax(const glm::vec3& vec, const glm::vec3& maxVec)
 {
     return glm::vec3(Min(vec.x, maxVec.x), Min(vec.y, maxVec.y), Min(vec.z, maxVec.z));
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Clamps the given value to a minimum cap
+/// Clamps the given 3d  vector to a minimum cap.
+/// @param[in] vec the vector to clamp.
+/// @param[in] minVec the vector holding the minimum values.
+/// @returns the input vector vec clamped based on the values of the vector minVec.
 inline glm::vec3 ClampToMin(const glm::vec3& vec, const glm::vec3& minVec)
 {
     return glm::vec3(Max(vec.x, minVec.x), Max(vec.y, minVec.y), Max(vec.z, minVec.z));
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Converts a glm::vec3 to a glm::vec2
+/// Converts a glm::vec3 to a glm::vec2.
+/// @param[in] vec the vec3 to transform.
+/// @returns a vec2 holding only the first two values of the input vector vec.
 inline glm::vec2 Vec3ToVec2(const glm::vec3& vec)
 {
     return glm::vec2(vec.x, vec.y);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Converts a glm::vec2 to a glm::vec3
+/// Converts a glm::vec2 to a glm::vec3.
+/// @param[in] vec the vec2 to transform.
+/// @returns a vec3 holding both values of the input vector vec and a zeroed third element.
 inline glm::vec3 Vec2ToVec3(const glm::vec2& vec)
 {
     return glm::vec3(vec.x, vec.y, 0.0f);
@@ -116,49 +148,63 @@ enum class TweeningMode
 };
 
 ///-----------------------------------------------------------------------------------------------
-/// Linear Tweening function to be used by clients of the TweenValue function
+/// Linear Tweening function to be used by clients of the TweenValue function. \see TweenValue()
+/// @param[in] t the input value to the tween function.
+/// @returns the transformed t value linearly.
 inline float LinearFunction(const float t)
 {
     return t;
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Quadratic Tweening function to be used by clients of the TweenValue function
+/// Quadratic Tweening function to be used by clients of the TweenValue function. \see TweenValue()
+/// @param[in] t the input value to the tween function.
+/// @returns the transformed t value quadratically.
 inline float QuadFunction(const float t)
 {
     return std::powf(t, 2.0f);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Cubic Tweening function to be used by clients of the TweenValue function
+/// Cubic Tweening function to be used by clients of the TweenValue function. \see TweenValue()
+/// @param[in] t the input value to the tween function.
+/// @returns the transformed t value cubically.
 inline float CubicFunction(const float t)
 {
     return std::powf(t, 3.0f);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Quartic Tweening function to be used by clients of the TweenValue function
+/// Quartic Tweening function to be used by clients of the TweenValue function. \see TweenValue()
+/// @param[in] t the input value to the tween function.
+/// @returns the transformed t value quartically.
 inline float QuartFunction(const float t)
 {
     return std::powf(t, 4.0f);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Quint Tweening function to be used by clients of the TweenValue function
+/// Quint Tweening function to be used by clients of the TweenValue function. \see TweenValue()
+/// @param[in] t the input value to the tween function.
+/// @returns the transformed t value quintically.
 inline float QuintFunction(const float t)
 {
     return std::powf(t, 5.0f);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Back Tweening function to be used by clients of the TweenValue function
+/// Back Tweening function to be used by clients of the TweenValue function. \see TweenValue()
+/// @param[in] t the input value to the tween function.
+/// @returns the transformed t value based on the back function.
 inline float BackFunction(const float t)
 {
     return std::powf(t, 2.0f) * (2.70158f * t - 1.70158f);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Bounce Tweening function to be used by clients of the TweenValue function
+/// Bounce Tweening function to be used by clients of the TweenValue function. \see TweenValue()
+/// @param[in] t the input value to the tween function.
+/// @returns the transformed t value based on the bounce function.
 inline float BounceFunction(const float t)
 {
     if (t < 4.0f/11.0f)
@@ -180,14 +226,20 @@ inline float BounceFunction(const float t)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Elastic Tweening function to be used by clients of the TweenValue function
+/// Elastic Tweening function to be used by clients of the TweenValue function. \see TweenValue()
+/// @param[in] t the input value to the tween function.
+/// @returns the transformed t value elastically.
 inline float ElasticFunction(const float t)
 {
     return std::sinf(13.0f * PI * 0.5f * t) * std::powf(2.0f, 10.0f * (t - 1));
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Tweens the given value (val) based on the tweening function (tweening Func defaulting to linear) and the tweening mode (tweeningMode defaulting to TweeningMode::EASE_OUT)
+/// Tweens the given value based on the tweening function and the tweening mode.
+/// @param[in] val the value to be tweened.
+/// @param[in] tweeningFunc the tweening function to be used (defaults to linear).
+/// @param[in] tweeningMode the tweening mode (defaults to ease out).
+/// @returns the tweened value.
 inline float TweenValue(const float val, const std::function<float(const float)> tweeningFunc = LinearFunction , const TweeningMode tweeningMode = TweeningMode::EASE_OUT)
 {
     switch (tweeningMode)
@@ -201,7 +253,10 @@ inline float TweenValue(const float val, const std::function<float(const float)>
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Computes a random int based on the min and max inclusive values provided
+/// Computes a random int based on the min and max inclusive values provided.
+/// @param[in] min the minimum value (inclusive) that the function can return (defaults to 0).
+/// @param[in] max the maximum value (inclusive) that the function can return (defaults to 32767).
+/// @returns a random integer that respects the given bounds.
 inline int RandomInt(const int min = 0, const int max = RAND_MAX)
 {    
     static std::random_device rd;
@@ -213,35 +268,46 @@ inline int RandomInt(const int min = 0, const int max = RAND_MAX)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Computes a random float based on the min and max inclusive values provided
+/// Computes a random float based on the min and max inclusive values provided.
+/// @param[in] min the minimum value (inclusive) that the function can return (defaults to 0.0f).
+/// @param[in] max the maximum value (inclusive) that the function can return (defaults to 1.0f).
+/// @returns a random float that respects the given bounds.
 inline float RandomFloat(const float min = 0.0f, const float max = 1.0f)
 {
     return min + static_cast <float> (RandomInt()) / (static_cast <float> (RAND_MAX / (max - min)));
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Computes a random sign, 1 or -1
+/// Computes a random sign, 1 or -1.
+/// @returns a random sign (either -1 or 1).
 inline int RandomSign()
 {
     return RandomInt(0, 1) == 0 ? -1 : 1;
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Computes the sine of the given float value
+/// Computes the sine of the given float value.
+/// @param[in] val the value.
+/// @returns the sin of the value.
 inline float Sinf(const float val)
 {
     return std::sinf(val);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Computes the cosine of the given float value
+/// Computes the cosine of the given float value.
+/// @param[in] val the value.
+/// @returns the cosine of the value.
 inline float Cosf(const float val)
 {
     return std::cosf(val);
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Computes the arc tangent value of the given x and y float values
+/// Computes the arc tangent value of the given x and y float values.
+/// @param[in] x the first value.
+/// @param[in] y the second value.
+/// @returns the arctan of the two values  given.
 inline float Arctan2(const float x, const float y)
 {
     return std::atan2(x, y);

@@ -21,7 +21,9 @@
 #endif
 
 ///-----------------------------------------------------------------------------------------------
-/// Extracts the file extension from the given file path (filePath)
+/// Extracts the file extension from the given file path.
+/// @param[in] filePath the input file path.
+/// @returns the extension (the string after the dot) of the file path given.
 inline std::string GetFileExtension(const std::string& filePath)
 {
     std::string pathExt;
@@ -38,7 +40,9 @@ inline std::string GetFileExtension(const std::string& filePath)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Extracts, and returns the file name from the given file path(filePath)
+/// Extracts, and returns the file name from the given file path.
+/// @param[in] filePath the input file path.
+/// @returns the file name (with the extension) from the file path given.
 inline std::string GetFileName(const std::string& filePath)
 {    
     std::string fileName;
@@ -54,7 +58,9 @@ inline std::string GetFileName(const std::string& filePath)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Extracts, Trims and returns the file name from the given file path (filePath) without the extension
+/// Extracts, and returns the file name without the extension from the given file path.
+/// @param[in] filePath the input file path.
+/// @returns the file name (without the extension) from the file path given.
 inline std::string GetFileNameWithoutExtension(const std::string& filePath)
 {
     std::string fileName = "";
@@ -80,7 +86,10 @@ inline std::string GetFileNameWithoutExtension(const std::string& filePath)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Returns a vector of filenames (not absolute paths) in a given directory (directory)
+
+/// Returns a vector of filenames (not absolute paths) in a given directory.
+/// @param[in] directory to search in.
+/// @returns a vector of filenames found in the given directory.
 inline std::vector<std::string> GetAllFilenamesInDirectory(const std::string& directory)
 {
     std::vector<std::string> fileNames;

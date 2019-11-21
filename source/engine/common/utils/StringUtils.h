@@ -20,7 +20,10 @@
 #include <vector>
 
 ///-----------------------------------------------------------------------------------------------
-/// Checks whether the given string (s) starts with a given pattern (pattern)
+/// Checks whether the given string starts with a given pattern.
+/// @param[in] s the string to check.
+/// @param[in] pattern the pattern to check for in string s.
+/// @returns whether or not the given pattern appears at the start of string s.
 inline bool StringStartsWith(const std::string& s, const std::string& pattern)
 {
     if (s.size() < pattern.size()) return false;
@@ -34,7 +37,10 @@ inline bool StringStartsWith(const std::string& s, const std::string& pattern)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Checks whether the given string (s) ends with a given pattern (pattern)
+/// Checks whether the given string ends with a given pattern.
+/// @param[in] s the string to check.
+/// @param[in] pattern the pattern to check for in string s.
+/// @returns whether or not the given pattern appears at the end of string s.
 inline bool StringEndsWith(const std::string& s, const std::string& pattern)
 {
     if (s.size() < pattern.size()) return false;
@@ -48,7 +54,9 @@ inline bool StringEndsWith(const std::string& s, const std::string& pattern)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Returns a copy of the given string (s) in uppercase
+/// Returns a copy of the given string in uppercase.
+/// @param[in] s the input string.
+/// @returns a copy of the input string transformed to uppercase.
 inline std::string StringToUpper(const std::string& s)
 {
     auto stringCopy = s;
@@ -59,7 +67,9 @@ inline std::string StringToUpper(const std::string& s)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Returns a copy of the given string (s) in lowercase
+/// Returns a copy of the given string in lowercase.
+/// @param[in] s the input string.
+/// @returns a copy of the input string transformed to lowercase.
 inline std::string StringToLower(const std::string& s)
 {
     auto stringCopy = s;
@@ -70,7 +80,10 @@ inline std::string StringToLower(const std::string& s)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Splits the given string (s) based on a delimiter character (delim)
+/// Splits the given string based on a delimiter character.
+/// @param[in] s the input string.
+/// @param[in] delim the delimiter character to split the original string based on.
+/// @returns a vector of the original string's components split based on the delimiter provided.
 inline std::vector<std::string> StringSplit(const std::string& s, char delim)
 {
     std::vector<std::string> elems;
@@ -85,7 +98,9 @@ inline std::vector<std::string> StringSplit(const std::string& s, char delim)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Returns the formatted time string HH:MM from the given number of seconds
+/// Returns the formatted time string HH:MM from the given number of seconds.
+/// @param[in] seconds the number of seconds to format.
+/// @returns the formatted time string.
 inline std::string GetHoursMinutesStringFromSeconds(const int seconds)
 {
     const auto minutes = seconds / 60;
@@ -103,8 +118,11 @@ inline std::string GetHoursMinutesStringFromSeconds(const int seconds)
 }
 
 ///-----------------------------------------------------------------------------------------------
-/// Replace all occurences of pattern with the replacement string in the original string
-inline void StringReplaceAllOccurences(std::string& s, const std::string& pattern, const std::string& replacement)
+/// Replace all occurences of the string 'pattern' with the string 'replacement' in the input string 's'.
+/// @param[in] pattern the string pattern to detect in the given input string s.
+/// @param[in] replacement the string pattern to replace in the given input string s.
+/// @param[out] the input string on which the replacement will take place.
+inline void StringReplaceAllOccurences(const std::string& pattern, const std::string& replacement, std::string& s)
 {
     s = regex_replace(s, std::regex(pattern), replacement);
 }

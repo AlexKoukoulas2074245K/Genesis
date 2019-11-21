@@ -6,6 +6,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "ShaderResource.h"
+#include "../rendering/opengl/Context.h"
 
 ///------------------------------------------------------------------------------------------------
 
@@ -38,6 +39,24 @@ ShaderResource& ShaderResource::operator = (const ShaderResource& rhs)
 ShaderResource::ShaderResource(const ShaderResource& rhs)
 {
     CopyConstruction(rhs);
+}
+
+///------------------------------------------------------------------------------------------------
+
+bool ShaderResource::SetMatrix4fv
+(
+    const StringId uniformName, 
+    const glm::mat4& matrix, 
+    const GLuint count /* 1 */,
+    const bool transpose /* false */
+) const
+{
+    if (mShaderUniformNamesToLocations.count(uniformName) > 0)
+    {
+        GL_CHECK(glUniformMatrix4fv(mShaderUniformNamesToLocations.at(uniformName), count, transpose, (GLfloat*)&matrix));
+        return true;
+    }    
+    return false;
 }
 
 ///------------------------------------------------------------------------------------------------

@@ -11,6 +11,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "IResource.h"
+#include "../common/utils/MathUtils.h"
 #include "../common/utils/StringUtils.h"
 
 #include <string>
@@ -39,9 +40,13 @@ public:
     ShaderResource& operator = (const ShaderResource&);
     ShaderResource(const ShaderResource&);
     
-    GLuint GetProgramId() const;
+    bool SetMatrix4fv(const StringId uniformName, const glm::mat4& matrix, const GLuint count = 1, const bool transpose = false) const;
+
+    GLuint GetProgramId() const;    
+
+protected:
     const std::unordered_map<StringId, GLuint, StringIdHasher>& GetUniformNamesToLocations() const;
-    
+
 private:
     void CopyConstruction(const ShaderResource&);
     

@@ -14,7 +14,7 @@
 #include <string>
 
 ///-----------------------------------------------------------------------------------------------
-/// Different types of message box types available
+/// Different types of message box types available.
 enum class MessageBoxType
 {
     INFO    = SDL_MessageBoxFlags::SDL_MESSAGEBOX_INFORMATION,
@@ -24,7 +24,10 @@ enum class MessageBoxType
 
 ///-----------------------------------------------------------------------------------------------
 /// Show an SDL driven message box with a custom title, description, and of 
-/// a particular type (see MessageBoxType)
+/// a particular type \see MessageBoxType.
+/// @param[in] messageBoxType the type of message box to show.
+/// @param[in] title the title of the window that will be displayed.
+/// @param[in] description the description in the main body of the window that will be displayed.
 inline void ShowMessageBox
 (
     const MessageBoxType messageBoxType,

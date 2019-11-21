@@ -33,8 +33,9 @@ public:
 };
 
 ///-----------------------------------------------------------------------------------------------
-
-// Compute a unique hash for a given template class
+/// Compute a unique integer id for a given template class.
+/// @tparam T the type class to generate the unique id for.
+/// @returns a unique id for given template parameter class type.
 template<class T>
 inline std::size_t GetTypeHash()
 {
@@ -42,11 +43,12 @@ inline std::size_t GetTypeHash()
 }
 
 ///-----------------------------------------------------------------------------------------------
-
-// Compute a unique hash for a given string
-inline std::size_t GetStringHash(const std::string& name)
+/// Compute a unique hash for a given string.
+/// @param[in] s the input string.
+/// @returns the hashed input string.
+inline std::size_t GetStringHash(const std::string& s)
 {
-    return hashFunction(name);
+    return hashFunction(s);
 }
 
 ///-----------------------------------------------------------------------------------------------
