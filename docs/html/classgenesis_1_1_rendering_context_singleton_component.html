@@ -92,18 +92,27 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ab36ca51532bb634399ade72e52aa8e7a"><td class="memItemLeft" align="right" valign="top"><a id="ab36ca51532bb634399ade72e52aa8e7a"></a>
 <a class="el" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">GLuint</a>&#160;</td><td class="memItemRight" valign="bottom"><b>mDefaultVertexArrayObject</b> = 0</td></tr>
 <tr class="separator:ab36ca51532bb634399ade72e52aa8e7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ba4e3f0d87dbe1824b2b738a13b83c5"><td class="memItemLeft" align="right" valign="top"><a id="a8ba4e3f0d87dbe1824b2b738a13b83c5"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>mFrustumCulledEntities</b> = 0</td></tr>
-<tr class="separator:a8ba4e3f0d87dbe1824b2b738a13b83c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac530337526b6718c4179e0cd59cd447c"><td class="memItemLeft" align="right" valign="top"><a id="ac530337526b6718c4179e0cd59cd447c"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>mRenderedEntities</b> = 0</td></tr>
-<tr class="separator:ac530337526b6718c4179e0cd59cd447c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12f01bff8ce9d15b294a430f949ca719"><td class="memItemLeft" align="right" valign="top"><a id="a12f01bff8ce9d15b294a430f949ca719"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>mBlending</b> = false</td></tr>
-<tr class="separator:a12f01bff8ce9d15b294a430f949ca719"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f8d04097bdbc3536ad0d4e338dc0988"><td class="memItemLeft" align="right" valign="top"><a id="a1f8d04097bdbc3536ad0d4e338dc0988"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>mDepthTest</b> = false</td></tr>
-<tr class="separator:a1f8d04097bdbc3536ad0d4e338dc0988"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bfcd6b786a47eadb7d6922dca30071f"><td class="memItemLeft" align="right" valign="top"><a id="a4bfcd6b786a47eadb7d6922dca30071f"></a>
+glm::vec4&#160;</td><td class="memItemRight" valign="bottom"><b>mClearColor</b> = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)</td></tr>
+<tr class="separator:a4bfcd6b786a47eadb7d6922dca30071f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cc554635f5015506fdb357515ad7e81"><td class="memItemLeft" align="right" valign="top"><a id="a8cc554635f5015506fdb357515ad7e81"></a>
+const <a class="el" href="classgenesis_1_1_shader_resource.html">ShaderResource</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>previousShader</b> = nullptr</td></tr>
+<tr class="separator:a8cc554635f5015506fdb357515ad7e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb1fbb96e7ecfd2422f38ffd62bb9dda"><td class="memItemLeft" align="right" valign="top"><a id="abb1fbb96e7ecfd2422f38ffd62bb9dda"></a>
+const <a class="el" href="classgenesis_1_1_texture_resource.html">TextureResource</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>previousTexture</b> = nullptr</td></tr>
+<tr class="separator:abb1fbb96e7ecfd2422f38ffd62bb9dda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03bed8e3c57cb7ff0b571fd49fca5d15"><td class="memItemLeft" align="right" valign="top"><a id="a03bed8e3c57cb7ff0b571fd49fca5d15"></a>
+const <a class="el" href="classgenesis_1_1_mesh_resource.html">MeshResource</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>previousMesh</b> = nullptr</td></tr>
+<tr class="separator:a03bed8e3c57cb7ff0b571fd49fca5d15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b1386adc8de1d08b1b98db0f28c4792"><td class="memItemLeft" align="right" valign="top"><a id="a9b1386adc8de1d08b1b98db0f28c4792"></a>
+<a class="el" href="class_string_id.html">StringId</a>&#160;</td><td class="memItemRight" valign="bottom"><b>previousShaderNameId</b> = <a class="el" href="class_string_id.html">StringId</a>()</td></tr>
+<tr class="separator:a9b1386adc8de1d08b1b98db0f28c4792"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1e2f2df75b59f065c88c9ce56670001"><td class="memItemLeft" align="right" valign="top"><a id="aa1e2f2df75b59f065c88c9ce56670001"></a>
+<a class="el" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a>&#160;</td><td class="memItemRight" valign="bottom"><b>previousTextureResourceId</b> = <a class="el" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a>()</td></tr>
+<tr class="separator:aa1e2f2df75b59f065c88c9ce56670001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a903f65c4ad44da57b43fbf690d740f06"><td class="memItemLeft" align="right" valign="top"><a id="a903f65c4ad44da57b43fbf690d740f06"></a>
+<a class="el" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a>&#160;</td><td class="memItemRight" valign="bottom"><b>previousMeshResourceId</b> = <a class="el" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a>()</td></tr>
+<tr class="separator:a903f65c4ad44da57b43fbf690d740f06"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><hr  />

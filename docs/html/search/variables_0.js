@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['camera_5ffrustum_5fsides_309',['CAMERA_FRUSTUM_SIDES',['../namespacegenesis.html#aab303ae103d5dc579d22bbbb1146c9e0',1,'genesis']]]
+  ['res_5froot_311',['RES_ROOT',['../classgenesis_1_1_resource_loading_service.html#acb55fe058a993e4fb8d283fdd232c59c',1,'genesis::ResourceLoadingService']]]
 ];

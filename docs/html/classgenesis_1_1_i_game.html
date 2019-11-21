@@ -86,16 +86,97 @@ Inheritance diagram for genesis::IGame:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9167d401d50063adcbe24ec47589d6bb"><td class="memItemLeft" align="right" valign="top"><a id="a9167d401d50063adcbe24ec47589d6bb"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>VOnInit</b> (<a class="el" href="classgenesis_1_1ecs_1_1_world.html">ecs::World</a> &amp;world)=0</td></tr>
+<tr class="memitem:a9167d401d50063adcbe24ec47589d6bb"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgenesis_1_1_i_game.html#a9167d401d50063adcbe24ec47589d6bb">VOnInit</a> (<a class="el" href="classgenesis_1_1ecs_1_1_world.html">ecs::World</a> &amp;world)=0</td></tr>
 <tr class="separator:a9167d401d50063adcbe24ec47589d6bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc0781767b0a05db238828109f34c273"><td class="memItemLeft" align="right" valign="top"><a id="adc0781767b0a05db238828109f34c273"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>VOnUpdate</b> (const float dt, <a class="el" href="classgenesis_1_1ecs_1_1_world.html">ecs::World</a> &amp;world)=0</td></tr>
+<tr class="memitem:adc0781767b0a05db238828109f34c273"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classgenesis_1_1_i_game.html#adc0781767b0a05db238828109f34c273">VOnUpdate</a> (const float dt, <a class="el" href="classgenesis_1_1ecs_1_1_world.html">ecs::World</a> &amp;world)=0</td></tr>
 <tr class="separator:adc0781767b0a05db238828109f34c273"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><hr  />
- </div><hr/>The documentation for this class was generated from the following file:<ul>
+<p> The interface that lays out the core methods for the <a class="el" href="class_game.html">Game</a>. This should be subclassed and supplied to the Engine's RunGame method </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classgenesis_1_1_genesis_engine.html#aa50e03a3580934831114b44ecc9f6022">GenesisEngine::RunGame()</a> </dd></dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a9167d401d50063adcbe24ec47589d6bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9167d401d50063adcbe24ec47589d6bb">&#9670;&nbsp;</a></span>VOnInit()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void genesis::IGame::VOnInit </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classgenesis_1_1ecs_1_1_world.html">ecs::World</a> &amp;&#160;</td>
+          <td class="paramname"><em>world</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p><a class="el" href="class_game.html">Game</a> initialization method.</p>
+<p>This will be called after all core engine subsystems are initialized, and the game is now free to perform all its initialization flows. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">world</td><td>the singular world of the ECS state. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="class_game.html#ae9d2e320e8a899cc55833f9bc986a958">Game</a>.</p>
+
+</div>
+</div>
+<a id="adc0781767b0a05db238828109f34c273"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc0781767b0a05db238828109f34c273">&#9670;&nbsp;</a></span>VOnUpdate()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void genesis::IGame::VOnUpdate </td>
+          <td>(</td>
+          <td class="paramtype">const float&#160;</td>
+          <td class="paramname"><em>dt</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classgenesis_1_1ecs_1_1_world.html">ecs::World</a> &amp;&#160;</td>
+          <td class="paramname"><em>world</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p><a class="el" href="class_game.html">Game</a> update method.</p>
+<p>This will be called once per frame and should be used to perform all game-specific logic. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">dt</td><td>the inter-frame delta time. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">world</td><td>the singular world of the ECS state. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="class_game.html#a3780a48704e2b30bd92171e10d451cd2">Game</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>C:/Users/alex.koukoulas/Code/Genesis/source/engine/<a class="el" href="_i_game_8h_source.html">IGame.h</a></li>
 </ul>
 </div><!-- contents -->

@@ -13,7 +13,7 @@
 int main(int, char**)
 {
     genesis::GenesisEngine engine;
-    genesis::GameStartupParameters startupParameters("Genesis", 800, 600);
+    genesis::GameStartupParameters startupParameters("Genesis", 0.7f);
 
     Game game;
     engine.RunGame(startupParameters, game);

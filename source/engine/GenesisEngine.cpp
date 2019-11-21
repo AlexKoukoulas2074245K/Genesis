@@ -103,6 +103,21 @@ void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& s
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
 
+    SDL_DisplayMode displayMode;
+    SDL_GetCurrentDisplayMode(0, &displayMode);
+
+    const auto screenAspectRatio = displayMode.w / static_cast<float>(displayMode.h);
+
+    auto requestedGameWidth = startupParameters.mGameWindowWidth;
+    auto requestedGameHeight = startupParameters.mGameWindowHeight;
+
+    // Check whether fraction constructor used
+    if (requestedGameWidth == 0)
+    {
+        requestedGameWidth  = static_cast<int>(static_cast<float>(displayMode.w) * startupParameters.mGameWindowScreenFraction);
+        requestedGameHeight = static_cast<int>(requestedGameWidth / screenAspectRatio);
+    }
+    
     // Create SDL window
     auto windowComponent = std::make_unique<WindowSingletonComponent>();
     windowComponent->mWindowTitle = startupParameters.mGameTitle;
@@ -111,8 +126,8 @@ void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& s
         windowComponent->mWindowTitle.c_str(),
         SDL_WINDOWPOS_CENTERED, 
         SDL_WINDOWPOS_CENTERED, 
-        startupParameters.mGameWindowWidth, 
-        startupParameters.mGameWindowHeight,
+        requestedGameWidth,
+        requestedGameHeight,
         SDL_WINDOW_OPENGL
     );
 

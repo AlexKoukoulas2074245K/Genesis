@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['game_30',['Game',['../class_game.html',1,'']]],
+  ['game_29',['Game',['../class_game.html',1,'']]],
+  ['gamestartupparameters_30',['GameStartupParameters',['../structgenesis_1_1_game_startup_parameters.html',1,'genesis::GameStartupParameters'],['../structgenesis_1_1_game_startup_parameters.html#ad9758fb2f1435f57cde26eb0050c2f6f',1,'genesis::GameStartupParameters::GameStartupParameters(const std::string &amp;gameTitle, const int gameWindowWidth, const int gameWindowHeight)'],['../structgenesis_1_1_game_startup_parameters.html#ac062412d970d09be4171dce38864e340',1,'genesis::GameStartupParameters::GameStartupParameters(const std::string &amp;gameTitle, const float gameWindowScreenFraction)']]],
   ['genesis_31',['genesis',['../namespacegenesis.html',1,'']]],
   ['genesisengine_32',['GenesisEngine',['../classgenesis_1_1_genesis_engine.html',1,'genesis::GenesisEngine'],['../classgenesis_1_1_genesis_engine.html#affde864ba299503eab255a0bac46b425',1,'genesis::GenesisEngine::GenesisEngine()']]],
   ['getactiveentities_33',['GetActiveEntities',['../classgenesis_1_1ecs_1_1_world.html#a132568e75c64974f67ae994a9c1250ea',1,'genesis::ecs::World']]],

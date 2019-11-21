@@ -76,38 +76,59 @@ $(function() {
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;../../ECS.h&quot;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;../../common/utils/MathUtils.h&quot;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &quot;../../common/utils/StringUtils.h&quot;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &quot;../../resources/ResourceLoadingService.h&quot;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacegenesis.html">genesis</a></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;{</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacegenesis.html">genesis</a></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
-<div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="namespacegenesis.html#a332cc295bff8f24e2d483d17e6862a7a">   23</a></span>&#160;<span class="keyword">using</span> <a class="code" href="namespacegenesis.html#a332cc295bff8f24e2d483d17e6862a7a">SDL_GLContext</a> = <span class="keywordtype">void</span>*;</div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">   24</a></span>&#160;<span class="keyword">using</span> <a class="code" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">GLuint</a>        = <span class="keywordtype">unsigned</span> int;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="namespacegenesis.html#a332cc295bff8f24e2d483d17e6862a7a">   25</a></span>&#160;<span class="keyword">using</span> <a class="code" href="namespacegenesis.html#a332cc295bff8f24e2d483d17e6862a7a">SDL_GLContext</a> = <span class="keywordtype">void</span>*;</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">   26</a></span>&#160;<span class="keyword">using</span> <a class="code" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">GLuint</a>        = <span class="keywordtype">unsigned</span> int;</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classgenesis_1_1_rendering_context_singleton_component.html">   28</a></span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_rendering_context_singleton_component.html">RenderingContextSingletonComponent</a> final : <span class="keyword">public</span> <a class="code" href="classgenesis_1_1ecs_1_1_i_component.html">ecs::IComponent</a></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">public</span>:    </div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <a class="code" href="namespacegenesis.html#a332cc295bff8f24e2d483d17e6862a7a">SDL_GLContext</a> mGLContext            = <span class="keyword">nullptr</span>;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <a class="code" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">GLuint</a> mDefaultVertexArrayObject    = 0;    </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> mFrustumCulledEntities = 0;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> mRenderedEntities      = 0;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordtype">bool</span> mBlending                      = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">bool</span> mDepthTest                     = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;};</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* RenderingContextSingletonComponent_h */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_shader_resource.html">ShaderResource</a>;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_texture_resource.html">TextureResource</a>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_mesh_resource.html">MeshResource</a>;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classgenesis_1_1_rendering_context_singleton_component.html">   36</a></span>&#160;<span class="keyword">class </span><a class="code" href="classgenesis_1_1_rendering_context_singleton_component.html">RenderingContextSingletonComponent</a> final : <span class="keyword">public</span> <a class="code" href="classgenesis_1_1ecs_1_1_i_component.html">ecs::IComponent</a></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">public</span>:        </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="comment">// Core state</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="namespacegenesis.html#a332cc295bff8f24e2d483d17e6862a7a">SDL_GLContext</a> mGLContext            = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <a class="code" href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">GLuint</a> mDefaultVertexArrayObject    = 0;        </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    glm::vec4 mClearColor               = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// Previous render call resource pointers</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">const</span> <a class="code" href="classgenesis_1_1_shader_resource.html">ShaderResource</a>* previousShader   = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">const</span> <a class="code" href="classgenesis_1_1_texture_resource.html">TextureResource</a>* previousTexture = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">const</span> <a class="code" href="classgenesis_1_1_mesh_resource.html">MeshResource</a>* previousMesh       =  <span class="keyword">nullptr</span>;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="comment">// Previous render call resource ids</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="class_string_id.html">StringId</a> previousShaderNameId        = <a class="code" href="class_string_id.html">StringId</a>();</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> previousTextureResourceId = <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a>();</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a> previousMeshResourceId    = <a class="code" href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">ResourceId</a>();</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;};</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* RenderingContextSingletonComponent_h */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aclassgenesis_1_1_texture_resource_html"><div class="ttname"><a href="classgenesis_1_1_texture_resource.html">genesis::TextureResource</a></div><div class="ttdef"><b>Definition:</b> TextureResource.h:28</div></div>
 <div class="ttc" id="aclassgenesis_1_1ecs_1_1_i_component_html"><div class="ttname"><a href="classgenesis_1_1ecs_1_1_i_component.html">genesis::ecs::IComponent</a></div><div class="ttdef"><b>Definition:</b> ECS.h:85</div></div>
-<div class="ttc" id="aclassgenesis_1_1_rendering_context_singleton_component_html"><div class="ttname"><a href="classgenesis_1_1_rendering_context_singleton_component.html">genesis::RenderingContextSingletonComponent</a></div><div class="ttdef"><b>Definition:</b> RenderingContextSingletonComponent.h:28</div></div>
-<div class="ttc" id="anamespacegenesis_html_a7fb6f72280ff7080bba64707e75af542"><div class="ttname"><a href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">genesis::GLuint</a></div><div class="ttdeci">unsigned int GLuint</div><div class="ttdef"><b>Definition:</b> RenderingContextSingletonComponent.h:24</div></div>
+<div class="ttc" id="aclassgenesis_1_1_rendering_context_singleton_component_html"><div class="ttname"><a href="classgenesis_1_1_rendering_context_singleton_component.html">genesis::RenderingContextSingletonComponent</a></div><div class="ttdef"><b>Definition:</b> RenderingContextSingletonComponent.h:36</div></div>
+<div class="ttc" id="anamespacegenesis_html_a7fb6f72280ff7080bba64707e75af542"><div class="ttname"><a href="namespacegenesis.html#a7fb6f72280ff7080bba64707e75af542">genesis::GLuint</a></div><div class="ttdeci">unsigned int GLuint</div><div class="ttdef"><b>Definition:</b> RenderingContextSingletonComponent.h:26</div></div>
+<div class="ttc" id="aclassgenesis_1_1_mesh_resource_html"><div class="ttname"><a href="classgenesis_1_1_mesh_resource.html">genesis::MeshResource</a></div><div class="ttdef"><b>Definition:</b> MeshResource.h:27</div></div>
+<div class="ttc" id="aclassgenesis_1_1_shader_resource_html"><div class="ttname"><a href="classgenesis_1_1_shader_resource.html">genesis::ShaderResource</a></div><div class="ttdef"><b>Definition:</b> ShaderResource.h:30</div></div>
+<div class="ttc" id="aclass_string_id_html"><div class="ttname"><a href="class_string_id.html">StringId</a></div><div class="ttdef"><b>Definition:</b> StringUtils.h:114</div></div>
 <div class="ttc" id="anamespacegenesis_html"><div class="ttname"><a href="namespacegenesis.html">genesis</a></div><div class="ttdef"><b>Definition:</b> TransformComponent.h:26</div></div>
-<div class="ttc" id="anamespacegenesis_html_a332cc295bff8f24e2d483d17e6862a7a"><div class="ttname"><a href="namespacegenesis.html#a332cc295bff8f24e2d483d17e6862a7a">genesis::SDL_GLContext</a></div><div class="ttdeci">void * SDL_GLContext</div><div class="ttdef"><b>Definition:</b> RenderingContextSingletonComponent.h:23</div></div>
+<div class="ttc" id="anamespacegenesis_html_a12081366aafd55cb677b4780bfbc7056"><div class="ttname"><a href="namespacegenesis.html#a12081366aafd55cb677b4780bfbc7056">genesis::ResourceId</a></div><div class="ttdeci">unsigned int ResourceId</div><div class="ttdef"><b>Definition:</b> RenderableComponent.h:27</div></div>
+<div class="ttc" id="anamespacegenesis_html_a332cc295bff8f24e2d483d17e6862a7a"><div class="ttname"><a href="namespacegenesis.html#a332cc295bff8f24e2d483d17e6862a7a">genesis::SDL_GLContext</a></div><div class="ttdeci">void * SDL_GLContext</div><div class="ttdef"><b>Definition:</b> RenderingContextSingletonComponent.h:25</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
