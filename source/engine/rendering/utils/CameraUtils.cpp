@@ -14,6 +14,11 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
+namespace rendering
+{
+
+///-----------------------------------------------------------------------------------------------
+
 CameraFrustum CalculateCameraFrustum(const glm::mat4& viewMatrix, const glm::mat4& projMatrix)
 {
     CameraFrustum cameraFrustum;
@@ -46,5 +51,7 @@ CameraFrustum CalculateCameraFrustum(const glm::mat4& viewMatrix, const glm::mat
 }
 
 ///-----------------------------------------------------------------------------------------------
+
+}
 
 }

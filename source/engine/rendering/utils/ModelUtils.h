@@ -22,6 +22,11 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------
 
+namespace rendering
+{
+
+///------------------------------------------------------------------------------------------------
+
 class RenderableComponent;
 
 ///------------------------------------------------------------------------------------------------
@@ -35,7 +40,7 @@ ecs::EntityId LoadAndCreateModelByName
 
 ///------------------------------------------------------------------------------------------------
 
-res::ResourceId LoadMeshResourceFromAtlasTexCoords
+resources::ResourceId LoadMeshResourceFromAtlasTexCoords
 (
     const int meshAtlasCol,
     const int meshAtlasRow,
@@ -47,7 +52,7 @@ res::ResourceId LoadMeshResourceFromAtlasTexCoords
 
 ///------------------------------------------------------------------------------------------------
 
-res::ResourceId LoadMeshFromAtlasTexCoordsAndAddToRenderableAnimations
+resources::ResourceId LoadMeshFromAtlasTexCoordsAndAddToRenderableAnimations
 (
     const int meshAtlasCol,
     const int meshAtlasRow,
@@ -60,6 +65,8 @@ res::ResourceId LoadMeshFromAtlasTexCoordsAndAddToRenderableAnimations
 );
 
 ///------------------------------------------------------------------------------------------------
+
+}
 
 }
 

@@ -16,6 +16,11 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
+namespace rendering
+{
+
+///-----------------------------------------------------------------------------------------------
+
 AnimationSystem::AnimationSystem(genesis::ecs::World& world)
     : BaseSystem(world)
 {
@@ -48,5 +53,7 @@ void AnimationSystem::VUpdateAssociatedComponents(const float dt) const
 }
 
 ///-----------------------------------------------------------------------------------------------
+
+}
 
 }

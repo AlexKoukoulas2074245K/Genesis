@@ -23,13 +23,20 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
+namespace rendering
+{
+
+///-----------------------------------------------------------------------------------------------
+
 class ShaderStoreSingletonComponent final: public ecs::IComponent
 {
 public:
-    std::unordered_map<StringId, res::ShaderResource, StringIdHasher> mShaders;
+    std::unordered_map<StringId, resources::ShaderResource, StringIdHasher> mShaders;
 };
 
 ///-----------------------------------------------------------------------------------------------
+
+}
 
 }
 

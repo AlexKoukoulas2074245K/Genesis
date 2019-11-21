@@ -19,6 +19,11 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------
 
+namespace rendering
+{
+
+///------------------------------------------------------------------------------------------------
+
 ecs::EntityId LoadAndCreateModelByName
 (
     const std::string& modelName,
@@ -37,13 +42,13 @@ ecs::EntityId LoadAndCreateModelByName
 
     renderableComponent->mAnimationsToMeshes[StringId("default")].push_back
     (
-        res::ResourceLoadingService::GetInstance().
-        LoadResource(res::ResourceLoadingService::RES_MODELS_ROOT + modelName + ".obj"
+        resources::ResourceLoadingService::GetInstance().
+        LoadResource(resources::ResourceLoadingService::RES_MODELS_ROOT + modelName + ".obj"
     ));
         
-    renderableComponent->mTextureResourceId = res::ResourceLoadingService::GetInstance().LoadResource
+    renderableComponent->mTextureResourceId = resources::ResourceLoadingService::GetInstance().LoadResource
     (
-        res::ResourceLoadingService::RES_TEXTURES_ROOT + modelName + ".png"
+        resources::ResourceLoadingService::RES_TEXTURES_ROOT + modelName + ".png"
     );
     
     world.AddComponent<RenderableComponent>(modelEntity, std::move(renderableComponent));
@@ -95,7 +100,7 @@ ResourceId LoadMeshFromAtlasTexCoords
     const auto texCoords = CalculateTextureCoordsFromColumnAndRow(correctedMeshCol, correctedMeshRow, atlasCols, atlasRows, horFlipped);
     const auto meshPath  = CreateTexCoordInjectedModelPath(modelName, texCoords);
 
-    const auto loadedMeshResourceId = res::ResourceLoadingService::GetInstance().LoadResource(meshPath);
+    const auto loadedMeshResourceId = resources::ResourceLoadingService::GetInstance().LoadResource(meshPath);
     return loadedMeshResourceId;
 }
 
@@ -164,7 +169,7 @@ std::string CreateTexCoordInjectedModelPath
     const std::vector<glm::vec2>& texCoords
 )
 {
-    std::string path = res::ResourceLoadingService::RES_MODELS_ROOT + modelName + "[";
+    std::string path = resources::ResourceLoadingService::RES_MODELS_ROOT + modelName + "[";
 
     path += std::to_string(texCoords[0].x) + "," + std::to_string(texCoords[0].y);
 
@@ -179,6 +184,8 @@ std::string CreateTexCoordInjectedModelPath
 }
 
 ///------------------------------------------------------------------------------------------------
+
+}
 
 }
 

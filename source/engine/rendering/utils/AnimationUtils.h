@@ -21,6 +21,11 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
+namespace rendering
+{
+
+///-----------------------------------------------------------------------------------------------
+
 inline void ChangeAnimationIfCurrentPlayingIsDifferent
 (
     const StringId animationNameId,
@@ -54,6 +59,8 @@ inline void ResumeCurrentlyPlayingAnimation(AnimationTimerComponent& animationTi
 }
 
 ///-----------------------------------------------------------------------------------------------
+
+}
 
 }
 

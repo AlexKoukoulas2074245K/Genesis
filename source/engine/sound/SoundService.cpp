@@ -112,9 +112,9 @@ void SoundService::Initialize() const
 
 void SoundService::PlaySfx(const StringId sfxName, const bool overrideCurrentPlaying /* true */)
 {
-    auto& resourceLoadingService = res::ResourceLoadingService::GetInstance();
+    auto& resourceLoadingService = resources::ResourceLoadingService::GetInstance();
 
-    const auto sfxFilePath = res::ResourceLoadingService::RES_SFX_ROOT + sfxName.GetString();
+    const auto sfxFilePath = resources::ResourceLoadingService::RES_SFX_ROOT + sfxName.GetString();
     auto sfxFilePathWithExtension = sfxFilePath + SFX_FILE_EXTENSION;
 
     if (resourceLoadingService.HasLoadedResource(sfxFilePathWithExtension) == false)
@@ -123,7 +123,7 @@ void SoundService::PlaySfx(const StringId sfxName, const bool overrideCurrentPla
         resourceLoadingService.LoadResource(sfxFilePathWithExtension);
     }
 
-    auto& sfxResource = resourceLoadingService.GetResource<res::SfxResource>(sfxFilePathWithExtension);
+    auto& sfxResource = resourceLoadingService.GetResource<resources::SfxResource>(sfxFilePathWithExtension);
 
     if (overrideCurrentPlaying || Mix_Playing(1) == false)
     {        
@@ -135,9 +135,9 @@ void SoundService::PlaySfx(const StringId sfxName, const bool overrideCurrentPla
 
 void SoundService::PlayMusic(const StringId musicTrackName, const bool fadeOutEnabled /* true */)
 {    
-    auto& resourceLoadingService = res::ResourceLoadingService::GetInstance();
+    auto& resourceLoadingService = resources::ResourceLoadingService::GetInstance();
 
-    const auto musicFilePath        = res::ResourceLoadingService::RES_MUSIC_ROOT + musicTrackName.GetString();    
+    const auto musicFilePath        = resources::ResourceLoadingService::RES_MUSIC_ROOT + musicTrackName.GetString();    
     auto musicFilePathWithExtension = musicFilePath + MUSIC_FILE_EXTENSION;    
 
     if (resourceLoadingService.HasLoadedResource(musicFilePathWithExtension) == false)
@@ -146,7 +146,7 @@ void SoundService::PlayMusic(const StringId musicTrackName, const bool fadeOutEn
         resourceLoadingService.LoadResource(musicFilePathWithExtension);
     }
 
-    auto& musicResource = resourceLoadingService.GetResource<res::MusicResource>(musicFilePathWithExtension);
+    auto& musicResource = resourceLoadingService.GetResource<resources::MusicResource>(musicFilePathWithExtension);
     
     if (fadeOutEnabled == false)
     {        
@@ -245,8 +245,8 @@ void SoundService::OnMusicFinished()
 {
     if (mQueuedMusicResourceId != 0)
     {
-        auto& resourceLoadingService = res::ResourceLoadingService::GetInstance();
-        auto& musicResource = resourceLoadingService.GetResource<res::MusicResource>(mQueuedMusicResourceId);
+        auto& resourceLoadingService = resources::ResourceLoadingService::GetInstance();
+        auto& musicResource = resourceLoadingService.GetResource<resources::MusicResource>(mQueuedMusicResourceId);
 
         Mix_PlayMusic(musicResource.GetSdlMusicHandle(), -1);
     }

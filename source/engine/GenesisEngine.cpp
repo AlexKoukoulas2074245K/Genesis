@@ -11,6 +11,7 @@
 #include "input/systems/RawInputHandlingSystem.h"
 #include "input/utils/InputUtils.h"
 #include "rendering/components/WindowSingletonComponent.h"
+#include "rendering/systems/AnimationSystem.h"
 #include "rendering/systems/RenderingSystem.h"
 #include "resources/ResourceLoadingService.h"
 #include "sound/SoundService.h"
@@ -119,7 +120,7 @@ void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& s
     }
     
     // Create SDL window
-    auto windowComponent = std::make_unique<WindowSingletonComponent>();
+    auto windowComponent = std::make_unique<rendering::WindowSingletonComponent>();
     windowComponent->mWindowTitle = startupParameters.mGameTitle;
     windowComponent->mWindowHandle = SDL_CreateWindow
     (
@@ -141,7 +142,7 @@ void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& s
     SDL_SetWindowResizable(windowComponent->mWindowHandle, SDL_FALSE);
     SDL_ShowWindow(windowComponent->mWindowHandle);
 
-    mWorld.SetSingletonComponent<WindowSingletonComponent>(std::move(windowComponent));
+    mWorld.SetSingletonComponent<rendering::WindowSingletonComponent>(std::move(windowComponent));
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -149,14 +150,15 @@ void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& s
 void GenesisEngine::InitializeSystems()
 {    
     mWorld.AddSystem(std::make_unique<input::RawInputHandlingSystem>(mWorld));
-    mWorld.AddSystem(std::make_unique<RenderingSystem>(mWorld));
+    mWorld.AddSystem(std::make_unique<rendering::AnimationSystem>(mWorld));
+    mWorld.AddSystem(std::make_unique<rendering::RenderingSystem>(mWorld));
 }
 
 ///-----------------------------------------------------------------------------------------------
 
 void GenesisEngine::InitializeServices() const
 {
-    res::ResourceLoadingService::GetInstance().Initialize();
+    resources::ResourceLoadingService::GetInstance().Initialize();
     sound::SoundService::GetInstance().Initialize();
 }
 

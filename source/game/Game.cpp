@@ -12,7 +12,7 @@
 
 void Game::VOnInit(genesis::ecs::World& world)
 {
-    genesis::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), world);
+    genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), world);
 }
 
 ///------------------------------------------------------------------------------------------------
