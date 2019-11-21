@@ -15,6 +15,11 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
+namespace input
+{
+
+///-----------------------------------------------------------------------------------------------
+
 RawInputHandlingSystem::RawInputHandlingSystem(genesis::ecs::World& world)
     : BaseSystem(world)
 {
@@ -40,17 +45,17 @@ void RawInputHandlingSystem::VUpdateAssociatedComponents(const float) const
         // Key down this frame but not last frame (tap)
         if (currentKeyboardState[sdlScancode] && !inputStateComponent.mPreviousRawKeyboardState[sdlScancode])
         {
-            inputStateComponent.mCurrentInputState[mappedVirtualAction] = VirtualActionInputState::TAPPED;
+            inputStateComponent.mCurrentInputState[mappedVirtualAction] = InputActionState::TAPPED;
         }
         // Key down this frame and last frame (pressed)
         else if (currentKeyboardState[sdlScancode] && inputStateComponent.mPreviousRawKeyboardState[sdlScancode])
         {
-            inputStateComponent.mCurrentInputState[mappedVirtualAction] = VirtualActionInputState::PRESSED;
+            inputStateComponent.mCurrentInputState[mappedVirtualAction] = InputActionState::PRESSED;
         }
         // Key up this frame, but down last frame (released)
         else
         {
-            inputStateComponent.mCurrentInputState[mappedVirtualAction] = VirtualActionInputState::RELEASED;
+            inputStateComponent.mCurrentInputState[mappedVirtualAction] = InputActionState::RELEASED;
         }
     }
 
@@ -59,5 +64,7 @@ void RawInputHandlingSystem::VUpdateAssociatedComponents(const float) const
 }
 
 ///-----------------------------------------------------------------------------------------------
+
+}
 
 }

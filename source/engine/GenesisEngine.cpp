@@ -148,7 +148,7 @@ void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& s
 
 void GenesisEngine::InitializeSystems()
 {    
-    mWorld.AddSystem(std::make_unique<RawInputHandlingSystem>(mWorld));
+    mWorld.AddSystem(std::make_unique<input::RawInputHandlingSystem>(mWorld));
     mWorld.AddSystem(std::make_unique<RenderingSystem>(mWorld));
 }
 

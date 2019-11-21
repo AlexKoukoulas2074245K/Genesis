@@ -23,11 +23,16 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
+namespace input
+{
+
+///-----------------------------------------------------------------------------------------------
+
 static constexpr int DEFAULT_KEY_COUNT = 512;
 
 ///-----------------------------------------------------------------------------------------------
 
-enum class VirtualActionType
+enum class InputActionType
 {
     LEFT_ARROW,
     RIGHT_ARROW,
@@ -46,7 +51,7 @@ enum class VirtualActionType
 
 ///-----------------------------------------------------------------------------------------------
 
-enum class VirtualActionInputState
+enum class InputActionState
 {
     RELEASED, PRESSED, TAPPED
 };
@@ -56,38 +61,37 @@ enum class VirtualActionInputState
 class InputStateSingletonComponent final: public ecs::IComponent
 {
 public:
-    std::unordered_map<VirtualActionType, VirtualActionInputState> mCurrentInputState = 
+    std::unordered_map<InputActionType, InputActionState> mCurrentInputState =
     {
-        { VirtualActionType::LEFT_ARROW,                  VirtualActionInputState::RELEASED },
-        { VirtualActionType::RIGHT_ARROW,                 VirtualActionInputState::RELEASED },
-        { VirtualActionType::UP_ARROW,                    VirtualActionInputState::RELEASED },
-        { VirtualActionType::DOWN_ARROW,                  VirtualActionInputState::RELEASED },
-        { VirtualActionType::A_BUTTON,                    VirtualActionInputState::RELEASED },
-        { VirtualActionType::B_BUTTON,                    VirtualActionInputState::RELEASED },
-        { VirtualActionType::START_BUTTON,                VirtualActionInputState::RELEASED },
-        { VirtualActionType::SELECT_BUTTON,               VirtualActionInputState::RELEASED },
-        { VirtualActionType::DEBUG_CAMERA_UP,             VirtualActionInputState::RELEASED },
-        { VirtualActionType::DEBUG_CAMERA_DOWN,           VirtualActionInputState::RELEASED },
-        { VirtualActionType::DEBUG_CAMERA_FORWARD,        VirtualActionInputState::RELEASED },
-        { VirtualActionType::DEBUG_CAMERA_BACKWARD,       VirtualActionInputState::RELEASED },
-        { VirtualActionType::DEBUG_SPEED_UP,              VirtualActionInputState::RELEASED },
+        { InputActionType::LEFT_ARROW,            InputActionState::RELEASED },
+        { InputActionType::RIGHT_ARROW,           InputActionState::RELEASED },
+        { InputActionType::UP_ARROW,              InputActionState::RELEASED },
+        { InputActionType::DOWN_ARROW,            InputActionState::RELEASED },
+        { InputActionType::A_BUTTON,              InputActionState::RELEASED },
+        { InputActionType::B_BUTTON,              InputActionState::RELEASED },
+        { InputActionType::START_BUTTON,          InputActionState::RELEASED },
+        { InputActionType::SELECT_BUTTON,         InputActionState::RELEASED },
+        { InputActionType::DEBUG_CAMERA_UP,       InputActionState::RELEASED },
+        { InputActionType::DEBUG_CAMERA_DOWN,     InputActionState::RELEASED },
+        { InputActionType::DEBUG_CAMERA_FORWARD,  InputActionState::RELEASED },
+        { InputActionType::DEBUG_CAMERA_BACKWARD, InputActionState::RELEASED },
     };
 
-    std::unordered_map<SDL_Scancode, VirtualActionType> mKeybindings = 
+    std::unordered_map<SDL_Scancode, InputActionType> mKeybindings =
     {
-        { SDL_SCANCODE_LEFT,      VirtualActionType::LEFT_ARROW },
-        { SDL_SCANCODE_RIGHT,     VirtualActionType::RIGHT_ARROW },
-        { SDL_SCANCODE_UP,        VirtualActionType::UP_ARROW },
-        { SDL_SCANCODE_DOWN,      VirtualActionType::DOWN_ARROW },
-        { SDL_SCANCODE_Z,         VirtualActionType::A_BUTTON },
-        { SDL_SCANCODE_X,         VirtualActionType::B_BUTTON },
-        { SDL_SCANCODE_RETURN,    VirtualActionType::START_BUTTON },
-        { SDL_SCANCODE_BACKSPACE, VirtualActionType::SELECT_BUTTON },
-        { SDL_SCANCODE_Q,         VirtualActionType::DEBUG_CAMERA_UP },
-        { SDL_SCANCODE_E,         VirtualActionType::DEBUG_CAMERA_DOWN },
-        { SDL_SCANCODE_W,         VirtualActionType::DEBUG_CAMERA_FORWARD },
-        { SDL_SCANCODE_S,         VirtualActionType::DEBUG_CAMERA_BACKWARD },
-        { SDL_SCANCODE_SPACE,     VirtualActionType::DEBUG_SPEED_UP },
+        { SDL_SCANCODE_LEFT,      InputActionType::LEFT_ARROW },
+        { SDL_SCANCODE_RIGHT,     InputActionType::RIGHT_ARROW },
+        { SDL_SCANCODE_UP,        InputActionType::UP_ARROW },
+        { SDL_SCANCODE_DOWN,      InputActionType::DOWN_ARROW },
+        { SDL_SCANCODE_Z,         InputActionType::A_BUTTON },
+        { SDL_SCANCODE_X,         InputActionType::B_BUTTON },
+        { SDL_SCANCODE_RETURN,    InputActionType::START_BUTTON },
+        { SDL_SCANCODE_BACKSPACE, InputActionType::SELECT_BUTTON },
+        { SDL_SCANCODE_Q,         InputActionType::DEBUG_CAMERA_UP },
+        { SDL_SCANCODE_E,         InputActionType::DEBUG_CAMERA_DOWN },
+        { SDL_SCANCODE_W,         InputActionType::DEBUG_CAMERA_FORWARD },
+        { SDL_SCANCODE_S,         InputActionType::DEBUG_CAMERA_BACKWARD },
+        { SDL_SCANCODE_SPACE,     InputActionType::DEBUG_SPEED_UP },
     };
 
     // Needed for tapped input checks 
@@ -97,6 +101,8 @@ public:
 };
 
 ///-----------------------------------------------------------------------------------------------
+
+}
 
 }
 

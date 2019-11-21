@@ -22,6 +22,11 @@
 
 ///-----------------------------------------------------------------------------------------------
 
+namespace genesis
+{
+
+///-----------------------------------------------------------------------------------------------
+
 namespace math
 {
 
@@ -311,6 +316,8 @@ inline float Cosf(const float val)
 inline float Arctan2(const float x, const float y)
 {
     return std::atan2(x, y);
+}
+
 }
 
 }
