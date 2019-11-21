@@ -1,4 +1,5 @@
 *project_files*/
+docs/html*
 CMakeLists.txt.user
 *~
 /**/*.xcodeproj/**/xcuserdata/
