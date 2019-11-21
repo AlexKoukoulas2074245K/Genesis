@@ -80,7 +80,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     auto& renderingContextComponent           = mWorld.GetSingletonComponent<RenderingContextSingletonComponent>();    
     
     // Calculate render-constant camera view matrix
-    cameraComponent.mViewMatrix = glm::lookAtLH(cameraComponent.mPosition, cameraComponent.mFocusPosition, cameraComponent.mUpVector);
+    cameraComponent.mViewMatrix = glm::lookAtLH(cameraComponent.mPosition, cameraComponent.mPosition + cameraComponent.mFrontVector, cameraComponent.mUpVector);
     
     // Calculate the camera frustum for this frame
     cameraComponent.mFrustum = CalculateCameraFrustum(cameraComponent.mViewMatrix, cameraComponent.mProjectionMatrix);
