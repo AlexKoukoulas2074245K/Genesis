@@ -82,6 +82,17 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     // Calculate render-constant camera view matrix
     cameraComponent.mViewMatrix = glm::lookAtLH(cameraComponent.mPosition, cameraComponent.mPosition + cameraComponent.mFrontVector, cameraComponent.mUpVector);
     
+    // Calculate render-constant camera projection matrix
+    cameraComponent.mProjectionMatrix = glm::perspectiveFovLH
+    (
+        cameraComponent.mFieldOfView,
+        windowComponent.mRenderableWidth,
+        windowComponent.mRenderableHeight,
+        cameraComponent.mZNear,
+        cameraComponent.mZFar
+    );
+
+
     // Calculate the camera frustum for this frame
     cameraComponent.mFrustum = CalculateCameraFrustum(cameraComponent.mViewMatrix, cameraComponent.mProjectionMatrix);
     
@@ -322,19 +333,8 @@ void RenderingSystem::InitializeRenderingWindowAndContext() const
 ///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::InitializeCamera() const
-{
-    const auto& windowComponent = mWorld.GetSingletonComponent<WindowSingletonComponent>();
-    auto cameraComponent = std::make_unique<CameraSingletonComponent>();
-    cameraComponent->mProjectionMatrix = glm::perspectiveFovLH
-    (
-        cameraComponent->mFieldOfView,
-        windowComponent.mRenderableWidth,
-        windowComponent.mRenderableHeight,
-        cameraComponent->mZNear,
-        cameraComponent->mZFar
-    );
-    
-    mWorld.SetSingletonComponent<CameraSingletonComponent>(std::move(cameraComponent));
+{        
+    mWorld.SetSingletonComponent<CameraSingletonComponent>(std::make_unique<CameraSingletonComponent>());
 }
 
 ///-----------------------------------------------------------------------------------------------

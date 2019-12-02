@@ -43,7 +43,9 @@ enum class InputActionType
     CAMERA_LOOK_UP,
     CAMERA_LOOK_DOWN,
     CAMERA_LOOK_LEFT,
-    CAMERA_LOOK_RIGHT
+    CAMERA_LOOK_RIGHT,
+    CAMERA_ZOOM_IN,
+    CAMERA_ZOOM_OUT
 };
 
 ///-----------------------------------------------------------------------------------------------
@@ -70,6 +72,8 @@ public:
         { InputActionType::CAMERA_LOOK_DOWN,     InputActionState::RELEASED },
         { InputActionType::CAMERA_LOOK_LEFT,     InputActionState::RELEASED },
         { InputActionType::CAMERA_LOOK_RIGHT,    InputActionState::RELEASED },
+        { InputActionType::CAMERA_ZOOM_IN,       InputActionState::RELEASED },
+        { InputActionType::CAMERA_ZOOM_OUT,      InputActionState::RELEASED }
     };
 
     std::unordered_map<SDL_Scancode, InputActionType> mKeybindings =
@@ -83,7 +87,9 @@ public:
         { SDL_SCANCODE_UP,    InputActionType::CAMERA_LOOK_UP },
         { SDL_SCANCODE_DOWN,  InputActionType::CAMERA_LOOK_DOWN },
         { SDL_SCANCODE_LEFT,  InputActionType::CAMERA_LOOK_LEFT },
-        { SDL_SCANCODE_RIGHT, InputActionType::CAMERA_LOOK_RIGHT }
+        { SDL_SCANCODE_RIGHT, InputActionType::CAMERA_LOOK_RIGHT },
+        { SDL_SCANCODE_Z,     InputActionType::CAMERA_ZOOM_IN },
+        { SDL_SCANCODE_X,     InputActionType::CAMERA_ZOOM_OUT }
     };
 
     // Needed for tapped input checks 
