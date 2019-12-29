@@ -29,7 +29,9 @@ if(NOT WIN32)
     find_package(SDL2_image REQUIRED)
     find_package(SDL2_mixer REQUIRED)
     find_package(OpenGL REQUIRED)
+    find_package(Lua51 REQUIRED)
 endif()
+
 
 # Find glm
 set(GLM_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/extern/glm-0.9.9.3")
@@ -38,14 +40,14 @@ set(GLM_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/extern/glm-0.9.9.3")
 set(JSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/extern/json-3.5.0")
 
 # Define executable target
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${SDL2main_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${CMAKE_BINARY_DIR} ${GLM_INCLUDE_DIRS} ${JSON_INCLUDE_DIRS})
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${SDL2main_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${CMAKE_BINARY_DIR} ${GLM_INCLUDE_DIRS} ${JSON_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
 
 file(GLOB_RECURSE SOURCE_DIR
         "*.h"
         "*.cpp"
 )    
 add_executable(${PROJECT_NAME} ${SOURCE_DIR})
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL_MIXER_LIBRARIES} ${OPENGL_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL_MIXER_LIBRARIES} ${OPENGL_LIBRARIES} ${LUA_LIBRARIES})
 
 assign_source_group(${SOURCE_DIR})
 
