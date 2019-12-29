@@ -11,6 +11,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "../common/utils/StringUtils.h"
+#include "../../engine/GenesisEngine.h"
 
 #include <functional>
 
@@ -32,7 +33,7 @@ using MusicResourceId = unsigned int;
 /// A class providing access to sound playback utilities.
 class SoundService final
 {        
-    friend class GenesisEngine;
+    friend class genesis::GenesisEngine;
 
 public:
     /// The default method of getting a hold of this singleton.

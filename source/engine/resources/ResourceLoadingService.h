@@ -11,6 +11,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "../common/utils/StringUtils.h"
+#include "../../engine/GenesisEngine.h"
 
 #include <memory>
 #include <string>        
@@ -47,8 +48,8 @@ struct ResourceIdHasher
 /// A service class aimed at providing resource loading, simple file IO, etc.
 class ResourceLoadingService final
 {
-    friend class GenesisEngine;
-
+    friend class genesis::GenesisEngine;
+    
 public:
     static const std::string RES_ROOT;
     static const std::string RES_ATLASES_ROOT;

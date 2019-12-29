@@ -34,9 +34,10 @@ struct GameStartupParameters
         const int gameWindowHeight
     )
         : mGameTitle(gameTitle)
+        , mGameWindowScreenFraction(0.0f)
         , mGameWindowWidth(gameWindowWidth)
         , mGameWindowHeight(gameWindowHeight)
-        , mGameWindowScreenFraction(0.0f)
+    
     {
     }
 
@@ -52,9 +53,9 @@ struct GameStartupParameters
         const float gameWindowScreenFraction
     )
         : mGameTitle(gameTitle)
+        , mGameWindowScreenFraction(gameWindowScreenFraction)
         , mGameWindowWidth(0)
         , mGameWindowHeight(0)
-        , mGameWindowScreenFraction(gameWindowScreenFraction)
     {
         
     }
