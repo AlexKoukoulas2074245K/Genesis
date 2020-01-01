@@ -10,6 +10,7 @@
 
 ///------------------------------------------------------------------------------------------------
 
+#include "common/utils/StringUtils.h"
 #include "common/utils/TypeTraits.h"
 
 #include <algorithm>
@@ -123,6 +124,11 @@ public:
         mAddedEntitiesBySystemsUpdate.push_back(mEntityCounter);
         return mEntityCounter++;
     }
+    
+    /// Creates a named entity and returns its corresponding entity id.
+    /// @param[in] name the name to associate the entity with.
+    /// @returns the entity id of the newly constructed entity.
+    EntityId CreateEntity(const StringId name);
     
     /// Gets the respective component from the entity with the given entity id.
     ///

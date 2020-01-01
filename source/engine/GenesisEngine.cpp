@@ -20,6 +20,17 @@
 #include <SDL_events.h> 
 #include <SDL_timer.h>
 
+
+extern "C" {
+# include "lua.h"
+# include "lauxlib.h"
+# include "lualib.h"
+}
+
+#include "../engine/common/utils/MathUtils.h"
+
+#include <iostream>
+
 ///------------------------------------------------------------------------------------------------
 
 namespace genesis
@@ -31,8 +42,70 @@ bool AppShouldQuit();
 
 ///------------------------------------------------------------------------------------------------
 
+    lua_State* L = nullptr;
+    
+    void luaInit()
+    {
+        L = luaL_newstate();
+        luaL_openlibs(L);
+    }
+    
+    void luaDestroy()
+    {
+        lua_close(L);
+    }
+    
+    void runLuaScript()
+    {
+        lua_settop(L,0); //empty the lua stack
+        if(luaL_dofile(L, "/Users/alex/Desktop/Code/Genesis/res/scripts/test.lua")) {
+            fprintf(stderr, "error: %s\n", lua_tostring(L,-1));
+            lua_pop(L,1);
+            exit(1);
+        }
+        
+        assert(lua_gettop(L) == 0); //empty the lua stack
+    }
+    
+    void BindNativeFunctionToLua(lua_State* L, const char* functionName, lua_CFunction function) {
+        lua_pushcfunction(L, function);
+        lua_setglobal(L, functionName);
+    }
+    
+    static ecs::World* world;
+    
 GenesisEngine::GenesisEngine()
-{    
+{
+    world = &mWorld;
+    luaInit();
+    BindNativeFunctionToLua(L, "print", [](lua_State* L)
+    {
+        std::string str(lua_tostring(L, 1));    // get function argument
+        std::cout << "[LUA]: " << str << "\n";
+        return 0;
+    });
+    
+    BindNativeFunctionToLua(L, "createEntity", [](lua_State*)
+    {
+        lua_pushinteger(L, world->CreateEntity());
+        return 1;
+    });
+    
+    runLuaScript();
+    
+    auto dtAccum = 0.0f;
+    for (int i = 0; i < 100; i++)
+    {
+        const auto randomDt = genesis::math::RandomFloat(0.0f, 0.1f);
+        dtAccum += randomDt;
+        
+        lua_getglobal(L, "update");
+        lua_pushnumber(L, dtAccum);
+        lua_pcall(L, 1, 0, 0);
+    }
+    
+    luaDestroy();
+    
 }
 
 ///------------------------------------------------------------------------------------------------

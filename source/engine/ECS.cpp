@@ -6,6 +6,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "ECS.h"
+#include "common/components/NameComponent.h"
 
 #include <typeinfo>
 
@@ -80,6 +81,17 @@ ComponentMask World::CalculateComponentUsageMaskForEntity(const EntityId entityI
 
 ///------------------------------------------------------------------------------------------------
 
+EntityId World::CreateEntity(const StringId name)
+{
+    const auto& newEntity = CreateEntity();
+    
+    auto nameComponent = std::make_unique<NameComponent>(<#_Args &&__args...#>)
+    auto nameComponent = AddComponent<NameComponent>(<#const EntityId entityId#>, <#std::unique_ptr<IComponent> component#>)
+    AddComponent<NameComponent>(<#const EntityId entityId#>, <#std::unique_ptr<IComponent> component#>)
+}
+
+///------------------------------------------------------------------------------------------------
+    
 void World::RemoveMarkedSystems()
 {
     for (const auto& systemHash: mSystemHashesToRemove)
