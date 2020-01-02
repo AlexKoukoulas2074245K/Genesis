@@ -60,8 +60,8 @@ bool IsMeshInsideCameraFrustum
 
 ///-----------------------------------------------------------------------------------------------
 
-RenderingSystem::RenderingSystem(genesis::ecs::World& world)
-    : genesis::ecs::BaseSystem(world)
+RenderingSystem::RenderingSystem()
+    : genesis::ecs::BaseSystem()
 {
     InitializeRenderingWindowAndContext();
     InitializeCamera();
@@ -72,12 +72,14 @@ RenderingSystem::RenderingSystem(genesis::ecs::World& world)
 ///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::VUpdateAssociatedComponents(const float) const
-{
+{    
+    auto& world = ecs::World::GetInstance();
+
     // Get common rendering singleton components
-    const auto& windowComponent               = mWorld.GetSingletonComponent<WindowSingletonComponent>();
-    const auto& shaderStoreComponent          = mWorld.GetSingletonComponent<ShaderStoreSingletonComponent>();        
-    auto& cameraComponent                     = mWorld.GetSingletonComponent<CameraSingletonComponent>();
-    auto& renderingContextComponent           = mWorld.GetSingletonComponent<RenderingContextSingletonComponent>();    
+    const auto& windowComponent               = world.GetSingletonComponent<WindowSingletonComponent>();
+    const auto& shaderStoreComponent          = world.GetSingletonComponent<ShaderStoreSingletonComponent>();
+    auto& cameraComponent                     = world.GetSingletonComponent<CameraSingletonComponent>();
+    auto& renderingContextComponent           = world.GetSingletonComponent<RenderingContextSingletonComponent>();
     
     // Calculate render-constant camera view matrix
     cameraComponent.mViewMatrix = glm::lookAtLH(cameraComponent.mPosition, cameraComponent.mPosition + cameraComponent.mFrontVector, cameraComponent.mUpVector);
@@ -97,7 +99,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     cameraComponent.mFrustum = CalculateCameraFrustum(cameraComponent.mViewMatrix, cameraComponent.mProjectionMatrix);
     
     // Collect all entities that need to be processed
-    auto activeEntities = mWorld.GetActiveEntities();
+    auto activeEntities = world.GetActiveEntities();
     std::vector<genesis::ecs::EntityId> guiEntities;    
     
     // Set background color
@@ -116,10 +118,10 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     GL_CHECK(glEnable(GL_DEPTH_TEST));
         
     // Sort entities based on their depth order to correct transparency
-    std::sort(activeEntities.begin(), activeEntities.end(), [this](const genesis::ecs::EntityId& lhs, const genesis::ecs::EntityId& rhs)
+    std::sort(activeEntities.begin(), activeEntities.end(), [this, &world](const genesis::ecs::EntityId& lhs, const genesis::ecs::EntityId& rhs)
     {
-        const auto& lhsTransformComponent = mWorld.GetComponent<TransformComponent>(lhs);
-        const auto& rhsTransformComponent = mWorld.GetComponent<TransformComponent>(rhs);
+        const auto& lhsTransformComponent = world.GetComponent<TransformComponent>(lhs);
+        const auto& rhsTransformComponent = world.GetComponent<TransformComponent>(rhs);
 
         return lhsTransformComponent.mPosition.z > rhsTransformComponent.mPosition.z;
     });
@@ -128,7 +130,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     {
         if (ShouldProcessEntity(entityId))
         {
-            const auto& renderableComponent = mWorld.GetComponent<RenderableComponent>(entityId);
+            const auto& renderableComponent = world.GetComponent<RenderableComponent>(entityId);
             if (renderableComponent.mIsGuiComponent)
             {
                 guiEntities.push_back(entityId);
@@ -136,7 +138,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
             }            
             else
             {            
-                const auto& transformComponent = mWorld.GetComponent<TransformComponent>(entityId);
+                const auto& transformComponent = world.GetComponent<TransformComponent>(entityId);
                 const auto& activeMeshes       = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
                 const auto& currentMesh        = resources::ResourceLoadingService::GetInstance().GetResource<resources::MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
 
@@ -170,7 +172,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     
     for (const auto& entityId : guiEntities)
     {
-        const auto& renderableComponent = mWorld.GetComponent<RenderableComponent>(entityId);
+        const auto& renderableComponent = world.GetComponent<RenderableComponent>(entityId);
         RenderEntityInternal
         (
             entityId,
@@ -219,7 +221,7 @@ void RenderingSystem::RenderEntityInternal
     }
 
     // Get currently active mesh for this entity
-    const auto& transformComponent = mWorld.GetComponent<TransformComponent>(entityId);    
+    const auto& transformComponent = ecs::World::GetInstance().GetComponent<TransformComponent>(entityId);
     const auto& activeMeshes       = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
 
     // Update current mesh if necessary
@@ -286,7 +288,7 @@ void RenderingSystem::InitializeRenderingWindowAndContext() const
 {    
     // Create SDL GL context
     auto renderingContextComponent = std::make_unique<RenderingContextSingletonComponent>();
-    auto& windowComponent = mWorld.GetSingletonComponent<WindowSingletonComponent>();
+    auto& windowComponent = ecs::World::GetInstance().GetSingletonComponent<WindowSingletonComponent>();
 
     renderingContextComponent->mGLContext = SDL_GL_CreateContext(windowComponent.mWindowHandle);
     if (renderingContextComponent->mGLContext == nullptr)
@@ -327,21 +329,21 @@ void RenderingSystem::InitializeRenderingWindowAndContext() const
     GL_CHECK(glDepthFunc(GL_LESS));    
     
     // Transfer ownership of singleton components to world    
-    mWorld.SetSingletonComponent<RenderingContextSingletonComponent>(std::move(renderingContextComponent));    
+    ecs::World::GetInstance().SetSingletonComponent<RenderingContextSingletonComponent>(std::move(renderingContextComponent));
 }
 
 ///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::InitializeCamera() const
 {        
-    mWorld.SetSingletonComponent<CameraSingletonComponent>(std::make_unique<CameraSingletonComponent>());
+    ecs::World::GetInstance().SetSingletonComponent<CameraSingletonComponent>(std::make_unique<CameraSingletonComponent>());
 }
 
 ///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::CompileAndLoadShaders() const
 {
-    auto& renderingContextComponent = mWorld.GetSingletonComponent<RenderingContextSingletonComponent>();
+    auto& renderingContextComponent = ecs::World::GetInstance().GetSingletonComponent<RenderingContextSingletonComponent>();
     
     // Bind default VAO for correct shader compilation
     GL_CHECK(glGenVertexArrays(1, &renderingContextComponent.mDefaultVertexArrayObject));
@@ -367,7 +369,7 @@ void RenderingSystem::CompileAndLoadShaders() const
     // Unbind any VAO currently bound
     GL_CHECK(glBindVertexArray(0));
     
-    mWorld.SetSingletonComponent<ShaderStoreSingletonComponent>(std::move(shaderStoreComponent));
+    ecs::World::GetInstance().SetSingletonComponent<ShaderStoreSingletonComponent>(std::move(shaderStoreComponent));
 }
 
 ///-----------------------------------------------------------------------------------------------

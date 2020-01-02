@@ -41,7 +41,7 @@ class WindowSingletonComponent;
 class RenderingSystem final: public ecs::BaseSystem
 {
 public:
-    RenderingSystem(ecs::World& world);
+    RenderingSystem();
     
     void VUpdateAssociatedComponents(const float dt) const override;
 

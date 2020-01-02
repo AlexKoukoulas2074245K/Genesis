@@ -55,18 +55,6 @@ static void OnMusicFinishedHook()
 
 ///------------------------------------------------------------------------------------------------
 
-/*
-static void OnSfxFinishedHook(const int channel)
-{
-    if (channel == SFX_CHANNEL_NUMBER)
-    {
-        SoundService::GetInstance().OnSfxFinished();
-    }
-}
-*/
-
-///------------------------------------------------------------------------------------------------
-
 SoundService& SoundService::GetInstance()
 {
     static SoundService instance;

@@ -24,14 +24,13 @@ configure_file(demo-config.h.in "${CMAKE_BINARY_DIR}/demo-config.h")
 
 # Find SDL2 and OpenGL
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/build_utilities")
+find_package(Lua REQUIRED)
 find_package(SDL2 REQUIRED COMPONENTS main)
 if(NOT WIN32)
     find_package(SDL2_image REQUIRED)
     find_package(SDL2_mixer REQUIRED)
-    find_package(OpenGL REQUIRED)
-    find_package(Lua51 REQUIRED)
+    find_package(OpenGL REQUIRED)    
 endif()
-
 
 # Find glm
 set(GLM_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/extern/glm-0.9.9.3")
@@ -51,12 +50,14 @@ target_link_libraries(${PROJECT_NAME} ${SDL2_LIBS} ${SDL2_IMAGE_LIBRARIES} ${SDL
 
 assign_source_group(${SOURCE_DIR})
 
-# Copy SDL2 DLLs to output folder on Windows
-if(WIN32)
-    foreach(DLL ${SDL2_DLLS})
+# Copy DLLs to output folder on Windows
+if(WIN32)		
+    foreach(DLL ${SDL2_DLLS} ${LUA_DLLS})		
+		message("Copying ${DLL} to output folder")
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD COMMAND
             ${CMAKE_COMMAND} -E copy_if_different ${DLL} $<TARGET_FILE_DIR:${PROJECT_NAME}>)
     endforeach()
+	
 endif()
 
 # Enable highest warning levels + treated as errors

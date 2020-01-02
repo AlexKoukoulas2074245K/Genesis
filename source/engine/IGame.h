@@ -10,10 +10,6 @@
 
 ///------------------------------------------------------------------------------------------------
 
-#include "ECS.h"
-
-///------------------------------------------------------------------------------------------------
-
 namespace genesis
 {
 
@@ -28,17 +24,15 @@ public:
     /// Game initialization method. 
     ///
     /// This will be called after all core engine subsystems are initialized, and 
-    /// the game is now free to perform all its initialization flows.
-    /// @param[in] world the singular world of the ECS state.
-    virtual void VOnInit(ecs::World& world) = 0;
+    /// the game is now free to perform all its initialization flows.    
+    virtual void VOnInit() = 0;
 
     /// Game update method. 
     ///
     /// This will be called once per frame and should be used to 
     /// perform all game-specific logic.
-    /// @param[in] dt the inter-frame delta time.
-    /// @param[in] world the singular world of the ECS state.
-    virtual void VOnUpdate(const float dt, ecs::World& world) = 0;
+    /// @param[in] dt the inter-frame delta time.    
+    virtual void VOnUpdate(const float dt) = 0;
 };
 
 ///------------------------------------------------------------------------------------------------

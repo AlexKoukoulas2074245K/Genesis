@@ -17,8 +17,8 @@
 class Game final: public genesis::IGame
 {
 public:    
-    void VOnInit(genesis::ecs::World& world) override;
-    void VOnUpdate(const float dt, genesis::ecs::World& world) override;
+    void VOnInit() override;
+    void VOnUpdate(const float dt) override;
 
 };       
 

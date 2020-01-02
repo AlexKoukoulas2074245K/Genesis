@@ -27,7 +27,7 @@ namespace rendering
 class AnimationSystem final : public ecs::BaseSystem
 {
 public:
-    AnimationSystem(ecs::World&);
+    AnimationSystem();
 
     void VUpdateAssociatedComponents(const float dt) const override;
 };

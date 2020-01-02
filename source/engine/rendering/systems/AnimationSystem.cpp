@@ -21,8 +21,8 @@ namespace rendering
 
 ///-----------------------------------------------------------------------------------------------
 
-AnimationSystem::AnimationSystem(genesis::ecs::World& world)
-    : BaseSystem(world)
+AnimationSystem::AnimationSystem()
+    : BaseSystem()
 {
     CalculateAndSetComponentUsageMask<AnimationTimerComponent, RenderableComponent>();
 }
@@ -31,11 +31,11 @@ AnimationSystem::AnimationSystem(genesis::ecs::World& world)
 
 void AnimationSystem::VUpdateAssociatedComponents(const float dt) const
 {
-    for (const auto& entityId : mWorld.GetActiveEntities())
+    for (const auto& entityId : ecs::World::GetInstance().GetActiveEntities())
     {
         if (ShouldProcessEntity(entityId))
         {
-            auto& animationComponent = mWorld.GetComponent<AnimationTimerComponent>(entityId);
+            auto& animationComponent = ecs::World::GetInstance().GetComponent<AnimationTimerComponent>(entityId);
 
             animationComponent.mAnimationTimer->Update(dt);
 
@@ -43,7 +43,7 @@ void AnimationSystem::VUpdateAssociatedComponents(const float dt) const
             {
                 animationComponent.mAnimationTimer->Reset();
                 
-                auto& renderableComponent = mWorld.GetComponent<RenderableComponent>(entityId);
+                auto& renderableComponent = ecs::World::GetInstance().GetComponent<RenderableComponent>(entityId);
                 const auto& activeAnimationMeshes = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
 
                 renderableComponent.mActiveMeshIndex = (renderableComponent.mActiveMeshIndex + 1) % activeAnimationMeshes.size();

@@ -20,13 +20,13 @@ namespace input
 
 ///-----------------------------------------------------------------------------------------------
 
-RawInputHandlingSystem::RawInputHandlingSystem(genesis::ecs::World& world)
-    : BaseSystem(world)
+RawInputHandlingSystem::RawInputHandlingSystem()
+    : BaseSystem()
 {
     auto inputStateComponent = std::make_unique<InputStateSingletonComponent>();
     inputStateComponent->mPreviousRawKeyboardState.resize(DEFAULT_KEY_COUNT, 0);
 
-    mWorld.SetSingletonComponent<InputStateSingletonComponent>(std::move(inputStateComponent));
+    ecs::World::GetInstance().SetSingletonComponent<InputStateSingletonComponent>(std::move(inputStateComponent));
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ void RawInputHandlingSystem::VUpdateAssociatedComponents(const float) const
 {   
     auto keyboardStateLength         = 0;
     const auto* currentKeyboardState = SDL_GetKeyboardState(&keyboardStateLength);
-    auto& inputStateComponent        = mWorld.GetSingletonComponent<InputStateSingletonComponent>();
+    auto& inputStateComponent        = ecs::World::GetInstance().GetSingletonComponent<InputStateSingletonComponent>();
 
     for (const auto& keybindingEntry: inputStateComponent.mKeybindings)
     {

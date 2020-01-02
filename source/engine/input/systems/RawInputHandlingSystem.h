@@ -26,7 +26,7 @@ namespace input
 class RawInputHandlingSystem final : public ecs::BaseSystem
 {
 public:
-    RawInputHandlingSystem(ecs::World&);
+    RawInputHandlingSystem();
 
     void VUpdateAssociatedComponents(const float dt) const override;
 };

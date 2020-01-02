@@ -40,7 +40,7 @@ SET(_POSSIBLE_LUA_LIBRARY lua)
 IF(Lua_FIND_VERSION_MAJOR AND Lua_FIND_VERSION_MINOR)
   SET(_POSSIBLE_SUFFIXES "${Lua_FIND_VERSION_MAJOR}${Lua_FIND_VERSION_MINOR}" "${Lua_FIND_VERSION_MAJOR}.${Lua_FIND_VERSION_MINOR}" "-${Lua_FIND_VERSION_MAJOR}.${Lua_FIND_VERSION_MINOR}")
 ELSE(Lua_FIND_VERSION_MAJOR AND Lua_FIND_VERSION_MINOR)
-  SET(_POSSIBLE_SUFFIXES "52" "5.2" "-5.2" "51" "5.1" "-5.1")
+  SET(_POSSIBLE_SUFFIXES "52" "5.2" "-5.2" "51" "5.1" "-5.1" "53" "-5.3" "5.3.5")
 ENDIF(Lua_FIND_VERSION_MAJOR AND Lua_FIND_VERSION_MINOR)
 
 # Set up possible search names and locations
@@ -60,7 +60,8 @@ FIND_PATH(LUA_INCLUDE_DIR lua.h
   HINTS
   $ENV{LUA_DIR}
   PATH_SUFFIXES ${_POSSIBLE_LUA_INCLUDE}
-  PATHS
+  PATHS  
+  ${CMAKE_SOURCE_DIR}/extern/lua-5.3.5/include
   ~/Library/Frameworks
   /Library/Frameworks
   /usr/local
@@ -78,6 +79,7 @@ FIND_LIBRARY(LUA_LIBRARY
   $ENV{LUA_DIR}
   PATH_SUFFIXES lib64 lib
   PATHS
+  ${CMAKE_SOURCE_DIR}/extern/lua-5.3.5/lib
   ~/Library/Frameworks
   /Library/Frameworks
   /usr/local
@@ -97,6 +99,10 @@ IF(LUA_LIBRARY)
   ELSE(UNIX AND NOT APPLE)
     SET( LUA_LIBRARIES "${LUA_LIBRARY}" CACHE STRING "Lua Libraries")
   ENDIF(UNIX AND NOT APPLE)
+  
+  iF(WIN32)
+	file(GLOB LUA_DLLS "${CMAKE_SOURCE_DIR}/extern/lua-5.3.5/bin/*.dll")
+  ENDIF(WIN32)
 ENDIF(LUA_LIBRARY)
 
 # Determine Lua version

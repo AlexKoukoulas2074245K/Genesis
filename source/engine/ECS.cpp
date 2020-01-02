@@ -15,15 +15,17 @@
 namespace genesis
 { 
 
+///------------------------------------------------------------------------------------------------
+
 namespace ecs
 { 
 
 ///------------------------------------------------------------------------------------------------
 
-World::World()
-    : mHasRunFirstUpdate(false)
+World& World::GetInstance()
 {
-    mEntityComponentStore.reserve(ANTICIPATED_ENTITY_COUNT);
+    static World instance;
+    return instance;
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -83,11 +85,11 @@ ComponentMask World::CalculateComponentUsageMaskForEntity(const EntityId entityI
 
 EntityId World::CreateEntity(const StringId name)
 {
-    const auto& newEntity = CreateEntity();
-    
-    auto nameComponent = std::make_unique<NameComponent>(<#_Args &&__args...#>)
-    auto nameComponent = AddComponent<NameComponent>(<#const EntityId entityId#>, <#std::unique_ptr<IComponent> component#>)
-    AddComponent<NameComponent>(<#const EntityId entityId#>, <#std::unique_ptr<IComponent> component#>)
+    const auto entity = CreateEntity();
+    auto nameComponent = std::make_unique<NameComponent>();
+    nameComponent->mName = name;    
+    AddComponent<NameComponent>(entity, std::move(nameComponent));
+    return entity;
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -158,6 +160,14 @@ void World::InsertNewEntitiesIntoActiveCollection()
 
 ///------------------------------------------------------------------------------------------------
 
+World::World()
+    : mHasRunFirstUpdate(false)
+{
+    mEntityComponentStore.reserve(ANTICIPATED_ENTITY_COUNT);
+}
+
+///------------------------------------------------------------------------------------------------
+
 void World::OnPreFirstUpdate()
 {
     mAddedEntitiesBySystemsUpdate.clear();
@@ -165,8 +175,7 @@ void World::OnPreFirstUpdate()
 
 ///------------------------------------------------------------------------------------------------
 
-BaseSystem::BaseSystem(World& world)
-    : mWorld(world)
+BaseSystem::BaseSystem()    
 {
 }
 
@@ -177,7 +186,7 @@ bool BaseSystem::ShouldProcessEntity(const EntityId entityId) const
     assert(entityId != NULL_ENTITY_ID &&
         "Entity process check for NULL_ENTITY_ID");
 
-    return (mWorld.CalculateComponentUsageMaskForEntity(entityId) & mComponentUsageMask) == mComponentUsageMask;
+    return (World::GetInstance().CalculateComponentUsageMaskForEntity(entityId) & mComponentUsageMask) == mComponentUsageMask;
 }
 
 ///------------------------------------------------------------------------------------------------

@@ -42,8 +42,7 @@ const std::string ResourceLoadingService::RES_ROOT = "../../res/";
 
 const std::string ResourceLoadingService::RES_ATLASES_ROOT    = RES_ROOT + "atlases/";
 const std::string ResourceLoadingService::RES_DATA_ROOT       = RES_ROOT + "gamedata/";
-const std::string ResourceLoadingService::ENCOUNTER_DATA_ROOT = RES_DATA_ROOT + "encounter_rates/";
-const std::string ResourceLoadingService::RES_LEVELS_ROOT     = RES_ROOT + "levels/";
+const std::string ResourceLoadingService::RES_SCRIPTS_ROOT    = RES_ROOT + "scripts/";
 const std::string ResourceLoadingService::RES_MODELS_ROOT     = RES_ROOT + "models/";
 const std::string ResourceLoadingService::RES_MUSIC_ROOT      = RES_ROOT + "music/";
 const std::string ResourceLoadingService::RES_SFX_ROOT        = RES_ROOT + "sfx/";
@@ -81,6 +80,7 @@ void ResourceLoadingService::Initialize()
     mResourceExtensionsToLoadersMap[StringId("png")]  = mResourceLoaders[0].get();
     mResourceExtensionsToLoadersMap[StringId("json")] = mResourceLoaders[1].get();
     mResourceExtensionsToLoadersMap[StringId("dat")]  = mResourceLoaders[1].get();
+    mResourceExtensionsToLoadersMap[StringId("lua")]  = mResourceLoaders[1].get();
     mResourceExtensionsToLoadersMap[StringId("vs")]   = mResourceLoaders[2].get();
     mResourceExtensionsToLoadersMap[StringId("fs")]   = mResourceLoaders[2].get();
     mResourceExtensionsToLoadersMap[StringId("obj")]  = mResourceLoaders[3].get();

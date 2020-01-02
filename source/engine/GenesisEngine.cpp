@@ -6,6 +6,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "GenesisEngine.h"
+#include "common/utils/MathUtils.h"
 #include "common/utils/OSMessageBox.h"
 #include "input/components/InputStateSingletonComponent.h"
 #include "input/systems/RawInputHandlingSystem.h"
@@ -15,21 +16,12 @@
 #include "rendering/systems/RenderingSystem.h"
 #include "resources/ResourceLoadingService.h"
 #include "sound/SoundService.h"
+#include "scripting/ScriptingService.h"
 
+#include <iostream>
 #include <SDL.h> 
 #include <SDL_events.h> 
 #include <SDL_timer.h>
-
-
-extern "C" {
-# include "lua.h"
-# include "lauxlib.h"
-# include "lualib.h"
-}
-
-#include "../engine/common/utils/MathUtils.h"
-
-#include <iostream>
 
 ///------------------------------------------------------------------------------------------------
 
@@ -41,71 +33,9 @@ namespace genesis
 bool AppShouldQuit();
 
 ///------------------------------------------------------------------------------------------------
-
-    lua_State* L = nullptr;
-    
-    void luaInit()
-    {
-        L = luaL_newstate();
-        luaL_openlibs(L);
-    }
-    
-    void luaDestroy()
-    {
-        lua_close(L);
-    }
-    
-    void runLuaScript()
-    {
-        lua_settop(L,0); //empty the lua stack
-        if(luaL_dofile(L, "/Users/alex/Desktop/Code/Genesis/res/scripts/test.lua")) {
-            fprintf(stderr, "error: %s\n", lua_tostring(L,-1));
-            lua_pop(L,1);
-            exit(1);
-        }
-        
-        assert(lua_gettop(L) == 0); //empty the lua stack
-    }
-    
-    void BindNativeFunctionToLua(lua_State* L, const char* functionName, lua_CFunction function) {
-        lua_pushcfunction(L, function);
-        lua_setglobal(L, functionName);
-    }
-    
-    static ecs::World* world;
     
 GenesisEngine::GenesisEngine()
-{
-    world = &mWorld;
-    luaInit();
-    BindNativeFunctionToLua(L, "print", [](lua_State* L)
-    {
-        std::string str(lua_tostring(L, 1));    // get function argument
-        std::cout << "[LUA]: " << str << "\n";
-        return 0;
-    });
-    
-    BindNativeFunctionToLua(L, "createEntity", [](lua_State*)
-    {
-        lua_pushinteger(L, world->CreateEntity());
-        return 1;
-    });
-    
-    runLuaScript();
-    
-    auto dtAccum = 0.0f;
-    for (int i = 0; i < 100; i++)
-    {
-        const auto randomDt = genesis::math::RandomFloat(0.0f, 0.1f);
-        dtAccum += randomDt;
-        
-        lua_getglobal(L, "update");
-        lua_pushnumber(L, dtAccum);
-        lua_pcall(L, 1, 0, 0);
-    }
-    
-    luaDestroy();
-    
+{            
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -114,7 +44,7 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
 {
     Initialize(startupParameters);
 
-    game.VOnInit(mWorld);
+    game.VOnInit();
 
     float elapsedTicks          = 0.0f;
     float dtAccumulator         = 0.0f;
@@ -142,9 +72,9 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
             dtAccumulator = 0.0f;
         }
 
-        game.VOnUpdate(dt, mWorld);
+        game.VOnUpdate(dt);
 
-        mWorld.Update(dt);
+        ecs::World::GetInstance().Update(dt);
     }
 }
 
@@ -155,6 +85,34 @@ void GenesisEngine::Initialize(const GameStartupParameters& startupParameters)
     InitializeSdlContextAndWindow(startupParameters);
     InitializeServices();
     InitializeSystems();
+
+    using genesis::scripting::ScriptingService;
+
+    auto& scriptingService = ScriptingService::GetInstance();    
+
+    scriptingService.BindNativeFunctionToLua("print", [](lua_State*)
+    {        
+        std::string str(ScriptingService::GetInstance().LuaToString(1));    // get function argument
+        std::cout << "[LUA]: " << str << "\n";
+        return 0;
+    });
+    
+    scriptingService.BindNativeFunctionToLua("createEntity", [](lua_State*)
+    {        
+        ScriptingService::GetInstance().LuaPushInteger(ecs::World::GetInstance().CreateEntity());
+        return 1;
+    });
+
+    scriptingService.RunScript("test");
+
+    auto dtAccum = 0.0f;
+    for (int i = 0; i < 100; i++)
+    {
+        const auto randomDt = genesis::math::RandomFloat(0.0f, 0.1f);
+        dtAccum += randomDt;
+
+        scriptingService.LuaCallGlobalFunction("update", 1, 2);
+    }    
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -215,16 +173,16 @@ void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& s
     SDL_SetWindowResizable(windowComponent->mWindowHandle, SDL_FALSE);
     SDL_ShowWindow(windowComponent->mWindowHandle);
 
-    mWorld.SetSingletonComponent<rendering::WindowSingletonComponent>(std::move(windowComponent));
+    ecs::World::GetInstance().SetSingletonComponent<rendering::WindowSingletonComponent>(std::move(windowComponent));
 }
 
 ///------------------------------------------------------------------------------------------------
 
 void GenesisEngine::InitializeSystems()
 {    
-    mWorld.AddSystem(std::make_unique<input::RawInputHandlingSystem>(mWorld));
-    mWorld.AddSystem(std::make_unique<rendering::AnimationSystem>(mWorld));
-    mWorld.AddSystem(std::make_unique<rendering::RenderingSystem>(mWorld));
+    ecs::World::GetInstance().AddSystem(std::make_unique<input::RawInputHandlingSystem>());
+    ecs::World::GetInstance().AddSystem(std::make_unique<rendering::AnimationSystem>());
+    ecs::World::GetInstance().AddSystem(std::make_unique<rendering::RenderingSystem>());
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -233,6 +191,7 @@ void GenesisEngine::InitializeServices() const
 {
     resources::ResourceLoadingService::GetInstance().Initialize();
     sound::SoundService::GetInstance().Initialize();
+    scripting::ScriptingService::GetInstance().Initialize();
 }
 
 ///-----------------------------------------------------------------------------------------------

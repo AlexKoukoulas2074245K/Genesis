@@ -94,10 +94,14 @@ public:
 /// The kernel of the ECS engine. Manages all registered systems and entities.
 class World final
 {
-public:    
-    /// Reserves space for the anticipated entity count.
-    World();
-    
+public:     
+    /// The default method of getting a hold of this singleton.
+    ///
+    /// The single instance of this class will be lazily initialized
+    /// the first time it is needed.
+    /// @returns a reference to the single instance of this class.    
+    static World& GetInstance();
+
     /// @returns a non-mutable reference to the active entity component store.
     [[nodiscard]] const std::vector<EntityId>& GetActiveEntities() const;
 
@@ -335,7 +339,10 @@ public:
             CalculateComponentUsageMask<SecondUtilizedComponentType, RestUtilizedComponentTypes...>();
     }    
 
-private:    
+private:        
+    // Reserves space for the anticipated entity count.
+    World();
+
     // Clears the pending entity list before the first update call, so that  
     void OnPreFirstUpdate();
     
@@ -399,7 +406,7 @@ class BaseSystem
     friend class World;
 
 public:
-    BaseSystem(World&);
+    BaseSystem();
         
     virtual ~BaseSystem() = default;
     BaseSystem(const BaseSystem&) = delete;
@@ -413,18 +420,15 @@ protected:
     template<class FirstUtilizedComponentType>
     void CalculateAndSetComponentUsageMask()
     {
-        mComponentUsageMask = mWorld.CalculateComponentUsageMask<FirstUtilizedComponentType>();
+        mComponentUsageMask = World::GetInstance().CalculateComponentUsageMask<FirstUtilizedComponentType>();
     }
         
     template<class FirstUtilizedComponentType, class SecondUtilizedComponentType, class ...RestUtilizedComponentTypes>
     void CalculateAndSetComponentUsageMask()
     {
-        mComponentUsageMask = mWorld.CalculateComponentUsageMask<FirstUtilizedComponentType>() |
-        mWorld.CalculateComponentUsageMask<SecondUtilizedComponentType, RestUtilizedComponentTypes...>();
-    }
-    
-protected:
-    World& mWorld;
+        mComponentUsageMask = World::GetInstance().CalculateComponentUsageMask<FirstUtilizedComponentType>() |
+                              World::GetInstance().CalculateComponentUsageMask<SecondUtilizedComponentType, RestUtilizedComponentTypes...>();
+    }    
         
 private:    
     virtual void VUpdateAssociatedComponents(const float dt) const = 0;

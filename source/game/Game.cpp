@@ -6,6 +6,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "Game.h"
+#include "../engine/ECS.h"
 #include "../engine/input/components/InputStateSingletonComponent.h"
 #include "../engine/input/utils/InputUtils.h"
 #include "../engine/rendering/components/CameraSingletonComponent.h"
@@ -13,15 +14,17 @@
 
 ///------------------------------------------------------------------------------------------------
 
-void Game::VOnInit(genesis::ecs::World& world)
+void Game::VOnInit()
 {
-    genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), world);
+    genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), genesis::ecs::World::GetInstance());
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void Game::VOnUpdate(const float dt, genesis::ecs::World& world)
+void Game::VOnUpdate(const float dt)
 {
+    auto& world = genesis::ecs::World::GetInstance();
+
     auto& cameraComponent = world.GetSingletonComponent<genesis::rendering::CameraSingletonComponent>();
     float moveSpeed = 5.0f;
     float lookSpeed = 1.0f;

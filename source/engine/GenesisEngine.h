@@ -19,6 +19,7 @@
 namespace genesis
 {
 
+///------------------------------------------------------------------------------------------------
 /// The central Engine class. Should be used to start the game
 class GenesisEngine final
 {
@@ -34,9 +35,6 @@ private:
     void InitializeSdlContextAndWindow(const GameStartupParameters& startupParameters);
     void InitializeSystems();
     void InitializeServices() const;
-
-private:
-    ecs::World mWorld;
 };
 
 }
