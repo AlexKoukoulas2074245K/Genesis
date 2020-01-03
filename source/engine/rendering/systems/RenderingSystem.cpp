@@ -118,7 +118,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     GL_CHECK(glEnable(GL_DEPTH_TEST));
         
     // Sort entities based on their depth order to correct transparency
-    std::sort(activeEntities.begin(), activeEntities.end(), [this, &world](const genesis::ecs::EntityId& lhs, const genesis::ecs::EntityId& rhs)
+    std::sort(activeEntities.begin(), activeEntities.end(), [&world](const genesis::ecs::EntityId& lhs, const genesis::ecs::EntityId& rhs)
     {
         const auto& lhsTransformComponent = world.GetComponent<TransformComponent>(lhs);
         const auto& rhsTransformComponent = world.GetComponent<TransformComponent>(rhs);
