@@ -7,6 +7,7 @@
 
 #include "ModelUtils.h"
 #include "../components/RenderableComponent.h"
+#include "../../common/components/NameComponent.h"
 #include "../../common/components/TransformComponent.h"
 #include "../../common/utils/MathUtils.h"
 
@@ -28,7 +29,8 @@ ecs::EntityId LoadAndCreateModelByName
 (
     const std::string& modelName,
     const glm::vec3& initialPosition,
-    ecs::World& world
+    ecs::World& world,
+    const StringId entityName /* StringId() */
 )
 {
     const auto modelEntity = world.CreateEntity();
@@ -53,6 +55,11 @@ ecs::EntityId LoadAndCreateModelByName
     
     world.AddComponent<RenderableComponent>(modelEntity, std::move(renderableComponent));
     world.AddComponent<TransformComponent>(modelEntity, std::move(transformComponent));
+
+    if (entityName != StringId())
+    {
+        world.AddComponent<NameComponent>(modelEntity, std::make_unique<NameComponent>(entityName));
+    }
 
     return modelEntity;
 }

@@ -35,7 +35,8 @@ ecs::EntityId LoadAndCreateModelByName
 (
     const std::string& modelName,
     const glm::vec3& initialPosition,
-    ecs::World& world
+    ecs::World& world,
+    const StringId entityName = StringId()
 );
 
 ///------------------------------------------------------------------------------------------------

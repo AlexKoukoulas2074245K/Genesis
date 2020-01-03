@@ -23,6 +23,10 @@ namespace genesis
 class NameComponent final: public ecs::IComponent
 {
 public:
+    NameComponent() = default;
+    NameComponent(const StringId name) : mName(name) {}
+
+public:
     StringId mName = StringId();
 };
 

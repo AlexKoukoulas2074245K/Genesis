@@ -73,9 +73,10 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
             dtAccumulator = 0.0f;
         }
 
+        ecs::World::GetInstance().Update(dt);
+
         game.VOnUpdate(dt);
 
-        ecs::World::GetInstance().Update(dt);
     }
 }
 

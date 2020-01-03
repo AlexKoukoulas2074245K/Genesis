@@ -85,15 +85,29 @@ ComponentMask World::CalculateComponentUsageMaskForEntity(const EntityId entityI
 
 EntityId World::CreateEntity(const StringId name)
 {
-    const auto entity = CreateEntity();
-    auto nameComponent = std::make_unique<NameComponent>();
-    nameComponent->mName = name;    
-    AddComponent<NameComponent>(entity, std::move(nameComponent));
+    const auto entity = CreateEntity();    
+    AddComponent<NameComponent>(entity, std::make_unique<NameComponent>(name));
     return entity;
 }
 
 ///------------------------------------------------------------------------------------------------
-    
+
+EntityId World::FindEntity(const StringId entityName)
+{
+    const auto findIter = std::find_if
+    (
+        mActiveEntitiesInFrame.cbegin(),
+        mActiveEntitiesInFrame.cend(),
+        [this, &entityName](const EntityId& entityId) 
+    {
+        return HasComponent<NameComponent>(entityId) && GetComponent<NameComponent>(entityId).mName == entityName;
+    });
+
+    return findIter != mActiveEntitiesInFrame.cend() ? *findIter : NULL_ENTITY_ID;
+}
+
+///------------------------------------------------------------------------------------------------
+
 void World::RemoveMarkedSystems()
 {
     for (const auto& systemHash: mSystemHashesToRemove)

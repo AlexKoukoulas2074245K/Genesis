@@ -29,31 +29,67 @@ void Game::VOnSystemsInit()
 
 void Game::VOnGameInit()
 {
-    genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), genesis::ecs::World::GetInstance());
+    const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), genesis::ecs::World::GetInstance(), StringId("monkey"));    
 
-    using genesis::lua::LuaScriptingService;
+    using genesis::lua::LuaScriptingService;   
 
-    auto& scriptingService = LuaScriptingService::GetInstance();
-
-    scriptingService.BindNativeFunctionToLua("createEntity", [](lua_State*)
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("CreateEntity", [](lua_State*)
     {
-        LuaScriptingService::GetInstance().LuaPushIntegral(genesis::ecs::World::GetInstance().CreateEntity());
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 0)
+        {
+            luaScriptingService.LuaPushIntegral(genesis::ecs::World::GetInstance().CreateEntity());
+        }
+        else if (stackSize == 1)
+        {
+            const auto entityName = StringId(luaScriptingService.LuaToString(1));
+            luaScriptingService.LuaPushIntegral(genesis::ecs::World::GetInstance().CreateEntity(entityName));
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 0 or 1) when calling CreateEntity");
+        }
+
         return 1;
     });
 
-    scriptingService.RunLuaScript("test");
-
-    auto dtAccum = 0.0f;
-    for (int i = 0; i < 5; i++)
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("FindEntity", [](lua_State*)
     {
-        const auto randomDt = genesis::math::RandomFloat(0.0f, 0.1f);
-        dtAccum += randomDt;
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
 
-        scriptingService.LuaCallGlobalFunction("update", 1, 2);
-    }
+        if (stackSize == 1)
+        {
+            const auto entityName = StringId(luaScriptingService.LuaToString(1));
+            luaScriptingService.LuaPushIntegral(genesis::ecs::World::GetInstance().FindEntity(entityName));
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling FindEntity");
+        }
 
-    scriptingService.RunLuaScript("test2");
-    scriptingService.LuaCallGlobalFunction("update", 1, 2);
+        return 1;
+    });
+
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("DestroyEntity", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 1)
+        {
+            const auto entityId = luaScriptingService.LuaToIntegral(1);
+            genesis::ecs::World::GetInstance().DestroyEntity(entityId);
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling DestroyEntity");
+        }
+
+        return 0;
+    });        
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -124,7 +160,7 @@ void Game::VOnUpdate(const float dt)
         }
     }
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_IN, world))
-    {
+    {    
         cameraComponent.mFieldOfView -= zoomSpeed * dt;
     }
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_OUT, world))
@@ -135,6 +171,13 @@ void Game::VOnUpdate(const float dt)
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.y = genesis::math::Sinf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.z = genesis::math::Sinf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
+
+    /*
+    using genesis::lua::LuaScriptingService;
+
+    LuaScriptingService::GetInstance().RunLuaScript("test");
+    LuaScriptingService::GetInstance().LuaCallGlobalFunction("Update", 1, 2);
+    */
 }
 
 ///------------------------------------------------------------------------------------------------

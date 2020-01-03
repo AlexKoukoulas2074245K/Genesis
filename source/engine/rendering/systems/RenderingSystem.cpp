@@ -99,7 +99,17 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     cameraComponent.mFrustum = CalculateCameraFrustum(cameraComponent.mViewMatrix, cameraComponent.mProjectionMatrix);
     
     // Collect all entities that need to be processed
-    auto activeEntities = world.GetActiveEntities();
+    std::vector<ecs::EntityId> applicableEntities; 
+    std::copy_if
+    (
+        world.GetActiveEntities().begin(),
+        world.GetActiveEntities().end(),
+        std::back_inserter(applicableEntities), 
+        [this](const ecs::EntityId entityId)     
+    {
+        return ShouldProcessEntity(entityId); 
+    });
+
     std::vector<genesis::ecs::EntityId> guiEntities;    
     
     // Set background color
@@ -118,7 +128,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     GL_CHECK(glEnable(GL_DEPTH_TEST));
         
     // Sort entities based on their depth order to correct transparency
-    std::sort(activeEntities.begin(), activeEntities.end(), [&world](const genesis::ecs::EntityId& lhs, const genesis::ecs::EntityId& rhs)
+    std::sort(applicableEntities.begin(), applicableEntities.end(), [&world](const genesis::ecs::EntityId& lhs, const genesis::ecs::EntityId& rhs)
     {
         const auto& lhsTransformComponent = world.GetComponent<TransformComponent>(lhs);
         const auto& rhsTransformComponent = world.GetComponent<TransformComponent>(rhs);
@@ -126,7 +136,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
         return lhsTransformComponent.mPosition.z > rhsTransformComponent.mPosition.z;
     });
 
-    for (const auto& entityId : activeEntities)
+    for (const auto& entityId : applicableEntities)
     {
         if (ShouldProcessEntity(entityId))
         {

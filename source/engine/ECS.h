@@ -116,11 +116,11 @@ public:
     /// @param[in] entityId the entity with this id will be destroyed.
     void DestroyEntity(const EntityId entityId);
     
-    /// Calculates the aggregate component mask for a given entity id.
+    /// Calculates the aggregate component mask for a given entity id.    
     /// @param[in] entityId.
     ComponentMask CalculateComponentUsageMaskForEntity(const EntityId entityId) const;
 
-    /// Creates an entity and returns its corresponding entity id. 
+    /// Creates an entity and returns its corresponding entity id.     
     /// @returns the entity id of the newly constructed entity.
     inline EntityId CreateEntity()
     {
@@ -134,6 +134,11 @@ public:
     /// @returns the entity id of the newly constructed entity.
     EntityId CreateEntity(const StringId name);
     
+    /// Finds and returns the entity based on the name provided.
+    /// @param[in] name the name to search for the entity with.
+    /// @returns the entity id of the entity found, or NULL_ENTITY_ID otherwise
+    EntityId FindEntity(const StringId entityName);
+
     /// Gets the respective component from the entity with the given entity id.
     ///
     /// The accessor will fail silently if the entity does not have a component of the respective component class.

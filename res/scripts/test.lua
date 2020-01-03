@@ -1,3 +1,4 @@
-function update(dt)
-	print("New Entity from test.lua: "..createEntity())
+function Update(dt)
+	monkeyEntity = FindEntity("monkey")
+	DestroyEntity(monkeyEntity)
 end

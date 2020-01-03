@@ -62,10 +62,17 @@ void LuaScriptingService::RunLuaScript(const std::string& scriptName) const
     if (luaL_dofile(mLuaState, scriptPath.c_str())) 
     {       
         const auto& errorMessage = std::string(lua_tostring(mLuaState, -1));
-        ShowMessageBox(MessageBoxType::ERROR, "Script loading error", "Failed to load script:\n" + errorMessage);        
-        lua_pop(mLuaState, 1);    
-        assert(false);
+        ReportLuaScriptError("Failed to load script:\n" + errorMessage);                
     }    
+}
+
+///------------------------------------------------------------------------------------------------
+
+void LuaScriptingService::ReportLuaScriptError(const std::string& errorMessage) const
+{
+    ShowMessageBox(MessageBoxType::ERROR, "Script error", errorMessage);
+    lua_pop(mLuaState, 1);
+    assert(false);
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -78,6 +85,20 @@ void LuaScriptingService::BindNativeFunctionToLua(const std::string& functionNam
 
 ///------------------------------------------------------------------------------------------------
 
+int LuaScriptingService::LuaGetIndexOfTopElement() const
+{
+    return lua_gettop(mLuaState);
+}
+
+///------------------------------------------------------------------------------------------------
+
+long long LuaScriptingService::LuaToIntegral(const int stackIndex) const
+{
+    return lua_tointeger(mLuaState, stackIndex);
+}
+
+///------------------------------------------------------------------------------------------------
+
 const char* LuaScriptingService::LuaToString(const int stackIndex) const
 {
     return lua_tostring(mLuaState, stackIndex);
@@ -85,35 +106,35 @@ const char* LuaScriptingService::LuaToString(const int stackIndex) const
 
 ///------------------------------------------------------------------------------------------------
 
-void LuaScriptingService::LuaPushIntegral(const long long value)
+void LuaScriptingService::LuaPushIntegral(const long long value) const
 {
     lua_pushinteger(mLuaState, value);
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void LuaScriptingService::LuaPushDouble(const double value)
+void LuaScriptingService::LuaPushDouble(const double value) const
 {
     lua_pushnumber(mLuaState, value);
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void LuaScriptingService::LuaPushBoolean(const bool value)
+void LuaScriptingService::LuaPushBoolean(const bool value) const
 {
     lua_pushboolean(mLuaState, value);
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void LuaScriptingService::LuaPushString(const std::string& value)
+void LuaScriptingService::LuaPushString(const std::string& value) const
 {
     lua_pushstring(mLuaState, value.c_str());
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void LuaScriptingService::LuaCallGlobalFunction(const std::string& functionName)
+void LuaScriptingService::LuaCallGlobalFunction(const std::string& functionName) const
 {
     LuaGetGlobal(functionName);
     LuaProcedureCall(0);
@@ -129,21 +150,19 @@ void LuaScriptingService::Initialize()
 
 ///------------------------------------------------------------------------------------------------
 
-void LuaScriptingService::LuaGetGlobal(const std::string& globalName)
+void LuaScriptingService::LuaGetGlobal(const std::string& globalName) const
 {
     lua_getglobal(mLuaState, globalName.c_str());
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void LuaScriptingService::LuaProcedureCall(const int argc)
+void LuaScriptingService::LuaProcedureCall(const int argc) const
 {    
     if (lua_pcall(mLuaState, argc, 0, 0))
     {
         const auto& errorMessage = std::string(lua_tostring(mLuaState, -1));
-        ShowMessageBox(MessageBoxType::ERROR, "Script loading error", "Failed to load script:\n" + errorMessage);
-        lua_pop(mLuaState, 1);
-        assert(false);
+        ReportLuaScriptError("Error running function: " + errorMessage);
     }
 }
 
