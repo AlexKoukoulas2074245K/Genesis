@@ -21,11 +21,17 @@ class IGame
 public:    
     virtual ~IGame() = default;
 
+    /// Game systems initialization method. 
+    ///
+    /// This is the first initialization method to be called, and is 
+    /// where all ecs systems used by the game should be initialized.
+    virtual void VOnSystemsInit() = 0;
+
     /// Game initialization method. 
     ///
-    /// This will be called after all core engine subsystems are initialized, and 
-    /// the game is now free to perform all its initialization flows.    
-    virtual void VOnInit() = 0;
+    /// This will be called after all systems have been initialized, and 
+    /// the game is now free to perform all its game-specific initialization flows.    
+    virtual void VOnGameInit() = 0;
 
     /// Game update method. 
     ///

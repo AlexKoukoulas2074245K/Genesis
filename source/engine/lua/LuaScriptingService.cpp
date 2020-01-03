@@ -1,11 +1,11 @@
 ///------------------------------------------------------------------------------------------------
-///  ScriptingService.cpp
+///  LuaScriptingService.cpp
 ///  Genesis
 ///
 ///  Created by Alex Koukoulas on 02/01/2020.
 ///------------------------------------------------------------------------------------------------
 
-#include "ScriptingService.h"
+#include "LuaScriptingService.h"
 #include "../common/utils/OSMessageBox.h"
 #include "../resources/DataFileResource.h"
 #include "../resources/ResourceLoadingService.h"
@@ -24,7 +24,7 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------ 
 
-namespace scripting
+namespace lua
 {
 
 ///------------------------------------------------------------------------------------------------ 
@@ -36,15 +36,15 @@ namespace
 
 ///------------------------------------------------------------------------------------------------ 
 
-ScriptingService& ScriptingService::GetInstance()
+LuaScriptingService& LuaScriptingService::GetInstance()
 {
-    static ScriptingService instance;
+    static LuaScriptingService instance;
     return instance;
 }
 
 ///------------------------------------------------------------------------------------------------
 
-ScriptingService::~ScriptingService()
+LuaScriptingService::~LuaScriptingService()
 {
     lua_close(mLuaState);
     mLuaState = nullptr;
@@ -52,7 +52,7 @@ ScriptingService::~ScriptingService()
 
 ///------------------------------------------------------------------------------------------------
 
-void ScriptingService::RunScript(const std::string& scriptName) const
+void LuaScriptingService::RunLuaScript(const std::string& scriptName) const
 {
     // Get actual script path
     const auto& scriptPath = resources::ResourceLoadingService::RES_SCRIPTS_ROOT + scriptName + SCRIPT_FILE_EXTENSION;
@@ -64,12 +64,13 @@ void ScriptingService::RunScript(const std::string& scriptName) const
         const auto& errorMessage = std::string(lua_tostring(mLuaState, -1));
         ShowMessageBox(MessageBoxType::ERROR, "Script loading error", "Failed to load script:\n" + errorMessage);        
         lua_pop(mLuaState, 1);    
+        assert(false);
     }    
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void ScriptingService::BindNativeFunctionToLua(const std::string& functionName, lua_CFunction function) const
+void LuaScriptingService::BindNativeFunctionToLua(const std::string& functionName, lua_CFunction function) const
 {    
     lua_pushcfunction(mLuaState, function);
     lua_setglobal(mLuaState, functionName.c_str());
@@ -77,49 +78,73 @@ void ScriptingService::BindNativeFunctionToLua(const std::string& functionName, 
 
 ///------------------------------------------------------------------------------------------------
 
-const char* ScriptingService::LuaToString(const int stackIndex) const
+const char* LuaScriptingService::LuaToString(const int stackIndex) const
 {
     return lua_tostring(mLuaState, stackIndex);
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void ScriptingService::LuaPushInteger(const long long value)
+void LuaScriptingService::LuaPushIntegral(const long long value)
 {
     lua_pushinteger(mLuaState, value);
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void ScriptingService::LuaPushBoolean(const bool value)
+void LuaScriptingService::LuaPushDouble(const double value)
+{
+    lua_pushnumber(mLuaState, value);
+}
+
+///------------------------------------------------------------------------------------------------
+
+void LuaScriptingService::LuaPushBoolean(const bool value)
 {
     lua_pushboolean(mLuaState, value);
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void ScriptingService::LuaPushString(const std::string& value)
+void LuaScriptingService::LuaPushString(const std::string& value)
 {
     lua_pushstring(mLuaState, value.c_str());
 }
 
 ///------------------------------------------------------------------------------------------------
 
-/*
-void ScriptingService::LuaCallGlobalFunction(const std::string& functionName) const
+void LuaScriptingService::LuaCallGlobalFunction(const std::string& functionName)
 {
-    lua_getglobal(mLuaState, functionName.c_str());
-    lua_pushnumber(mLuaState, 0.1f);
-    lua_pcall(mLuaState, 1, 0, 0);
+    LuaGetGlobal(functionName);
+    LuaProcedureCall(0);
 }
-*/
 
 ///------------------------------------------------------------------------------------------------
 
-void ScriptingService::Initialize()
+void LuaScriptingService::Initialize()
 {
     mLuaState = luaL_newstate();
     luaL_openlibs(mLuaState);
+}
+
+///------------------------------------------------------------------------------------------------
+
+void LuaScriptingService::LuaGetGlobal(const std::string& globalName)
+{
+    lua_getglobal(mLuaState, globalName.c_str());
+}
+
+///------------------------------------------------------------------------------------------------
+
+void LuaScriptingService::LuaProcedureCall(const int argc)
+{    
+    if (lua_pcall(mLuaState, argc, 0, 0))
+    {
+        const auto& errorMessage = std::string(lua_tostring(mLuaState, -1));
+        ShowMessageBox(MessageBoxType::ERROR, "Script loading error", "Failed to load script:\n" + errorMessage);
+        lua_pop(mLuaState, 1);
+        assert(false);
+    }
 }
 
 ///------------------------------------------------------------------------------------------------

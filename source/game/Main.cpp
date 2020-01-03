@@ -7,7 +7,10 @@
 
 #include "Game.h"
 #include "../engine/GenesisEngine.h"
-#include <iostream>
+
+#if defined(_WIN32) && !defined(NDEBUG)
+#include <vld.h>
+#endif
 
 ///------------------------------------------------------------------------------------------------
 

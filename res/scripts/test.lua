@@ -1,3 +1,3 @@
 function update(dt)
-print("New Entity: "..createEntity())
+	print("New Entity from test.lua: "..createEntity())
 end

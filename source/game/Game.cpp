@@ -9,14 +9,51 @@
 #include "../engine/ECS.h"
 #include "../engine/input/components/InputStateSingletonComponent.h"
 #include "../engine/input/utils/InputUtils.h"
+#include "../engine/lua/LuaScriptingService.h"
+#include "../engine/input/systems/RawInputHandlingSystem.h"
 #include "../engine/rendering/components/CameraSingletonComponent.h"
 #include "../engine/rendering/utils/ModelUtils.h"
+#include "../engine/rendering/systems/AnimationSystem.h"
+#include "../engine/rendering/systems/RenderingSystem.h"
 
 ///------------------------------------------------------------------------------------------------
 
-void Game::VOnInit()
+void Game::VOnSystemsInit()
+{
+    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::input::RawInputHandlingSystem>());
+    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::rendering::AnimationSystem>());
+    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::rendering::RenderingSystem>());
+}
+
+///------------------------------------------------------------------------------------------------
+
+void Game::VOnGameInit()
 {
     genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), genesis::ecs::World::GetInstance());
+
+    using genesis::lua::LuaScriptingService;
+
+    auto& scriptingService = LuaScriptingService::GetInstance();
+
+    scriptingService.BindNativeFunctionToLua("createEntity", [](lua_State*)
+    {
+        LuaScriptingService::GetInstance().LuaPushIntegral(genesis::ecs::World::GetInstance().CreateEntity());
+        return 1;
+    });
+
+    scriptingService.RunLuaScript("test");
+
+    auto dtAccum = 0.0f;
+    for (int i = 0; i < 5; i++)
+    {
+        const auto randomDt = genesis::math::RandomFloat(0.0f, 0.1f);
+        dtAccum += randomDt;
+
+        scriptingService.LuaCallGlobalFunction("update", 1, 2);
+    }
+
+    scriptingService.RunLuaScript("test2");
+    scriptingService.LuaCallGlobalFunction("update", 1, 2);
 }
 
 ///------------------------------------------------------------------------------------------------

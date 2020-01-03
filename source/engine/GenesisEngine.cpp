@@ -11,14 +11,13 @@
 #include "input/components/InputStateSingletonComponent.h"
 #include "input/systems/RawInputHandlingSystem.h"
 #include "input/utils/InputUtils.h"
+#include "lua/LuaScriptingService.h"
 #include "rendering/components/WindowSingletonComponent.h"
 #include "rendering/systems/AnimationSystem.h"
 #include "rendering/systems/RenderingSystem.h"
 #include "resources/ResourceLoadingService.h"
 #include "sound/SoundService.h"
-#include "scripting/ScriptingService.h"
 
-#include <iostream>
 #include <SDL.h> 
 #include <SDL_events.h> 
 #include <SDL_timer.h>
@@ -44,11 +43,12 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
 {
     Initialize(startupParameters);
 
-    game.VOnInit();
+    game.VOnSystemsInit();
+    game.VOnGameInit();
 
-    float elapsedTicks          = 0.0f;
-    float dtAccumulator         = 0.0f;
-    long long framesAccumulator = 0; 
+    auto elapsedTicks      = 0.0f;
+    auto dtAccumulator     = 0.0f;
+    auto framesAccumulator = 0LL; 
 
     while (!AppShouldQuit())
     {
@@ -63,7 +63,8 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
         dtAccumulator += dt;
 
         if (dtAccumulator > 1.0f)
-        {            
+        {          
+
             //const auto fpsString = " - FPS: " + std::to_string(framesAccumulator);            
             //const auto entityCountString = " - Entities: " + std::to_string(mWorld.GetActiveEntities().size());            
             //SDL_SetWindowTitle(windowComponent.mWindowHandle, (windowComponent.mWindowTitle + fpsString + entityCountString).c_str());
@@ -83,36 +84,7 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
 void GenesisEngine::Initialize(const GameStartupParameters& startupParameters)
 {       
     InitializeSdlContextAndWindow(startupParameters);
-    InitializeServices();
-    InitializeSystems();
-
-    using genesis::scripting::ScriptingService;
-
-    auto& scriptingService = ScriptingService::GetInstance();    
-
-    scriptingService.BindNativeFunctionToLua("print", [](lua_State*)
-    {        
-        std::string str(ScriptingService::GetInstance().LuaToString(1));    // get function argument
-        std::cout << "[LUA]: " << str << "\n";
-        return 0;
-    });
-    
-    scriptingService.BindNativeFunctionToLua("createEntity", [](lua_State*)
-    {        
-        ScriptingService::GetInstance().LuaPushInteger(ecs::World::GetInstance().CreateEntity());
-        return 1;
-    });
-
-    scriptingService.RunScript("test");
-
-    auto dtAccum = 0.0f;
-    for (int i = 0; i < 100; i++)
-    {
-        const auto randomDt = genesis::math::RandomFloat(0.0f, 0.1f);
-        dtAccum += randomDt;
-
-        scriptingService.LuaCallGlobalFunction("update", 1, 2);
-    }    
+    InitializeServices();    
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -176,22 +148,13 @@ void GenesisEngine::InitializeSdlContextAndWindow(const GameStartupParameters& s
     ecs::World::GetInstance().SetSingletonComponent<rendering::WindowSingletonComponent>(std::move(windowComponent));
 }
 
-///------------------------------------------------------------------------------------------------
-
-void GenesisEngine::InitializeSystems()
-{    
-    ecs::World::GetInstance().AddSystem(std::make_unique<input::RawInputHandlingSystem>());
-    ecs::World::GetInstance().AddSystem(std::make_unique<rendering::AnimationSystem>());
-    ecs::World::GetInstance().AddSystem(std::make_unique<rendering::RenderingSystem>());
-}
-
 ///-----------------------------------------------------------------------------------------------
 
 void GenesisEngine::InitializeServices() const
 {
     resources::ResourceLoadingService::GetInstance().Initialize();
     sound::SoundService::GetInstance().Initialize();
-    scripting::ScriptingService::GetInstance().Initialize();
+    lua::LuaScriptingService::GetInstance().Initialize();
 }
 
 ///-----------------------------------------------------------------------------------------------
