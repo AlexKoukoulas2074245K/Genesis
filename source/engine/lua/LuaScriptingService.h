@@ -78,6 +78,11 @@ public:
     /// @returns the long long value at the given stack index.
     long long LuaToIntegral(const int stackIndex) const;
 
+    /// Converts the Lua value at the given stack index to a double.
+    /// @param[in] stackIndex the stack index to get the value from.
+    /// @returns the double value at the given stack index.
+    double LuaToDouble(const int stackIndex) const;
+
     /// Converts the Lua value at the given stack index to a string.
     /// @param[in] stackIndex the stack index to get the value from.
     /// @returns an immutable string representation of the value at the given stack index.

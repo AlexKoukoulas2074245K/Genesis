@@ -7,6 +7,7 @@
 
 #include "Game.h"
 #include "../engine/ECS.h"
+#include "../engine/common/components/TransformComponent.h"
 #include "../engine/input/components/InputStateSingletonComponent.h"
 #include "../engine/input/utils/InputUtils.h"
 #include "../engine/lua/LuaScriptingService.h"
@@ -29,7 +30,7 @@ void Game::VOnSystemsInit()
 
 void Game::VOnGameInit()
 {
-    const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.0f, 0.0f, 0.0f), genesis::ecs::World::GetInstance(), StringId("monkey"));    
+    const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.1f, 0.2f, 0.3f), genesis::ecs::World::GetInstance(), StringId("monkey"));    
 
     using genesis::lua::LuaScriptingService;   
 
@@ -91,10 +92,52 @@ void Game::VOnGameInit()
         return 0;
     });        
 
-    using genesis::lua::LuaScriptingService;
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("GetEntityPosition", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 1)
+        {
+            const auto entityId = luaScriptingService.LuaToIntegral(1);
+            const auto& transformComponent = genesis::ecs::World::GetInstance().GetComponent<genesis::TransformComponent>(entityId);
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mPosition.x));
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mPosition.y));
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mPosition.z));
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling GetEntityPosition");
+        }
+
+        return 3;
+    });
+
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("SetEntityPosition", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 4)
+        {
+            const auto entityId = luaScriptingService.LuaToIntegral(1);
+            const auto positionX = luaScriptingService.LuaToDouble(2);
+            const auto positionY = luaScriptingService.LuaToDouble(3);
+            const auto positionZ = luaScriptingService.LuaToDouble(4);
+            
+            auto& transformComponent = genesis::ecs::World::GetInstance().GetComponent<genesis::TransformComponent>(entityId);
+            transformComponent.mPosition = glm::vec3(positionX, positionY, positionZ);
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 3) when calling GetEntityPosition");
+        }
+
+        return 0;
+    });
 
     LuaScriptingService::GetInstance().RunLuaScript("test");
-    LuaScriptingService::GetInstance().LuaCallGlobalFunction("Update", 1, 2);
+
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -176,6 +219,9 @@ void Game::VOnUpdate(const float dt)
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.y = genesis::math::Sinf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.z = genesis::math::Sinf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
+
+    using genesis::lua::LuaScriptingService;
+    LuaScriptingService::GetInstance().LuaCallGlobalFunction("Update", 1, dt);
 }
 
 ///------------------------------------------------------------------------------------------------

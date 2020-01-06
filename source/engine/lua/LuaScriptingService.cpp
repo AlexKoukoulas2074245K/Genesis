@@ -99,6 +99,13 @@ long long LuaScriptingService::LuaToIntegral(const int stackIndex) const
 
 ///------------------------------------------------------------------------------------------------
 
+double LuaScriptingService::LuaToDouble(const int stackIndex) const
+{
+    return lua_tonumber(mLuaState, stackIndex);
+}
+
+///------------------------------------------------------------------------------------------------
+
 const char* LuaScriptingService::LuaToString(const int stackIndex) const
 {
     return lua_tostring(mLuaState, stackIndex);
