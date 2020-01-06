@@ -39,9 +39,8 @@ const std::vector<EntityId>& World::GetActiveEntities() const
 
 void World::Update(const float dt)
 {
-    if (mHasRunFirstUpdate == false)
+    if (!mHasRunFirstUpdate)
     {
-        OnPreFirstUpdate();
         mHasRunFirstUpdate = true;
     }
 
@@ -178,13 +177,6 @@ World::World()
     : mHasRunFirstUpdate(false)
 {
     mEntityComponentStore.reserve(ANTICIPATED_ENTITY_COUNT);
-}
-
-///------------------------------------------------------------------------------------------------
-
-void World::OnPreFirstUpdate()
-{
-    mAddedEntitiesBySystemsUpdate.clear();
 }
 
 ///------------------------------------------------------------------------------------------------

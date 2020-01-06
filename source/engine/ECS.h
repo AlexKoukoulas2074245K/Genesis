@@ -125,7 +125,12 @@ public:
     inline EntityId CreateEntity()
     {
         mEntityComponentStore.operator[](mEntityCounter);
-        mAddedEntitiesBySystemsUpdate.push_back(mEntityCounter);
+        
+        if (mHasRunFirstUpdate)
+            mAddedEntitiesBySystemsUpdate.push_back(mEntityCounter);
+        else
+            mActiveEntitiesInFrame.push_back(mEntityCounter);
+        
         return mEntityCounter++;
     }
     
@@ -346,26 +351,23 @@ public:
 
 private:        
     // Reserves space for the anticipated entity count.
-    World();
-
-    // Clears the pending entity list before the first update call, so that  
-    void OnPreFirstUpdate();
+    World();    
     
-    // Removes all systems that have been marked to be removed
+    // Removes all systems that have been marked to be removed.
     void RemoveMarkedSystems();
 
-    // Removes all entities with no components currently attached to them
+    // Removes all entities with no components currently attached to them.
     void RemoveEntitiesWithoutAnyComponents();
 
-    // Collects all active entities (with at least one component) for processing by systems for this frame
+    // Collects all active entities (with at least one component) for processing by systems for this frame.
     void CongregateActiveEntitiesInCurrentFrame();
 
-    // Handles entities that are added mid system update, so that the rest of the system updates will pick it up
+    // Handles entities that are added mid system update, so that the rest of the system updates will pick it up.
     void InsertNewEntitiesIntoActiveCollection();
 
     // Registers the given component type (ComponentType) to the world
     // and computes its mask. All components that are used as data containers 
-    // for entities, must be registered here first before used
+    // for entities, must be registered here first before used.
     template<class ComponentType>
     inline void RegisterComponentType()
     {

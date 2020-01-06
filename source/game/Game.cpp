@@ -90,6 +90,11 @@ void Game::VOnGameInit()
 
         return 0;
     });        
+
+    using genesis::lua::LuaScriptingService;
+
+    LuaScriptingService::GetInstance().RunLuaScript("test");
+    LuaScriptingService::GetInstance().LuaCallGlobalFunction("Update", 1, 2);
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -171,13 +176,6 @@ void Game::VOnUpdate(const float dt)
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.y = genesis::math::Sinf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.z = genesis::math::Sinf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
-
-    /*
-    using genesis::lua::LuaScriptingService;
-
-    LuaScriptingService::GetInstance().RunLuaScript("test");
-    LuaScriptingService::GetInstance().LuaCallGlobalFunction("Update", 1, 2);
-    */
 }
 
 ///------------------------------------------------------------------------------------------------
