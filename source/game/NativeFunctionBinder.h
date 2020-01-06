@@ -1,28 +1,22 @@
 ///------------------------------------------------------------------------------------------------
-///  Main.cpp
+///  NativeFunctionBinder.h
 ///  Genesis
 ///
-///  Created by Alex Koukoulas on 19/11/2019.
+///  Created by Alex Koukoulas on 06/01/2020.
 ///------------------------------------------------------------------------------------------------
 
-#include "Game.h"
-#include "../engine/GenesisEngine.h"
-
-#if defined(_WIN32) && !defined(NDEBUG)
-#include <vld.h>
-#endif
+#ifndef NativeFunctionBinder_h
+#define NativeFunctionBinder_h
 
 ///------------------------------------------------------------------------------------------------
 
-int main(int, char**)
+class NativeFunctionBinder final
 {
-    genesis::GenesisEngine engine;
-    genesis::GameStartupParameters startupParameters("Genesis", 0.4f);
+public:    
+    static void BindNativeFunctionsToLua();
 
-    Game game;
-    engine.RunGame(startupParameters, game);
-}
+};       
 
 ///------------------------------------------------------------------------------------------------
 
-
+#endif /* NativeFunctionBinder_h */

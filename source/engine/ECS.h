@@ -302,15 +302,26 @@ public:
         mSystems.push_back(std::move(system));
     }            
 
-    /// Removes a system from the world.
+    /// Set the functional state of the system. If disabled its update function will not trigger.
     /// @tparam SystemType the system type to check for.     
+    /// @param[in] enabled whether or not the system should be enabled.
     template<class SystemType>
-    inline void RemoveSystem()
+    inline void SetSystemEnabled(const bool enabled)
     {
         static_assert(std::is_base_of<BaseSystem, SystemType>::value,
             "Attempted to remove and object that does not derive from BaseSystem");
 
-        mSystemHashesToRemove.push_back(GetStringHash(typeid(SystemType).name()));
+        const auto systemHash = GetStringHash(typeid(SystemType).name());
+
+        auto systemsIter = mSystems.begin();
+        while (systemsIter != mSystems.end())
+        {
+            auto& system = *(*systemsIter);
+            if (GetStringHash(typeid(system).name()) == systemHash)
+            {
+                system.mEnabled = enabled;
+            }            
+        }        
     }
 
     /// Calculates the bit mask of the given template arguments.
@@ -442,6 +453,7 @@ private:
 
 private:
     ComponentMask mComponentUsageMask;
+    bool mEnabled;
 };
 
 }

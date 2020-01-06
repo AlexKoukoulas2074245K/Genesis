@@ -46,13 +46,13 @@ public:
     ShaderResource(const ShaderResource&);
     
     bool SetMatrix4fv(const StringId uniformName, const glm::mat4& matrix, const GLuint count = 1, const bool transpose = false) const;
+    bool SetFloat(const StringId uniformName, const float value) const;
 
     GLuint GetProgramId() const;    
 
-protected:
+private:
     const std::unordered_map<StringId, GLuint, StringIdHasher>& GetUniformNamesToLocations() const;
 
-private:
     void CopyConstruction(const ShaderResource&);
     
 private:

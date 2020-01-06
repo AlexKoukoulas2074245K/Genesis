@@ -66,6 +66,18 @@ bool ShaderResource::SetMatrix4fv
 
 ///------------------------------------------------------------------------------------------------
 
+bool ShaderResource::SetFloat(const StringId uniformName, const float value) const
+{
+    if (mShaderUniformNamesToLocations.count(uniformName) > 0)
+    {
+        GL_CHECK(glUniform1f(mShaderUniformNamesToLocations.at(uniformName), value));
+        return true;
+    }
+    return false;
+}
+
+///------------------------------------------------------------------------------------------------
+
 GLuint ShaderResource::GetProgramId() const
 {
     return mProgramId;

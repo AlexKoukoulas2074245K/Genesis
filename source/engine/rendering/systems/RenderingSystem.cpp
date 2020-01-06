@@ -28,6 +28,7 @@
 #include <SDL.h> 
 #include <vector>
 #include <iterator>
+#include "../../debug/components/ConsoleStateSingletonComponent.h"
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -43,9 +44,10 @@ namespace rendering
 
 namespace
 {
-    const StringId WORLD_MARIX_UNIFORM_NAME      = StringId("world");
-    const StringId VIEW_MARIX_UNIFORM_NAME       = StringId("view");
-    const StringId PROJECTION_MARIX_UNIFORM_NAME = StringId("proj");    
+    const StringId WORLD_MARIX_UNIFORM_NAME                   = StringId("world");
+    const StringId VIEW_MARIX_UNIFORM_NAME                    = StringId("view");
+    const StringId PROJECTION_MARIX_UNIFORM_NAME              = StringId("proj");
+    const StringId CONSOLE_BACKGROUND_OPAQUENESS_UNIFORM_NAME = StringId("opaqueness");
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -287,6 +289,7 @@ void RenderingSystem::RenderEntityInternal
     currentShader->SetMatrix4fv(WORLD_MARIX_UNIFORM_NAME, world);
     currentShader->SetMatrix4fv(VIEW_MARIX_UNIFORM_NAME, cameraComponent.mViewMatrix);
     currentShader->SetMatrix4fv(PROJECTION_MARIX_UNIFORM_NAME, cameraComponent.mProjectionMatrix);
+    currentShader->SetFloat(CONSOLE_BACKGROUND_OPAQUENESS_UNIFORM_NAME, ecs::World::GetInstance().GetSingletonComponent<debug::ConsoleStateSingletonComponent>().mBackgroundOpaqueness);
 
     // Perform draw call
     GL_CHECK(glDrawElements(GL_TRIANGLES, currentMesh->GetElementCount(), GL_UNSIGNED_SHORT, (void*)0));

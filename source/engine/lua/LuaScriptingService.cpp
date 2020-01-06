@@ -77,8 +77,8 @@ void LuaScriptingService::ReportLuaScriptError(const std::string& errorMessage) 
 
 ///------------------------------------------------------------------------------------------------
 
-void LuaScriptingService::BindNativeFunctionToLua(const std::string& functionName, lua_CFunction function) const
-{    
+void LuaScriptingService::BindNativeFunctionToLua(const std::string& functionName, const std::string&, lua_CFunction function) const
+{       
     lua_pushcfunction(mLuaState, function);
     lua_setglobal(mLuaState, functionName.c_str());
 }

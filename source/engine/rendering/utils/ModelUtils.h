@@ -41,28 +41,14 @@ ecs::EntityId LoadAndCreateModelByName
 
 ///------------------------------------------------------------------------------------------------
 
-resources::ResourceId LoadMeshResourceFromAtlasTexCoords
+ecs::EntityId LoadAndCreateGuiSprite
 (
-    const int meshAtlasCol,
-    const int meshAtlasRow,
-    const int atlasCols,
-    const int atlasRows,
-    const bool horFlipped,
-    const std::string& modelName
-);
-
-///------------------------------------------------------------------------------------------------
-
-resources::ResourceId LoadMeshFromAtlasTexCoordsAndAddToRenderableAnimations
-(
-    const int meshAtlasCol,
-    const int meshAtlasRow,
-    const int atlasCols,
-    const int atlasRows,
-    const bool horFlipped,
     const std::string& modelName,
-    const StringId animationNameId,
-    RenderableComponent& renderableComponent
+    const std::string& textureName,
+    const StringId shaderName,
+    const glm::vec3& initialPosition,
+    ecs::World& world,
+    const StringId entityName = StringId()
 );
 
 ///------------------------------------------------------------------------------------------------

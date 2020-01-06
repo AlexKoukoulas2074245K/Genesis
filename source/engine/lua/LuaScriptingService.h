@@ -64,8 +64,10 @@ public:
 
     /// Binds a native function to the lua state.    
     /// @param[in] functionName the name that will be registered for the function on the lua state.   
+    /// @param[in] functionDescription a description of the function's signature and return type, e.g. "f(a,b,c) -> int". Used 
+    /// in the lua script generation to provide a list of bound native functions as comments at the top of the file.
     /// @param[in] function the function to be registered on the lua state.   
-    void BindNativeFunctionToLua(const std::string& functionName, lua_CFunction function) const; 
+    void BindNativeFunctionToLua(const std::string& functionName, const std::string& functionDescription, lua_CFunction function) const;
 
     /// Returns the index of the top element in the stack. 
     ///
