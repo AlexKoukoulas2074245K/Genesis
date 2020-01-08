@@ -7,13 +7,13 @@
 
 #include "NativeFunctionBinder.h"
 #include "../engine/common/components/TransformComponent.h"
-#include "../engine/lua/LuaScriptingService.h"
+#include "../engine/scripting/service/LuaScriptingService.h"
 
 ///------------------------------------------------------------------------------------------------
 
 void NativeFunctionBinder::BindNativeFunctionsToLua()
 {
-    using genesis::lua::LuaScriptingService;
+    using genesis::scripting::LuaScriptingService;
 
     LuaScriptingService::GetInstance().BindNativeFunctionToLua("CreateEntity", "CreateEntity([optional]entityName) -> entityId", [](lua_State*)
     {

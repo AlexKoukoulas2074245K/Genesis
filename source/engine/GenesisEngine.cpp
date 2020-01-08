@@ -6,16 +6,17 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "GenesisEngine.h"
+#include "common/utils/Logging.h"
 #include "common/utils/MathUtils.h"
 #include "common/utils/OSMessageBox.h"
 #include "input/components/InputStateSingletonComponent.h"
 #include "input/systems/RawInputHandlingSystem.h"
 #include "input/utils/InputUtils.h"
-#include "lua/LuaScriptingService.h"
 #include "rendering/components/WindowSingletonComponent.h"
 #include "rendering/systems/AnimationSystem.h"
 #include "rendering/systems/RenderingSystem.h"
 #include "resources/ResourceLoadingService.h"
+#include "scripting/service/LuaScriptingService.h"
 #include "sound/SoundService.h"
 
 #include <SDL.h> 
@@ -63,9 +64,8 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
         dtAccumulator += dt;
 
         if (dtAccumulator > 1.0f)
-        {          
-
-            //const auto fpsString = " - FPS: " + std::to_string(framesAccumulator);            
+        {                      
+            Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator)).c_str());
             //const auto entityCountString = " - Entities: " + std::to_string(mWorld.GetActiveEntities().size());            
             //SDL_SetWindowTitle(windowComponent.mWindowHandle, (windowComponent.mWindowTitle + fpsString + entityCountString).c_str());
 
@@ -155,7 +155,7 @@ void GenesisEngine::InitializeServices() const
 {
     resources::ResourceLoadingService::GetInstance().Initialize();
     sound::SoundService::GetInstance().Initialize();
-    lua::LuaScriptingService::GetInstance().Initialize();
+    scripting::LuaScriptingService::GetInstance().Initialize();
 }
 
 ///-----------------------------------------------------------------------------------------------

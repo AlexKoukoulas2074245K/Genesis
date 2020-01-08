@@ -6,9 +6,9 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "LuaScriptingService.h"
-#include "../common/utils/OSMessageBox.h"
-#include "../resources/DataFileResource.h"
-#include "../resources/ResourceLoadingService.h"
+#include "../../common/utils/OSMessageBox.h"
+#include "../../resources/DataFileResource.h"
+#include "../../resources/ResourceLoadingService.h"
 
 extern "C" 
 {
@@ -24,7 +24,7 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------ 
 
-namespace lua
+namespace scripting
 {
 
 ///------------------------------------------------------------------------------------------------ 

@@ -8,16 +8,18 @@
 #include "Game.h"
 #include "NativeFunctionBinder.h"
 #include "../engine/ECS.h"
+#include "../engine/debug/components/ConsoleStateSingletonComponent.h"
 #include "../engine/debug/systems/ConsoleManagementSystem.h"
 #include "../engine/input/components/InputStateSingletonComponent.h"
 #include "../engine/input/utils/InputUtils.h"
-#include "../engine/lua/LuaScriptingService.h"
 #include "../engine/input/systems/RawInputHandlingSystem.h"
 #include "../engine/rendering/components/CameraSingletonComponent.h"
 #include "../engine/rendering/utils/ModelUtils.h"
 #include "../engine/rendering/systems/AnimationSystem.h"
 #include "../engine/rendering/systems/RenderingSystem.h"
-#include "../engine/debug/components/ConsoleStateSingletonComponent.h"
+#include "../engine/scripting/components/ScriptComponent.h"
+#include "../engine/scripting/service/LuaScriptingService.h"
+#include "../engine/scripting/systems/ScriptingSystem.h"
 
 ///------------------------------------------------------------------------------------------------
 
@@ -25,6 +27,7 @@ void Game::VOnSystemsInit()
 {
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::input::RawInputHandlingSystem>());
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::rendering::AnimationSystem>());
+    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::scripting::ScriptingSystem>());
 
 #ifndef NDEBUG
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::debug::ConsoleManagementSystem>());
@@ -40,10 +43,13 @@ void Game::VOnSystemsInit()
 void Game::VOnGameInit()
 {
     const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.1f, 0.2f, 0.3f), genesis::ecs::World::GetInstance(), StringId("monkey"));    
-    genesis::rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), genesis::ecs::World::GetInstance(), StringId("console_background"));
 
-    using genesis::lua::LuaScriptingService;
-    LuaScriptingService::GetInstance().RunLuaScript("test");
+    auto scriptComponent = std::make_unique<genesis::scripting::ScriptComponent>();
+    scriptComponent->mScriptName = StringId("test");
+    scriptComponent->mScriptType = genesis::scripting::ScriptType::CONTINUOUS_EXECUTION;
+    genesis::ecs::World::GetInstance().AddComponent<genesis::scripting::ScriptComponent>(monkeyEntityId, std::move(scriptComponent));
+
+    genesis::rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), genesis::ecs::World::GetInstance(), StringId("console_background"));
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -130,9 +136,6 @@ void Game::VOnUpdate(const float dt)
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.y = genesis::math::Sinf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.z = genesis::math::Sinf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
-
-    using genesis::lua::LuaScriptingService;
-    LuaScriptingService::GetInstance().LuaCallGlobalFunction("Update", 1, dt);
 }
 
 ///------------------------------------------------------------------------------------------------
