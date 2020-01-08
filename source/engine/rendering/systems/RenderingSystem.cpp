@@ -28,7 +28,6 @@
 #include <SDL.h> 
 #include <vector>
 #include <iterator>
-#include "../../debug/components/ConsoleStateSingletonComponent.h"
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -46,8 +45,7 @@ namespace
 {
     const StringId WORLD_MARIX_UNIFORM_NAME                   = StringId("world");
     const StringId VIEW_MARIX_UNIFORM_NAME                    = StringId("view");
-    const StringId PROJECTION_MARIX_UNIFORM_NAME              = StringId("proj");
-    const StringId CONSOLE_BACKGROUND_OPAQUENESS_UNIFORM_NAME = StringId("opaqueness");
+    const StringId PROJECTION_MARIX_UNIFORM_NAME              = StringId("proj");    
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -269,7 +267,8 @@ void RenderingSystem::RenderEntityInternal
     world = glm::rotate(world, rotation.y, math::Y_AXIS);
     world = glm::rotate(world, rotation.z, math::Z_AXIS);
     world = glm::scale(world, scale);
-        
+       
+
     // Update texture if necessary
     const resources::TextureResource* currentTexture = nullptr;
     if (renderableComponent.mTextureResourceId != renderingContextComponent.previousTextureResourceId)
@@ -285,11 +284,22 @@ void RenderingSystem::RenderEntityInternal
         currentTexture = renderingContextComponent.previousTexture;
     }      
 
-    // Set uniforms    
+    // Set mvp uniforms    
     currentShader->SetMatrix4fv(WORLD_MARIX_UNIFORM_NAME, world);
     currentShader->SetMatrix4fv(VIEW_MARIX_UNIFORM_NAME, cameraComponent.mViewMatrix);
-    currentShader->SetMatrix4fv(PROJECTION_MARIX_UNIFORM_NAME, cameraComponent.mProjectionMatrix);
-    currentShader->SetFloat(CONSOLE_BACKGROUND_OPAQUENESS_UNIFORM_NAME, ecs::World::GetInstance().GetSingletonComponent<debug::ConsoleStateSingletonComponent>().mBackgroundOpaqueness);
+    currentShader->SetMatrix4fv(PROJECTION_MARIX_UNIFORM_NAME, cameraComponent.mProjectionMatrix);    
+
+    // Set other matrix uniforms
+    for (const auto& matrixUniformEntry: renderableComponent.mShaderUniforms.mShaderMatrixUniforms)
+    {
+        currentShader->SetMatrix4fv(matrixUniformEntry.first, matrixUniformEntry.second);
+    }
+
+    // Set other float uniforms
+    for (const auto& floatUniformEntry : renderableComponent.mShaderUniforms.mShaderFloatUniforms)
+    {
+        currentShader->SetFloat(floatUniformEntry.first, floatUniformEntry.second);
+    }
 
     // Perform draw call
     GL_CHECK(glDrawElements(GL_TRIANGLES, currentMesh->GetElementCount(), GL_UNSIGNED_SHORT, (void*)0));

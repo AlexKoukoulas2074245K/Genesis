@@ -7,6 +7,7 @@
 
 #include "ConsoleManagementSystem.h"
 #include "../components/ConsoleStateSingletonComponent.h"
+#include "../../rendering/components/RenderableComponent.h"
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -41,6 +42,10 @@ void ConsoleManagementSystem::VUpdateAssociatedComponents(const float dt) const
         consoleStateComponent.mBackgroundOpaqueness -= dt;
         if (consoleStateComponent.mBackgroundOpaqueness < 0.0f) consoleStateComponent.mBackgroundOpaqueness = 0.0f;
     }
+
+    const auto consoleBackgroundEntity = ecs::World::GetInstance().FindEntity(StringId("console_background"));
+    auto& consoleBackgroundRenderableComponent = ecs::World::GetInstance().GetComponent<rendering::RenderableComponent>(consoleBackgroundEntity);
+    consoleBackgroundRenderableComponent.mShaderUniforms.mShaderFloatUniforms[StringId("opaqueness")] = consoleStateComponent.mBackgroundOpaqueness;
 }
 
 ///-----------------------------------------------------------------------------------------------

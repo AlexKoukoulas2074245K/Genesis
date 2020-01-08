@@ -33,11 +33,19 @@ using ResourceId = unsigned int;
 
 ///-----------------------------------------------------------------------------------------------
 
+struct ShaderUniforms final
+{
+    std::unordered_map<StringId, float, StringIdHasher> mShaderFloatUniforms;
+    std::unordered_map<StringId, glm::mat4, StringIdHasher> mShaderMatrixUniforms;
+};
+
+///-----------------------------------------------------------------------------------------------
+
 class RenderableComponent final: public ecs::IComponent
 {
-public:
-    // This should be a map of vectors (animation name to meshes)
+public:    
     std::unordered_map<StringId, std::vector<ResourceId>, StringIdHasher> mAnimationsToMeshes;    
+    ShaderUniforms mShaderUniforms;
     StringId mShaderNameId                 = StringId();    
     StringId mActiveAnimationNameId        = StringId();
     size_t mActiveMeshIndex                = 0;
