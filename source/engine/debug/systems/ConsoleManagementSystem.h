@@ -29,6 +29,7 @@ public:
     ConsoleManagementSystem();
 
     void VUpdateAssociatedComponents(const float dt) const override;
+    void HandleConsoleBackgroundAnimation(const float dt) const;
 };
 
 ///-----------------------------------------------------------------------------------------------

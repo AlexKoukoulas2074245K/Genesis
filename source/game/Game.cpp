@@ -6,9 +6,7 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "Game.h"
-#include "NativeFunctionBinder.h"
 #include "../engine/ECS.h"
-#include "../engine/debug/components/ConsoleStateSingletonComponent.h"
 #include "../engine/debug/systems/ConsoleManagementSystem.h"
 #include "../engine/input/components/InputStateSingletonComponent.h"
 #include "../engine/input/utils/InputUtils.h"
@@ -33,9 +31,7 @@ void Game::VOnSystemsInit()
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::debug::ConsoleManagementSystem>());
 #endif
 
-    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::rendering::RenderingSystem>());
-
-    NativeFunctionBinder::BindNativeFunctionsToLua();
+    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::rendering::RenderingSystem>());    
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -126,11 +122,12 @@ void Game::VOnUpdate(const float dt)
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_OUT, world))
     {
         cameraComponent.mFieldOfView += zoomSpeed * dt;
-    }
-    if (genesis::input::IsActionTypeKeyTapped(genesis::input::InputActionType::CONSOLE_TOGGLE, world))
+    }    
+
+    const auto getKeyChar = genesis::input::GetTypedCharacter(genesis::ecs::World::GetInstance());
+    if (getKeyChar != 0)
     {
-        auto& consoleStateComponent = genesis::ecs::World::GetInstance().GetSingletonComponent<genesis::debug::ConsoleStateSingletonComponent>();
-        consoleStateComponent.mEnabled = !consoleStateComponent.mEnabled;
+        std::cout << "Key tapped: " << getKeyChar << "\n";
     }
 
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);

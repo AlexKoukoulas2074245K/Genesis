@@ -46,7 +46,8 @@ enum class InputActionType
     CAMERA_LOOK_RIGHT,
     CAMERA_ZOOM_IN,
     CAMERA_ZOOM_OUT,
-    CONSOLE_TOGGLE
+    CONSOLE_TOGGLE,
+    SHIFT
 };
 
 ///-----------------------------------------------------------------------------------------------
@@ -54,6 +55,31 @@ enum class InputActionType
 enum class InputActionState
 {
     RELEASED, PRESSED, TAPPED
+};
+
+///-----------------------------------------------------------------------------------------------
+
+
+static std::unordered_map<SDL_Scancode, SDL_Keycode> sKeyResultWithShiftModifier =
+{
+    { SDL_SCANCODE_1,            SDLK_EXCLAIM },
+    { SDL_SCANCODE_2,            SDLK_AT },
+    { SDL_SCANCODE_3,            SDLK_HASH },
+    { SDL_SCANCODE_4,            SDLK_DOLLAR },
+    { SDL_SCANCODE_5,            SDLK_PERCENT },
+    { SDL_SCANCODE_6,            SDLK_CARET },
+    { SDL_SCANCODE_7,            SDLK_AMPERSAND },
+    { SDL_SCANCODE_8,            SDLK_ASTERISK },
+    { SDL_SCANCODE_9,            SDLK_LEFTPAREN },
+    { SDL_SCANCODE_0,            SDLK_RIGHTPAREN },
+    { SDL_SCANCODE_MINUS,        SDLK_UNDERSCORE },
+    { SDL_SCANCODE_EQUALS,       SDLK_PLUS },
+    { SDL_SCANCODE_SEMICOLON,    SDLK_COLON },
+    { SDL_SCANCODE_COMMA,        SDLK_LESS },
+    { SDL_SCANCODE_PERIOD,       SDLK_GREATER },
+    { SDL_SCANCODE_SLASH,        SDLK_QUESTION },
+    { SDL_SCANCODE_LEFTBRACKET,  static_cast<SDL_Keycode>('{') },
+    { SDL_SCANCODE_RIGHTBRACKET, static_cast<SDL_Keycode>('}') }
 };
 
 ///-----------------------------------------------------------------------------------------------
@@ -75,7 +101,8 @@ public:
         { InputActionType::CAMERA_LOOK_RIGHT,    InputActionState::RELEASED },
         { InputActionType::CAMERA_ZOOM_IN,       InputActionState::RELEASED },
         { InputActionType::CAMERA_ZOOM_OUT,      InputActionState::RELEASED },
-        { InputActionType::CONSOLE_TOGGLE,       InputActionState::RELEASED }
+        { InputActionType::CONSOLE_TOGGLE,       InputActionState::RELEASED },
+        { InputActionType::SHIFT,                InputActionState::RELEASED }
     };
 
     std::unordered_map<SDL_Scancode, InputActionType> mKeybindings =
@@ -92,13 +119,12 @@ public:
         { SDL_SCANCODE_RIGHT,  InputActionType::CAMERA_LOOK_RIGHT },
         { SDL_SCANCODE_Z,      InputActionType::CAMERA_ZOOM_IN },
         { SDL_SCANCODE_X,      InputActionType::CAMERA_ZOOM_OUT },
-        { SDL_SCANCODE_GRAVE,  InputActionType::CONSOLE_TOGGLE }
+        { SDL_SCANCODE_GRAVE,  InputActionType::CONSOLE_TOGGLE },
+        { SDL_SCANCODE_LSHIFT, InputActionType::SHIFT }
     };
 
     // Needed for tapped input checks 
-    std::vector<unsigned char> mPreviousRawKeyboardState;
-    
-    bool mHasBeenConsumed = false;
+    std::vector<unsigned char> mPreviousRawKeyboardState;        
 };
 
 ///-----------------------------------------------------------------------------------------------

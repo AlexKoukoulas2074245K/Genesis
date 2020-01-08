@@ -6,9 +6,11 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "GenesisEngine.h"
+#include "common/components/TransformComponent.h"
 #include "common/utils/Logging.h"
 #include "common/utils/MathUtils.h"
 #include "common/utils/OSMessageBox.h"
+#include "debug/components/ConsoleStateSingletonComponent.h"
 #include "input/components/InputStateSingletonComponent.h"
 #include "input/systems/RawInputHandlingSystem.h"
 #include "input/utils/InputUtils.h"
@@ -30,7 +32,7 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------
 
-bool AppShouldQuit();
+static bool AppShouldQuit();
 
 ///------------------------------------------------------------------------------------------------
     
@@ -39,7 +41,7 @@ GenesisEngine::GenesisEngine()
 }
 
 ///------------------------------------------------------------------------------------------------
-
+std::string text;
 void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGame& game)
 {
     Initialize(startupParameters);
@@ -52,7 +54,7 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
     auto framesAccumulator = 0LL; 
 
     while (!AppShouldQuit())
-    {
+    {        
         // Calculate frame delta
         const auto currentTicks   = static_cast<float>(SDL_GetTicks());
         const auto lastFrameTicks = currentTicks - elapsedTicks;
@@ -65,18 +67,20 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
 
         if (dtAccumulator > 1.0f)
         {                      
-            Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator)).c_str());
-            //const auto entityCountString = " - Entities: " + std::to_string(mWorld.GetActiveEntities().size());            
-            //SDL_SetWindowTitle(windowComponent.mWindowHandle, (windowComponent.mWindowTitle + fpsString + entityCountString).c_str());
+            Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator)).c_str());            
 
             framesAccumulator = 0;
             dtAccumulator = 0.0f;
         }
 
-        ecs::World::GetInstance().Update(dt);
+        if (input::IsActionTypeKeyTapped(input::InputActionType::CONSOLE_TOGGLE, ecs::World::GetInstance()))
+        {
+            auto& consoleStateComponent = ecs::World::GetInstance().GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
+            consoleStateComponent.mEnabled = !consoleStateComponent.mEnabled;        
+        }
 
         game.VOnUpdate(dt);
-
+        ecs::World::GetInstance().Update(dt);        
     }
 }
 
@@ -156,9 +160,120 @@ void GenesisEngine::InitializeServices() const
     resources::ResourceLoadingService::GetInstance().Initialize();
     sound::SoundService::GetInstance().Initialize();
     scripting::LuaScriptingService::GetInstance().Initialize();
+
+    BindDefaultFunctionsToLua();
 }
 
 ///-----------------------------------------------------------------------------------------------
+
+void GenesisEngine::BindDefaultFunctionsToLua() const
+{
+    using scripting::LuaScriptingService;
+
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("CreateEntity", "CreateEntity([optional]entityName) -> entityId", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 0)
+        {
+            luaScriptingService.LuaPushIntegral(genesis::ecs::World::GetInstance().CreateEntity());
+        }
+        else if (stackSize == 1)
+        {
+            const auto entityName = StringId(luaScriptingService.LuaToString(1));
+            luaScriptingService.LuaPushIntegral(genesis::ecs::World::GetInstance().CreateEntity(entityName));
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 0 or 1) when calling CreateEntity");
+        }
+
+        return 1;
+    });
+
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("FindEntity", "FindEntity(entityName) -> entityId", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 1)
+        {
+            const auto entityName = StringId(luaScriptingService.LuaToString(1));
+            luaScriptingService.LuaPushIntegral(genesis::ecs::World::GetInstance().FindEntity(entityName));
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling FindEntity");
+        }
+
+        return 1;
+    });
+
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("DestroyEntity", "DestroyEntity(entityId) -> void", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 1)
+        {
+            const auto entityId = luaScriptingService.LuaToIntegral(1);
+            genesis::ecs::World::GetInstance().DestroyEntity(entityId);
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling DestroyEntity");
+        }
+
+        return 0;
+    });
+
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("GetEntityPosition", "GetEntityPosition(entityId) -> x,y,z", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 1)
+        {
+            const auto entityId = luaScriptingService.LuaToIntegral(1);
+            const auto& transformComponent = genesis::ecs::World::GetInstance().GetComponent<genesis::TransformComponent>(entityId);
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mPosition.x));
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mPosition.y));
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mPosition.z));
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling GetEntityPosition");
+        }
+
+        return 3;
+    });
+
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("SetEntityPosition", "SetEntityPosition(entityId, x, y, z) -> void", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 4)
+        {
+            const auto entityId = luaScriptingService.LuaToIntegral(1);
+            const auto positionX = luaScriptingService.LuaToDouble(2);
+            const auto positionY = luaScriptingService.LuaToDouble(3);
+            const auto positionZ = luaScriptingService.LuaToDouble(4);
+
+            auto& transformComponent = genesis::ecs::World::GetInstance().GetComponent<genesis::TransformComponent>(entityId);
+            transformComponent.mPosition = glm::vec3(positionX, positionY, positionZ);
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 4) when calling SetEntityPosition");
+        }
+
+        return 0;
+    });
+}
+
+///------------------------------------------------------------------------------------------------
 
 bool AppShouldQuit()
 {

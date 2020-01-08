@@ -8,5 +8,4 @@
 function Update(entityId, dt, dtAccum)	
 	x,y,z = GetEntityPosition(entityId)
 	SetEntityPosition(entityId, math.sin(dtAccum), 0.0, math.cos(dtAccum))
-	
 end

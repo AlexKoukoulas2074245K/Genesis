@@ -34,6 +34,7 @@ private:
     void Initialize(const GameStartupParameters& startupParameters);
     void InitializeSdlContextAndWindow(const GameStartupParameters& startupParameters);    
     void InitializeServices() const;
+    void BindDefaultFunctionsToLua() const;
 };
 
 }

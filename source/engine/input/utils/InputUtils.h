@@ -56,6 +56,39 @@ inline bool IsActionTypeKeyReleased(const InputActionType actionType, const ecs:
 
 ///-----------------------------------------------------------------------------------------------
 
+/// Checks and returns the character from the currently tapped key.
+/// @param[in] world the singular world of the ECS state.
+/// @returns the tapped character, or 0 if no character is currently tapped.
+inline char GetTypedCharacter(const ecs::World& world)
+{
+    const auto& inputStateComponent = world.GetSingletonComponent<InputStateSingletonComponent>();
+
+    // Check whether modifier key is down
+    const auto isShiftDown = IsActionTypeKeyPressed(InputActionType::SHIFT, world);
+
+    // Find tapped key
+    auto keyboardStateLength = 0;
+    const auto* currentKeyboardState = SDL_GetKeyboardState(&keyboardStateLength);    
+    for (auto i = 0U; i < inputStateComponent.mPreviousRawKeyboardState.size(); ++i)
+    {
+        if (currentKeyboardState[i] && !inputStateComponent.mPreviousRawKeyboardState[i])
+        {
+            if (isShiftDown && sKeyResultWithShiftModifier.count(static_cast<SDL_Scancode>(i)) != 0)
+            {
+                return static_cast<char>(sKeyResultWithShiftModifier.at(static_cast<SDL_Scancode>(i)));
+            }
+            else
+            {
+                return static_cast<char>(SDL_GetKeyFromScancode(static_cast<SDL_Scancode>(i)));
+            }            
+        }
+    }
+
+    return 0;
+}
+
+///-----------------------------------------------------------------------------------------------
+
 }
 
 }

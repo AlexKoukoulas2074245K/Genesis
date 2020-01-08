@@ -58,8 +58,7 @@ void RawInputHandlingSystem::VUpdateAssociatedComponents(const float) const
             inputStateComponent.mCurrentInputState[mappedVirtualAction] = InputActionState::RELEASED;
         }
     }
-
-    inputStateComponent.mHasBeenConsumed = false;
+    
     inputStateComponent.mPreviousRawKeyboardState.assign(currentKeyboardState, currentKeyboardState + keyboardStateLength);
 }
 
