@@ -35,7 +35,9 @@ namespace
 
     static const float CONSOLE_TEXT_SIZE       = 0.1f;
     static const float CONSOLE_DARKENING_SPEED = 0.005f;
-    static const float MAX_OPAQUENESS          = 0.8f;    
+    static const float MAX_OPAQUENESS          = 0.8f;
+    
+    static const char CONSOLE_PROMPT_CHARACTER = '>';
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -68,7 +70,7 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
 
         if (consoleStateComponent.mEnabled)
         {   
-            consoleStateComponent.mCurrentCommandTextBuffer = ">";
+            consoleStateComponent.mCurrentCommandTextBuffer = CONSOLE_PROMPT_CHARACTER;
             SDL_StartTextInput();
         }
         else
@@ -85,6 +87,10 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
             auto& consoleCurrentCommandText = consoleStateComponent.mCurrentCommandTextBuffer;
             consoleCurrentCommandText       = consoleCurrentCommandText.substr(0, consoleCurrentCommandText.size() - 1);            
         }
+    }
+    else if (input::IsActionTypeKeyTapped(input::InputActionType::ENTER_KEY))
+    {
+        ExecuteCommand();
     }
 }
 
@@ -141,6 +147,30 @@ void ConsoleManagementSystem::HandleConsoleTextRendering() const
     }    
 }
 
+///-----------------------------------------------------------------------------------------------
+
+void ConsoleManagementSystem::ExecuteCommand() const
+{
+    const auto& world = ecs::World::GetInstance();
+    auto& consoleStateComponent = world.GetSingletonComponent<ConsoleStateSingletonComponent>();
+    
+    consoleStateComponent.mPastConsoleTextStringEntityIds.push_back(consoleStateComponent.mCurrentCommandRenderedTextEntityId);
+    
+    if (consoleStateComponent.mCurrentCommandTextBuffer.size() != 1)
+    {
+        consoleStateComponent.mCommandHistory.push_back(consoleStateComponent.mCurrentCommandTextBuffer.substr(1));
+
+    }
+    
+    consoleStateComponent.mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;
+    consoleStateComponent.mCurrentCommandTextBuffer = CONSOLE_PROMPT_CHARACTER;
+    
+    for (const auto& pastTextStringEntityId: consoleStateComponent.mPastConsoleTextStringEntityIds)
+    {
+        rendering::MoveText(pastTextStringEntityId, 0.0f, CONSOLE_TEXT_SIZE);
+    }
+}
+    
 ///-----------------------------------------------------------------------------------------------
 
 bool ConsoleManagementSystem::IsCurrentCommandRenderedTextOutOfDate() const

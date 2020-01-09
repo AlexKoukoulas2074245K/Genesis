@@ -75,6 +75,19 @@ ecs::EntityId RenderText
 );
 
 ///------------------------------------------------------------------------------------------------
+/// Moves a text string by a certain displacement.
+///
+/// @param[in] textStringEntityId the id of the entity holding the root TextStringComponent of the text to be moved.
+/// @param[in] dx the horizontal displacement
+/// @param[in] dy the vertical displacement
+void MoveText
+(
+    const ecs::EntityId textStringEntityId,
+    const float dx = 0.0f,
+    const float dy = 0.0f
+);
+    
+///------------------------------------------------------------------------------------------------
 /// Clears a text string. 
 ///
 /// @param[in] textStringEntityId the id of the entity holding the root TextStringComponent of the text to be cleared.

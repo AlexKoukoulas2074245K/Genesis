@@ -13,6 +13,7 @@
 #include "../../ECS.h"
 
 #include <string>
+#include <vector>
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -28,7 +29,9 @@ namespace debug
 
 class ConsoleStateSingletonComponent final: public ecs::IComponent
 {
-public:   
+public:
+    std::vector<std::string> mCommandHistory;
+    std::vector<ecs::EntityId> mPastConsoleTextStringEntityIds;
     ecs::EntityId mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;    
     std::string mCurrentCommandTextBuffer             = "";
     float mBackgroundOpaqueness                       = 0.0f;

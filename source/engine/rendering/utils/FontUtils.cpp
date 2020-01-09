@@ -177,6 +177,24 @@ void ClearRenderedText
 
 ///-----------------------------------------------------------------------------------------------
 
+void MoveText
+(
+    const ecs::EntityId textStringEntityId,
+    const float dx /* 0.0f */,
+    const float dy /* 0.0f */
+)
+{
+    auto& world = ecs::World::GetInstance();
+    auto& textStringComponent = world.GetComponent<TextStringComponent>(textStringEntityId);
+    
+    for (const auto& characterEntity : textStringComponent.mTextCharacterEntities)
+    {
+        world.GetComponent<TransformComponent>(characterEntity.mEntityId).mPosition += glm::vec3(dx, dy, 0.0f);
+    }
+}
+    
+///-----------------------------------------------------------------------------------------------
+    
 }
 
 }

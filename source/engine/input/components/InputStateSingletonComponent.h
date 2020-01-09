@@ -48,7 +48,8 @@ enum class InputActionType
     CAMERA_ZOOM_OUT,
     CONSOLE_TOGGLE,
     SHIFT_KEY,
-    BACKSPACE_KEY
+    BACKSPACE_KEY,
+    ENTER_KEY
 };
 
 ///-----------------------------------------------------------------------------------------------
@@ -80,6 +81,7 @@ public:
         { InputActionType::CONSOLE_TOGGLE,       InputActionState::RELEASED },
         { InputActionType::SHIFT_KEY,            InputActionState::RELEASED },
         { InputActionType::BACKSPACE_KEY,        InputActionState::RELEASED },
+        { InputActionType::ENTER_KEY,            InputActionState::RELEASED },
     };
 
     std::unordered_map<SDL_Scancode, InputActionType> mKeybindings =
@@ -99,6 +101,7 @@ public:
         { SDL_SCANCODE_GRAVE,     InputActionType::CONSOLE_TOGGLE },
         { SDL_SCANCODE_LSHIFT,    InputActionType::SHIFT_KEY },
         { SDL_SCANCODE_BACKSPACE, InputActionType::BACKSPACE_KEY },
+        { SDL_SCANCODE_RETURN,    InputActionType::ENTER_KEY }
     };
 
     // Needed for tapped input checks 

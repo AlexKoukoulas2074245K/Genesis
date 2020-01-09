@@ -32,7 +32,8 @@ public:
     void HandleConsoleSpecialInput() const;
     void HandleConsoleBackgroundAnimation() const;
     void HandleConsoleTextRendering() const;
-
+    void ExecuteCommand() const;
+    
     bool IsCurrentCommandRenderedTextOutOfDate() const;
 };
 
