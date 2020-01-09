@@ -26,7 +26,6 @@ namespace rendering
 {
 
 ///------------------------------------------------------------------------------------------------
-
 /// Loads and creates and entity holding the loaded model based on the model name supplied.
 ///
 /// Note: this helper function assumes that the model name and texture name are the 
@@ -44,7 +43,6 @@ ecs::EntityId LoadAndCreateModelByName
 );
 
 ///------------------------------------------------------------------------------------------------
-
 /// Loads and creates and entity holding the loaded Gui sprite model based on the model and texture names supplied.
 ///
 /// @param[in] modelName the model with the given name to look for in the resource models folder.
@@ -64,7 +62,6 @@ ecs::EntityId LoadAndCreateGuiSprite
 );
 
 ///------------------------------------------------------------------------------------------------
-
 /// Loads and creates a mesh holding texture coords pointing to subregion of an atlas texture.
 ///
 /// @param[in] meshAtlasCol the atlas column occupied by the desired subimage.

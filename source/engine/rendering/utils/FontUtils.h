@@ -24,7 +24,6 @@ namespace rendering
 {
 
 ///------------------------------------------------------------------------------------------------
-
 /// Loads the font with the given name. 
 ///
 /// This function assumes that a font texture atlas (res/textures/atlases) and a font data file
@@ -40,33 +39,44 @@ void LoadFont
 );
 
 ///------------------------------------------------------------------------------------------------
-
 /// Renders a single character with the given font. 
 ///
 /// @param[in] character the character to render.
 /// @param[in] fontName the name of the font to use in rendering.
+/// @param[in] size the size of character.
 /// @param[in] position the position to render the character at.
 /// @returns the id of an entity holding the renderable and transform components of the character.
 ecs::EntityId RenderCharacter
 (
     const char character,
     const StringId fontName,
+    const float size,
     const glm::vec3& position
 );
 
 ///------------------------------------------------------------------------------------------------
-
 /// Renders a text string with the given font. 
 ///
 /// @param[in] text the text to render.
 /// @param[in] fontName the name of the font to use in the text rendering.
+/// @param[in] size the size of the rendered text's individual glyphs.
 /// @param[in] position the position to render the string at.
-/// @returns the id of an entity holding a TextStringComponent which contains all the character entities of the input string.
+/// @returns the id of an entity holding the root TextStringComponent which contains all the character entities of the input string.
 ecs::EntityId RenderText
 (
     const std::string& text,
     const StringId fontName,
+    const float size,
     const glm::vec3& position
+);
+
+///------------------------------------------------------------------------------------------------
+/// Clears a text string. 
+///
+/// @param[in] textStringEntityId the id of the entity holding the root TextStringComponent of the text to be cleared.
+void ClearRenderedText
+(
+    const ecs::EntityId textStringEntityId
 );
 
 ///------------------------------------------------------------------------------------------------

@@ -86,7 +86,6 @@ inline std::string GetFileNameWithoutExtension(const std::string& filePath)
 }
 
 ///-----------------------------------------------------------------------------------------------
-
 /// Returns a vector of filenames (not absolute paths) in a given directory.
 /// @param[in] directory to search in.
 /// @returns a vector of filenames found in the given directory.

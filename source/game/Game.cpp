@@ -14,7 +14,6 @@
 #include "../engine/rendering/components/CameraSingletonComponent.h"
 #include "../engine/rendering/utils/FontUtils.h"
 #include "../engine/rendering/utils/MeshUtils.h"
-#include "../engine/rendering/systems/AnimationSystem.h"
 #include "../engine/rendering/systems/RenderingSystem.h"
 #include "../engine/scripting/components/ScriptComponent.h"
 #include "../engine/scripting/service/LuaScriptingService.h"
@@ -24,8 +23,7 @@
 
 void Game::VOnSystemsInit()
 {
-    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::input::RawInputHandlingSystem>());
-    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::rendering::AnimationSystem>());
+    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::input::RawInputHandlingSystem>());    
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::scripting::ScriptingSystem>());
 
 #ifndef NDEBUG
@@ -46,8 +44,7 @@ void Game::VOnGameInit()
     scriptComponent->mScriptType = genesis::scripting::ScriptType::CONTINUOUS_EXECUTION;
     genesis::ecs::World::GetInstance().AddComponent<genesis::scripting::ScriptComponent>(monkeyEntityId, std::move(scriptComponent));
 
-    genesis::rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), StringId("console_background"));
-    genesis::rendering::RenderText("TEST ASD", StringId("console_font"), glm::vec3(0.0f, 0.0f, 0.0f));
+    genesis::rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), StringId("console_background"));    
 }
 
 ///------------------------------------------------------------------------------------------------

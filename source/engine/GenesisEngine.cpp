@@ -15,7 +15,6 @@
 #include "input/systems/RawInputHandlingSystem.h"
 #include "input/utils/InputUtils.h"
 #include "rendering/components/WindowSingletonComponent.h"
-#include "rendering/systems/AnimationSystem.h"
 #include "rendering/systems/RenderingSystem.h"
 #include "rendering/utils/FontUtils.h"
 #include "resources/ResourceLoadingService.h"

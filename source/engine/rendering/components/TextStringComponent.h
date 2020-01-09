@@ -26,10 +26,25 @@ namespace rendering
 
 ///-----------------------------------------------------------------------------------------------
 
+class CharacterEntry final
+{
+public:
+    CharacterEntry(const ecs::EntityId entityId, const char character)
+        : mEntityId(entityId)
+        , mCharacter(character)
+    {
+    }
+
+    const ecs::EntityId mEntityId;
+    const char mCharacter;
+};
+
+///-----------------------------------------------------------------------------------------------
+
 class TextStringComponent final: public ecs::IComponent
 {
 public:
-    std::vector<ecs::EntityId> mTextCharacterEntities;
+    std::vector<CharacterEntry> mTextCharacterEntities;
 };
 
 ///-----------------------------------------------------------------------------------------------

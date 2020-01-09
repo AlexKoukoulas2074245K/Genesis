@@ -89,6 +89,7 @@ ecs::EntityId RenderCharacter
 (
     const char character,
     const StringId fontName,
+    const float size,
     const glm::vec3& position
 )
 {    
@@ -104,7 +105,7 @@ ecs::EntityId RenderCharacter
 
     auto transformComponent = std::make_unique<TransformComponent>();    
     transformComponent->mPosition = position;
-    transformComponent->mScale = glm::vec3(0.1f, 0.1f, 1.0f);
+    transformComponent->mScale = glm::vec3(size);
 
     const auto characterEntity = world.CreateEntity();
     world.AddComponent<RenderableComponent>(characterEntity, std::move(renderableComponent));
@@ -119,27 +120,54 @@ ecs::EntityId RenderText
 (
     const std::string& text,
     const StringId fontName,
+    const float size,
     const glm::vec3& position
 )
 {
+    auto& world = ecs::World::GetInstance();
+    auto& fontStoreComponent = world.GetSingletonComponent<FontsStoreSingletonComponent>();
     auto textStringComponent = std::make_unique<TextStringComponent>();
 
     auto positionCounter = position;
     for (const auto& character : text)
     {
+        if (fontStoreComponent.mLoadedFonts.at(fontName).count(character) == 0)
+        {
+            continue;
+        }
+
         // Don't add transform or model components for whitespace character
         if (character != ' ')
         {
-            textStringComponent->mTextCharacterEntities.push_back(RenderCharacter(character, fontName, positionCounter));
+            textStringComponent->mTextCharacterEntities.push_back(CharacterEntry(RenderCharacter(character, fontName, size, positionCounter), character));
         }
 
-        positionCounter.x += 0.1f;
+        positionCounter.x += size/3.0f;
     }    
 
-    auto entity = ecs::World::GetInstance().CreateEntity();
-    ecs::World::GetInstance().AddComponent<TextStringComponent>(entity, std::move(textStringComponent));
+    auto entity = world.CreateEntity();
+    world.AddComponent<TextStringComponent>(entity, std::move(textStringComponent));
 
     return entity;
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void ClearRenderedText
+(
+    const ecs::EntityId textStringEntityId
+)
+{
+    auto& world = ecs::World::GetInstance();
+    auto& textStringComponent = world.GetComponent<TextStringComponent>(textStringEntityId);
+
+    for (const auto& characterEntity : textStringComponent.mTextCharacterEntities)
+    {
+        world.DestroyEntity(characterEntity.mEntityId);
+    }
+
+    textStringComponent.mTextCharacterEntities.clear();
+    world.DestroyEntity(textStringEntityId);
 }
 
 ///-----------------------------------------------------------------------------------------------

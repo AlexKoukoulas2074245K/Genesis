@@ -28,7 +28,7 @@ namespace rendering
 namespace
 {
     const StringId DEFAULT_MODEL_SHADER = StringId("default_3d");    
-    const StringId ATLAS_MODEL_NAME     = StringId("atlas_quad");
+    const StringId ATLAS_MODEL_NAME     = StringId("gui_atlas_quad");
 }
 
 ///------------------------------------------------------------------------------------------------
