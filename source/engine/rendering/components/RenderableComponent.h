@@ -36,6 +36,7 @@ using ResourceId = unsigned int;
 struct ShaderUniforms final
 {
     std::unordered_map<StringId, float, StringIdHasher> mShaderFloatUniforms;
+    std::unordered_map<StringId, glm::vec4, StringIdHasher> mShaderFloatVec4Uniforms;
     std::unordered_map<StringId, glm::mat4, StringIdHasher> mShaderMatrixUniforms;
 };
 

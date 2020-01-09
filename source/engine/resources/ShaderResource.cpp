@@ -66,6 +66,18 @@ bool ShaderResource::SetMatrix4fv
 
 ///------------------------------------------------------------------------------------------------
 
+bool ShaderResource::SetFloatVec4(const StringId uniformName, const glm::vec4& vec) const
+{
+    if (mShaderUniformNamesToLocations.count(uniformName) > 0)
+    {
+        GL_CHECK(glUniform4f(mShaderUniformNamesToLocations.at(uniformName), vec.x, vec.y, vec.z, vec.w));
+        return true;
+    }
+    return false;
+}
+
+///------------------------------------------------------------------------------------------------
+
 bool ShaderResource::SetFloat(const StringId uniformName, const float value) const
 {
     if (mShaderUniformNamesToLocations.count(uniformName) > 0)

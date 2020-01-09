@@ -295,6 +295,12 @@ void RenderingSystem::RenderEntityInternal
         currentShader->SetMatrix4fv(matrixUniformEntry.first, matrixUniformEntry.second);
     }
 
+    // Set other float vec4 uniforms
+    for (const auto& floatVec4UniformEntry : renderableComponent.mShaderUniforms.mShaderFloatVec4Uniforms)
+    {
+        currentShader->SetFloatVec4(floatVec4UniformEntry.first, floatVec4UniformEntry.second);
+    }
+
     // Set other float uniforms
     for (const auto& floatUniformEntry : renderableComponent.mShaderUniforms.mShaderFloatUniforms)
     {

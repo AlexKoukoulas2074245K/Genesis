@@ -26,7 +26,8 @@ namespace debug
 
 namespace
 {
-    static const glm::vec3 CONSOLE_CURRENT_COMMAND_TEXT_POSITION = glm::vec3(-0.5f, 0.5f, -0.1f);
+    static const glm::vec4 CONSOLE_TEXT_COLOR                    = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    static const glm::vec3 CONSOLE_CURRENT_COMMAND_TEXT_POSITION = glm::vec3(-0.95f, 0.65f, -0.1f);
 
     static const StringId CONSOLE_TEXT_FONT_NAME          = StringId("console_font");
     static const StringId CONSOLE_BACKGROUND_ENTITY_NAME  = StringId("console_background");
@@ -34,7 +35,7 @@ namespace
 
     static const float CONSOLE_TEXT_SIZE       = 0.1f;
     static const float CONSOLE_DARKENING_SPEED = 0.005f;
-    static const float MAX_OPAQUENESS          = 0.5f;    
+    static const float MAX_OPAQUENESS          = 0.8f;    
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -66,7 +67,8 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
         consoleStateComponent.mEnabled = !consoleStateComponent.mEnabled;
 
         if (consoleStateComponent.mEnabled)
-        {
+        {   
+            consoleStateComponent.mCurrentCommandTextBuffer = ">";
             SDL_StartTextInput();
         }
         else
@@ -78,10 +80,10 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
     // Handle console backspace
     else if (input::IsActionTypeKeyTapped(input::InputActionType::BACKSPACE_KEY))
     {
-        if (consoleStateComponent.mEnabled && consoleStateComponent.mCurrentCommandTextBuffer.size() > 0)
+        if (consoleStateComponent.mEnabled && consoleStateComponent.mCurrentCommandTextBuffer.size() > 1)
         {
-            const auto newString = consoleStateComponent.mCurrentCommandTextBuffer.substr(0, consoleStateComponent.mCurrentCommandTextBuffer.size() - 1);
-            consoleStateComponent.mCurrentCommandTextBuffer = newString;
+            auto& consoleCurrentCommandText = consoleStateComponent.mCurrentCommandTextBuffer;
+            consoleCurrentCommandText       = consoleCurrentCommandText.substr(0, consoleCurrentCommandText.size() - 1);            
         }
     }
 }
@@ -125,7 +127,7 @@ void ConsoleManagementSystem::HandleConsoleTextRendering() const
     {
         if (consoleStateComponent.mCurrentCommandRenderedTextEntityId != ecs::NULL_ENTITY_ID)
         {
-            rendering::ClearRenderedText(consoleStateComponent.mCurrentCommandRenderedTextEntityId);
+            rendering::ClearRenderedText(consoleStateComponent.mCurrentCommandRenderedTextEntityId);            
         }
 
         consoleStateComponent.mCurrentCommandRenderedTextEntityId = rendering::RenderText
@@ -133,8 +135,9 @@ void ConsoleManagementSystem::HandleConsoleTextRendering() const
             consoleStateComponent.mCurrentCommandTextBuffer,
             CONSOLE_TEXT_FONT_NAME,
             CONSOLE_TEXT_SIZE,
-            CONSOLE_CURRENT_COMMAND_TEXT_POSITION
-        );
+            CONSOLE_CURRENT_COMMAND_TEXT_POSITION,
+            CONSOLE_TEXT_COLOR
+        );        
     }    
 }
 

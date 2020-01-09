@@ -28,7 +28,8 @@ namespace rendering
 
 namespace
 {
-    const StringId FONT_SHADER_NAME = StringId("default_gui");
+    const StringId FONT_SHADER_NAME                     = StringId("default_gui");
+    const StringId GUI_SHADER_CUSTOM_COLOR_UNIFORM_NAME = StringId("custom_color");
 
     const std::string FONT_MAP_FILE_EXTENSION           = ".dat";
     const std::string FONT_ATLAS_TEXTURE_FILE_EXTENSION = ".png";
@@ -90,7 +91,8 @@ ecs::EntityId RenderCharacter
     const char character,
     const StringId fontName,
     const float size,
-    const glm::vec3& position
+    const glm::vec3& position,
+    const glm::vec4& color /* glm::vec4(0.0f, 0.0f, 0.0f, 0.0f) */
 )
 {    
     auto& world = ecs::World::GetInstance();
@@ -102,6 +104,7 @@ ecs::EntityId RenderCharacter
     renderableComponent->mShaderNameId = FONT_SHADER_NAME;
     renderableComponent->mIsGuiComponent = true;
     renderableComponent->mAnimationsToMeshes[renderableComponent->mActiveAnimationNameId].push_back(fontStoreComponent.mLoadedFonts.at(fontName).at(character));
+    renderableComponent->mShaderUniforms.mShaderFloatVec4Uniforms[GUI_SHADER_CUSTOM_COLOR_UNIFORM_NAME] = color;
 
     auto transformComponent = std::make_unique<TransformComponent>();    
     transformComponent->mPosition = position;
@@ -121,7 +124,8 @@ ecs::EntityId RenderText
     const std::string& text,
     const StringId fontName,
     const float size,
-    const glm::vec3& position
+    const glm::vec3& position,
+    const glm::vec4& color /* glm::vec4(0.0f, 0.0f, 0.0f, 0.0f) */
 )
 {
     auto& world = ecs::World::GetInstance();
@@ -131,7 +135,7 @@ ecs::EntityId RenderText
     auto positionCounter = position;
     for (const auto& character : text)
     {
-        if (fontStoreComponent.mLoadedFonts.at(fontName).count(character) == 0)
+        if (character != ' ' && fontStoreComponent.mLoadedFonts.at(fontName).count(character) == 0)
         {
             continue;
         }
@@ -139,7 +143,8 @@ ecs::EntityId RenderText
         // Don't add transform or model components for whitespace character
         if (character != ' ')
         {
-            textStringComponent->mTextCharacterEntities.push_back(CharacterEntry(RenderCharacter(character, fontName, size, positionCounter), character));
+            const auto characterEntityId = RenderCharacter(character, fontName, size, positionCounter, color);
+            textStringComponent->mTextCharacterEntities.push_back(CharacterEntry(characterEntityId, character));
         }
 
         positionCounter.x += size/3.0f;

@@ -9,8 +9,6 @@ out vec4 frag_color;
 
 void main()
 {
-    float finalUvX = uv_frag.x;    
-    float finalUvY = 1.00 - uv_frag.y;    
-
+	// Directly set console color
     frag_color = vec4(0.0, 0.0, 0.0, opaqueness);	
 }
