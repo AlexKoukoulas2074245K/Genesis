@@ -60,51 +60,14 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
     game.VOnGameInit();
 
 
+    auto dt                = 0.0f;
     auto elapsedTicks      = 0.0f;
     auto dtAccumulator     = 0.0f;
     auto framesAccumulator = 0LL; 
 
     while (!AppShouldQuit())
     {        
-        // Calculate frame delta
-        const auto currentTicks   = static_cast<float>(SDL_GetTicks());
-        const auto lastFrameTicks = currentTicks - elapsedTicks;
-
-        elapsedTicks  = currentTicks;
-        const auto dt = lastFrameTicks * 0.001f;
-
-        framesAccumulator++;
-        dtAccumulator += dt;
-
-        if (dtAccumulator > 1.0f)
-        {                      
-            Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator)).c_str());            
-
-            framesAccumulator = 0;
-            dtAccumulator = 0.0f;
-        }
-
-#ifndef NDEBUG
-        if (input::IsActionTypeKeyTapped(input::InputActionType::CONSOLE_TOGGLE))
-        {
-            if (ecs::World::GetInstance().HasSingletonComponent<debug::ConsoleStateSingletonComponent>())
-            {
-                auto& consoleStateComponent = ecs::World::GetInstance().GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
-                consoleStateComponent.mEnabled = !consoleStateComponent.mEnabled;
-
-                if (consoleStateComponent.mEnabled)
-                {
-                    consoleStateComponent.mCurrentCommandText.clear();
-                    SDL_StartTextInput();
-                }
-                else
-                {
-                    SDL_StopTextInput();
-                }
-            }            
-        }
-#endif
-
+        UpdateFrameStatistics(dt, elapsedTicks, dtAccumulator, framesAccumulator);
         game.VOnUpdate(dt);
         ecs::World::GetInstance().Update(dt);        
     }
@@ -195,6 +158,43 @@ void GenesisEngine::InitializeServices() const
 void GenesisEngine::InitializeDefaultConsoleFont() const
 {
     rendering::LoadFont(CONSOLE_FONT_NAME, CONSOLE_FONT_ATLAS_COLS, CONSOLE_FONT_ATLAS_ROWS);
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void GenesisEngine::UpdateFrameStatistics(float& dt, float& elapsedTicks, float& dtAccumulator, long long& framesAccumulator) const
+{
+    // Calculate frame delta
+    const auto currentTicks = static_cast<float>(SDL_GetTicks());
+    const auto lastFrameTicks = currentTicks - elapsedTicks;
+
+    elapsedTicks = currentTicks;
+    dt = lastFrameTicks * 0.001f;
+
+    framesAccumulator++;
+    dtAccumulator += dt;
+
+    if (dtAccumulator > 1.0f)
+    {
+        Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator)).c_str());
+
+        framesAccumulator = 0;
+        dtAccumulator = 0.0f;
+    }        
+
+    // Make sure the console system has been registered at all
+    if (ecs::World::GetInstance().HasSingletonComponent<debug::ConsoleStateSingletonComponent>() == false)
+    {
+        return;
+    }
+
+    auto& consoleStateComponent = ecs::World::GetInstance().GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
+
+    // Freeze dt in case the console is opened
+    if (consoleStateComponent.mEnabled)
+    {
+        dt = 0.0f;
+    }
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -325,7 +325,10 @@ bool AppShouldQuit()
                 if (world.HasSingletonComponent<debug::ConsoleStateSingletonComponent>())
                 {
                     auto& consoleStateComponent = world.GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
-                    consoleStateComponent.mCurrentCommandText += std::string(event.text.text);
+                    if (consoleStateComponent.mEnabled)
+                    {
+                        consoleStateComponent.mCurrentCommandTextBuffer += std::string(event.text.text);
+                    }                    
                 }                
             } 
 #endif

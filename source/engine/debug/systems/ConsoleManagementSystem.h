@@ -29,7 +29,11 @@ public:
     ConsoleManagementSystem();
 
     void VUpdateAssociatedComponents(const float dt) const override;
-    void HandleConsoleBackgroundAnimation(const float dt) const;
+    void HandleConsoleSpecialInput() const;
+    void HandleConsoleBackgroundAnimation() const;
+    void HandleConsoleTextRendering() const;
+
+    bool IsCurrentCommandRenderedTextOutOfDate() const;
 };
 
 ///-----------------------------------------------------------------------------------------------

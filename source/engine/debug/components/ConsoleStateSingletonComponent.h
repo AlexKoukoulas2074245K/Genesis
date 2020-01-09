@@ -29,9 +29,10 @@ namespace debug
 class ConsoleStateSingletonComponent final: public ecs::IComponent
 {
 public:   
-    std::string mCurrentCommandText = "";
-    float mBackgroundOpaqueness     = 0.0f;
-    bool mEnabled                   = false;
+    ecs::EntityId mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;
+    std::string mCurrentCommandTextBuffer             = "";
+    float mBackgroundOpaqueness                       = 0.0f;
+    bool mEnabled                                     = false;
 };
 
 ///-----------------------------------------------------------------------------------------------

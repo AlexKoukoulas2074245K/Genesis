@@ -7,7 +7,10 @@
 
 #include "ConsoleManagementSystem.h"
 #include "../components/ConsoleStateSingletonComponent.h"
+#include "../../input/utils/InputUtils.h"
 #include "../../rendering/components/RenderableComponent.h"
+#include "../../rendering/components/TextStringComponent.h"
+#include "../../rendering/utils/FontUtils.h"
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -23,11 +26,15 @@ namespace debug
 
 namespace
 {
+    static const glm::vec3 CONSOLE_CURRENT_COMMAND_TEXT_POSITION = glm::vec3(-0.5f, 0.5f, -0.1f);
+
+    static const StringId CONSOLE_TEXT_FONT_NAME          = StringId("console_font");
     static const StringId CONSOLE_BACKGROUND_ENTITY_NAME  = StringId("console_background");
     static const StringId CONSOLE_OPAQUENESS_UNIFORM_NAME = StringId("opaqueness");
 
-    static const float CONSOLE_DARKENING_SPEED = 2.0f;
-    static const float MAX_OPAQUENESS          = 0.5f;
+    static const float CONSOLE_TEXT_SIZE       = 0.1f;
+    static const float CONSOLE_DARKENING_SPEED = 0.005f;
+    static const float MAX_OPAQUENESS          = 0.5f;    
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -40,19 +47,54 @@ ConsoleManagementSystem::ConsoleManagementSystem()
 
 ///-----------------------------------------------------------------------------------------------
 
-void ConsoleManagementSystem::VUpdateAssociatedComponents(const float dt) const
+void ConsoleManagementSystem::VUpdateAssociatedComponents(const float) const
 {   
-    HandleConsoleBackgroundAnimation(dt);
+    HandleConsoleSpecialInput();
+    HandleConsoleBackgroundAnimation();
+    HandleConsoleTextRendering();
 }
 
 ///-----------------------------------------------------------------------------------------------
 
-void ConsoleManagementSystem::HandleConsoleBackgroundAnimation(const float dt) const
+void ConsoleManagementSystem::HandleConsoleSpecialInput() const
+{
+    auto& consoleStateComponent = ecs::World::GetInstance().GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
+
+    // Handling console open/close
+    if (input::IsActionTypeKeyTapped(input::InputActionType::CONSOLE_TOGGLE))
+    {
+        consoleStateComponent.mEnabled = !consoleStateComponent.mEnabled;
+
+        if (consoleStateComponent.mEnabled)
+        {
+            SDL_StartTextInput();
+        }
+        else
+        {
+            SDL_StopTextInput();
+            consoleStateComponent.mCurrentCommandTextBuffer.clear();
+        }
+    }
+    // Handle console backspace
+    else if (input::IsActionTypeKeyTapped(input::InputActionType::BACKSPACE_KEY))
+    {
+        if (consoleStateComponent.mEnabled && consoleStateComponent.mCurrentCommandTextBuffer.size() > 0)
+        {
+            const auto newString = consoleStateComponent.mCurrentCommandTextBuffer.substr(0, consoleStateComponent.mCurrentCommandTextBuffer.size() - 1);
+            consoleStateComponent.mCurrentCommandTextBuffer = newString;
+        }
+    }
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void ConsoleManagementSystem::HandleConsoleBackgroundAnimation() const
 {
     auto& consoleStateComponent = ecs::World::GetInstance().GetSingletonComponent<ConsoleStateSingletonComponent>();
     if (consoleStateComponent.mEnabled)
     {
-        consoleStateComponent.mBackgroundOpaqueness += CONSOLE_DARKENING_SPEED * dt;
+        // dt is not used in the opaqueness calculation since frozen when console opens
+        consoleStateComponent.mBackgroundOpaqueness += CONSOLE_DARKENING_SPEED;
         if (consoleStateComponent.mBackgroundOpaqueness > MAX_OPAQUENESS)
         {
             consoleStateComponent.mBackgroundOpaqueness = MAX_OPAQUENESS;
@@ -60,7 +102,8 @@ void ConsoleManagementSystem::HandleConsoleBackgroundAnimation(const float dt) c
     }
     else
     {
-        consoleStateComponent.mBackgroundOpaqueness -= CONSOLE_DARKENING_SPEED * dt;
+        // dt is not used in the opaqueness calculation since frozen when console opens
+        consoleStateComponent.mBackgroundOpaqueness -= CONSOLE_DARKENING_SPEED;
         if (consoleStateComponent.mBackgroundOpaqueness < 0.0f)
         {
             consoleStateComponent.mBackgroundOpaqueness = 0.0f;
@@ -70,6 +113,46 @@ void ConsoleManagementSystem::HandleConsoleBackgroundAnimation(const float dt) c
     const auto consoleBackgroundEntity = ecs::World::GetInstance().FindEntity(CONSOLE_BACKGROUND_ENTITY_NAME);
     auto& consoleBackgroundRenderableComponent = ecs::World::GetInstance().GetComponent<rendering::RenderableComponent>(consoleBackgroundEntity);
     consoleBackgroundRenderableComponent.mShaderUniforms.mShaderFloatUniforms[CONSOLE_OPAQUENESS_UNIFORM_NAME] = consoleStateComponent.mBackgroundOpaqueness;
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void ConsoleManagementSystem::HandleConsoleTextRendering() const
+{
+    auto& consoleStateComponent = ecs::World::GetInstance().GetSingletonComponent<ConsoleStateSingletonComponent>();
+
+    if (consoleStateComponent.mCurrentCommandRenderedTextEntityId == ecs::NULL_ENTITY_ID || IsCurrentCommandRenderedTextOutOfDate())
+    {
+        if (consoleStateComponent.mCurrentCommandRenderedTextEntityId != ecs::NULL_ENTITY_ID)
+        {
+            rendering::ClearRenderedText(consoleStateComponent.mCurrentCommandRenderedTextEntityId);
+        }
+
+        consoleStateComponent.mCurrentCommandRenderedTextEntityId = rendering::RenderText
+        (
+            consoleStateComponent.mCurrentCommandTextBuffer,
+            CONSOLE_TEXT_FONT_NAME,
+            CONSOLE_TEXT_SIZE,
+            CONSOLE_CURRENT_COMMAND_TEXT_POSITION
+        );
+    }    
+}
+
+///-----------------------------------------------------------------------------------------------
+
+bool ConsoleManagementSystem::IsCurrentCommandRenderedTextOutOfDate() const
+{
+    const auto& world = ecs::World::GetInstance();
+    const auto& consoleStateComponent = world.GetSingletonComponent<ConsoleStateSingletonComponent>();
+    const auto& renderedTextStringComponent = world.GetComponent<rendering::TextStringComponent>(consoleStateComponent.mCurrentCommandRenderedTextEntityId);
+
+    std::string renderedCommandText = "";
+    for (const auto& characterEntry: renderedTextStringComponent.mTextCharacterEntities)
+    {
+        renderedCommandText += characterEntry.mCharacter;
+    }
+
+    return renderedCommandText != consoleStateComponent.mCurrentCommandTextBuffer;
 }
 
 ///-----------------------------------------------------------------------------------------------
