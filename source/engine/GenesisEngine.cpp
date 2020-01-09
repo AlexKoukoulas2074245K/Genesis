@@ -34,7 +34,7 @@ namespace genesis
 
 namespace
 {
-    const StringId CONSOLE_FONT_NAME  = "console_font";
+    const StringId CONSOLE_FONT_NAME  = StringId("console_font");
     const int CONSOLE_FONT_ATLAS_COLS = 16;
     const int CONSOLE_FONT_ATLAS_ROWS = 16;
 }

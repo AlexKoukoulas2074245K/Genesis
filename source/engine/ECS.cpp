@@ -49,12 +49,9 @@ void World::Update(const float dt)
     CongregateActiveEntitiesInCurrentFrame();
 
     for(const auto& system: mSystems)
-    {         
-        if (system->mEnabled)
-        {
-            system->VUpdateAssociatedComponents(dt);
-            InsertNewEntitiesIntoActiveCollection();
-        }        
+    {
+        system->VUpdateAssociatedComponents(dt);
+        InsertNewEntitiesIntoActiveCollection();
     }
 }
 
@@ -185,7 +182,6 @@ World::World()
 ///------------------------------------------------------------------------------------------------
 
 BaseSystem::BaseSystem()
-    : mEnabled(true)
 {
 }
 
