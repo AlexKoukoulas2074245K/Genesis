@@ -27,7 +27,7 @@ namespace debug
 namespace
 {
     static const glm::vec4 CONSOLE_TEXT_COLOR                    = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    static const glm::vec3 CONSOLE_CURRENT_COMMAND_TEXT_POSITION = glm::vec3(-0.95f, 0.65f, -0.1f);
+    static const glm::vec3 CONSOLE_CURRENT_COMMAND_TEXT_POSITION = glm::vec3(-0.95f, -0.65f, -0.1f);
 
     static const StringId CONSOLE_TEXT_FONT_NAME          = StringId("console_font");
     static const StringId CONSOLE_BACKGROUND_ENTITY_NAME  = StringId("console_background");
