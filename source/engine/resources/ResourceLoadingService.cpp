@@ -40,14 +40,15 @@ const std::string ResourceLoadingService::RES_ROOT = "../res/";
 const std::string ResourceLoadingService::RES_ROOT = "../../res/";
 #endif
 
-const std::string ResourceLoadingService::RES_ATLASES_ROOT    = RES_ROOT + "atlases/";
-const std::string ResourceLoadingService::RES_DATA_ROOT       = RES_ROOT + "gamedata/";
-const std::string ResourceLoadingService::RES_SCRIPTS_ROOT    = RES_ROOT + "scripts/";
-const std::string ResourceLoadingService::RES_MODELS_ROOT     = RES_ROOT + "models/";
-const std::string ResourceLoadingService::RES_MUSIC_ROOT      = RES_ROOT + "music/";
-const std::string ResourceLoadingService::RES_SFX_ROOT        = RES_ROOT + "sfx/";
-const std::string ResourceLoadingService::RES_SHADERS_ROOT    = RES_ROOT + "shaders/";
-const std::string ResourceLoadingService::RES_TEXTURES_ROOT   = RES_ROOT + "textures/";
+const std::string ResourceLoadingService::RES_DATA_ROOT          = RES_ROOT + "data/";
+const std::string ResourceLoadingService::RES_SCRIPTS_ROOT       = RES_ROOT + "scripts/";
+const std::string ResourceLoadingService::RES_MODELS_ROOT        = RES_ROOT + "models/";
+const std::string ResourceLoadingService::RES_MUSIC_ROOT         = RES_ROOT + "music/";
+const std::string ResourceLoadingService::RES_SFX_ROOT           = RES_ROOT + "sfx/";
+const std::string ResourceLoadingService::RES_SHADERS_ROOT       = RES_ROOT + "shaders/";
+const std::string ResourceLoadingService::RES_TEXTURES_ROOT      = RES_ROOT + "textures/";
+const std::string ResourceLoadingService::RES_ATLASES_ROOT       = RES_TEXTURES_ROOT + "atlases/";
+const std::string ResourceLoadingService::RES_FONT_MAP_DATA_ROOT = RES_DATA_ROOT + "font_maps/";
 
 ///------------------------------------------------------------------------------------------------
 

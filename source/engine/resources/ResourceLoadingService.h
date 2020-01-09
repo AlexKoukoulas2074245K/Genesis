@@ -51,16 +51,17 @@ class ResourceLoadingService final
     friend class genesis::GenesisEngine;
     
 public:
-    static const std::string RES_ROOT;
-    static const std::string RES_ATLASES_ROOT;
+    static const std::string RES_ROOT;    
     static const std::string RES_DATA_ROOT;
     static const std::string RES_SCRIPTS_ROOT;   
     static const std::string RES_MODELS_ROOT;
     static const std::string RES_MUSIC_ROOT;
     static const std::string RES_SFX_ROOT;
     static const std::string RES_SHADERS_ROOT;
-    static const std::string RES_TEXTURES_ROOT;        
-    
+    static const std::string RES_TEXTURES_ROOT;     
+    static const std::string RES_ATLASES_ROOT;
+    static const std::string RES_FONT_MAP_DATA_ROOT;
+
     /// The default method of getting a hold of this singleton.
     ///
     /// The single instance of this class will be lazily initialized

@@ -1,0 +1,80 @@
+///------------------------------------------------------------------------------------------------
+///  FontUtils.h
+///  Genesis
+///
+///  Created by Alex Koukoulas on 09/01/2020.
+///------------------------------------------------------------------------------------------------
+
+#ifndef FontUtils_h
+#define FontUtils_h
+
+///------------------------------------------------------------------------------------------------
+
+#include "../../ECS.h"
+#include "../../common/utils/MathUtils.h"
+
+///------------------------------------------------------------------------------------------------
+
+namespace genesis
+{
+
+///------------------------------------------------------------------------------------------------
+
+namespace rendering
+{
+
+///------------------------------------------------------------------------------------------------
+
+/// Loads the font with the given name. 
+///
+/// This function assumes that a font texture atlas (res/textures/atlases) and a font data file
+/// (under res/data/font_maps) exist with the same name as the one passed in the function.
+/// @param[in] fontName the name of the font to load.
+/// @param[in] fontAtlasCols the number of columns in the font atlas texture.
+/// @param[in] fontAtlasRows the number of rows in the font atlas texture.
+void LoadFont
+(
+    const StringId fontName, 
+    const int fontAtlasCols, 
+    const int fontAtlasRows
+);
+
+///------------------------------------------------------------------------------------------------
+
+/// Renders a single character with the given font. 
+///
+/// @param[in] character the character to render.
+/// @param[in] fontName the name of the font to use in rendering.
+/// @param[in] position the position to render the character at.
+/// @returns the id of an entity holding the renderable and transform components of the character.
+ecs::EntityId RenderCharacter
+(
+    const char character,
+    const StringId fontName,
+    const glm::vec3& position
+);
+
+///------------------------------------------------------------------------------------------------
+
+/// Renders a text string with the given font. 
+///
+/// @param[in] text the text to render.
+/// @param[in] fontName the name of the font to use in the text rendering.
+/// @param[in] position the position to render the string at.
+/// @returns the id of an entity holding a TextStringComponent which contains all the character entities of the input string.
+ecs::EntityId RenderText
+(
+    const std::string& text,
+    const StringId fontName,
+    const glm::vec3& position
+);
+
+///------------------------------------------------------------------------------------------------
+
+}
+
+}
+
+///------------------------------------------------------------------------------------------------
+
+#endif /* FontUtils_h */

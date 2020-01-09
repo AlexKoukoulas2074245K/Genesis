@@ -17,6 +17,7 @@
 #include "rendering/components/WindowSingletonComponent.h"
 #include "rendering/systems/AnimationSystem.h"
 #include "rendering/systems/RenderingSystem.h"
+#include "rendering/utils/FontUtils.h"
 #include "resources/ResourceLoadingService.h"
 #include "scripting/service/LuaScriptingService.h"
 #include "sound/SoundService.h"
@@ -32,6 +33,15 @@ namespace genesis
 
 ///------------------------------------------------------------------------------------------------
 
+namespace
+{
+    const StringId CONSOLE_FONT_NAME  = "console_font";
+    const int CONSOLE_FONT_ATLAS_COLS = 16;
+    const int CONSOLE_FONT_ATLAS_ROWS = 16;
+}
+
+///------------------------------------------------------------------------------------------------
+
 static bool AppShouldQuit();
 
 ///------------------------------------------------------------------------------------------------
@@ -41,13 +51,15 @@ GenesisEngine::GenesisEngine()
 }
 
 ///------------------------------------------------------------------------------------------------
-std::string text;
+
 void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGame& game)
 {
     Initialize(startupParameters);
 
     game.VOnSystemsInit();
+    InitializeDefaultConsoleFont();
     game.VOnGameInit();
+
 
     auto elapsedTicks      = 0.0f;
     auto dtAccumulator     = 0.0f;
@@ -73,11 +85,26 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
             dtAccumulator = 0.0f;
         }
 
-        if (input::IsActionTypeKeyTapped(input::InputActionType::CONSOLE_TOGGLE, ecs::World::GetInstance()))
+#ifndef NDEBUG
+        if (input::IsActionTypeKeyTapped(input::InputActionType::CONSOLE_TOGGLE))
         {
-            auto& consoleStateComponent = ecs::World::GetInstance().GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
-            consoleStateComponent.mEnabled = !consoleStateComponent.mEnabled;        
+            if (ecs::World::GetInstance().HasSingletonComponent<debug::ConsoleStateSingletonComponent>())
+            {
+                auto& consoleStateComponent = ecs::World::GetInstance().GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
+                consoleStateComponent.mEnabled = !consoleStateComponent.mEnabled;
+
+                if (consoleStateComponent.mEnabled)
+                {
+                    consoleStateComponent.mCurrentCommandText.clear();
+                    SDL_StartTextInput();
+                }
+                else
+                {
+                    SDL_StopTextInput();
+                }
+            }            
         }
+#endif
 
         game.VOnUpdate(dt);
         ecs::World::GetInstance().Update(dt);        
@@ -162,6 +189,13 @@ void GenesisEngine::InitializeServices() const
     scripting::LuaScriptingService::GetInstance().Initialize();
 
     BindDefaultFunctionsToLua();
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void GenesisEngine::InitializeDefaultConsoleFont() const
+{
+    rendering::LoadFont(CONSOLE_FONT_NAME, CONSOLE_FONT_ATLAS_COLS, CONSOLE_FONT_ATLAS_ROWS);
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -284,6 +318,18 @@ bool AppShouldQuit()
         switch (event.type)
         {
             case SDL_QUIT: return true;
+
+#ifndef NDEBUG
+            case SDL_TEXTINPUT:
+            {
+                auto& world = ecs::World::GetInstance();
+                if (world.HasSingletonComponent<debug::ConsoleStateSingletonComponent>())
+                {
+                    auto& consoleStateComponent = world.GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
+                    consoleStateComponent.mCurrentCommandText += std::string(event.text.text);
+                }                
+            } 
+#endif
         }
     }
 

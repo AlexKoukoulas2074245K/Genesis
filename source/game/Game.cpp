@@ -12,7 +12,8 @@
 #include "../engine/input/utils/InputUtils.h"
 #include "../engine/input/systems/RawInputHandlingSystem.h"
 #include "../engine/rendering/components/CameraSingletonComponent.h"
-#include "../engine/rendering/utils/ModelUtils.h"
+#include "../engine/rendering/utils/FontUtils.h"
+#include "../engine/rendering/utils/MeshUtils.h"
 #include "../engine/rendering/systems/AnimationSystem.h"
 #include "../engine/rendering/systems/RenderingSystem.h"
 #include "../engine/scripting/components/ScriptComponent.h"
@@ -38,14 +39,15 @@ void Game::VOnSystemsInit()
 
 void Game::VOnGameInit()
 {
-    const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.1f, 0.2f, 0.3f), genesis::ecs::World::GetInstance(), StringId("monkey"));    
+    const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.1f, 0.2f, 0.3f), StringId("monkey"));
 
     auto scriptComponent = std::make_unique<genesis::scripting::ScriptComponent>();
     scriptComponent->mScriptName = StringId("test");
     scriptComponent->mScriptType = genesis::scripting::ScriptType::CONTINUOUS_EXECUTION;
     genesis::ecs::World::GetInstance().AddComponent<genesis::scripting::ScriptComponent>(monkeyEntityId, std::move(scriptComponent));
 
-    genesis::rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), genesis::ecs::World::GetInstance(), StringId("console_background"));
+    genesis::rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), StringId("console_background"));
+    genesis::rendering::RenderText("TEST ASD", StringId("console_font"), glm::vec3(0.0f, 0.0f, 0.0f));
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -59,31 +61,31 @@ void Game::VOnUpdate(const float dt)
     float lookSpeed = 1.0f;
     float zoomSpeed = 0.2f;
 
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_UP, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_UP))
     {
         cameraComponent.mPosition.y += moveSpeed * dt;
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_DOWN, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_DOWN))
     {
         cameraComponent.mPosition.y -= moveSpeed * dt;
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_LEFT, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_LEFT))
     {
         cameraComponent.mPosition += dt * moveSpeed * glm::normalize(glm::cross(cameraComponent.mFrontVector, cameraComponent.mUpVector));
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_RIGHT, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_RIGHT))
     {
         cameraComponent.mPosition -= dt * moveSpeed * glm::normalize(glm::cross(cameraComponent.mFrontVector, cameraComponent.mUpVector));
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_FORWARD, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_FORWARD))
     {
         cameraComponent.mPosition += dt * moveSpeed * cameraComponent.mFrontVector;
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_BACKWARD, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_BACKWARD))
     {
         cameraComponent.mPosition -= dt * moveSpeed * cameraComponent.mFrontVector;
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_UP, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_UP))
     {
         cameraComponent.mPitch += lookSpeed * dt;
         if (cameraComponent.mPitch >= 2 * genesis::math::PI)
@@ -91,7 +93,7 @@ void Game::VOnUpdate(const float dt)
             cameraComponent.mPitch = cameraComponent.mPitch - 2 * genesis::math::PI;
         }
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_DOWN, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_DOWN))
     {
         cameraComponent.mPitch -= lookSpeed * dt;
         if (cameraComponent.mPitch <= 0.0f)
@@ -99,7 +101,7 @@ void Game::VOnUpdate(const float dt)
             cameraComponent.mPitch = 2 * genesis::math::PI + cameraComponent.mPitch;
         }
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_LEFT, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_LEFT))
     {
         cameraComponent.mYaw += lookSpeed * dt;
         if (cameraComponent.mYaw >= 2 * genesis::math::PI)
@@ -107,7 +109,7 @@ void Game::VOnUpdate(const float dt)
             cameraComponent.mYaw = cameraComponent.mYaw - 2 * genesis::math::PI;
         }        
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_RIGHT, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_RIGHT))
     {
         cameraComponent.mYaw -= lookSpeed * dt;
         if (cameraComponent.mYaw <= 0.0f)
@@ -115,20 +117,14 @@ void Game::VOnUpdate(const float dt)
             cameraComponent.mYaw = 2 * genesis::math::PI + cameraComponent.mYaw;
         }
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_IN, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_IN))
     {    
         cameraComponent.mFieldOfView -= zoomSpeed * dt;
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_OUT, world))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_OUT))
     {
         cameraComponent.mFieldOfView += zoomSpeed * dt;
-    }    
-
-    const auto getKeyChar = genesis::input::GetTypedCharacter(genesis::ecs::World::GetInstance());
-    if (getKeyChar != 0)
-    {
-        std::cout << "Key tapped: " << getKeyChar << "\n";
-    }
+    }      
 
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
     cameraComponent.mFrontVector.y = genesis::math::Sinf(cameraComponent.mPitch);

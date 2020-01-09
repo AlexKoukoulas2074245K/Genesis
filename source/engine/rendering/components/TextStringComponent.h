@@ -1,18 +1,18 @@
 ///------------------------------------------------------------------------------------------------
-///  ConsoleStateSingletonComponent.h
+///  TextStringComponent.h
 ///  Genesis
 ///
-///  Created by Alex Koukoulas on 06/01/2020.
+///  Created by Alex Koukoulas on 09/01/2020.
 ///-----------------------------------------------------------------------------------------------
 
-#ifndef ConsoleStateSingletonComponent_h
-#define ConsoleStateSingletonComponent_h
+#ifndef TextStringComponent_h
+#define TextStringComponent_h
 
 ///-----------------------------------------------------------------------------------------------
 
 #include "../../ECS.h"
 
-#include <string>
+#include <vector>
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -21,17 +21,15 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
-namespace debug
+namespace rendering
 {
 
 ///-----------------------------------------------------------------------------------------------
 
-class ConsoleStateSingletonComponent final: public ecs::IComponent
+class TextStringComponent final: public ecs::IComponent
 {
-public:   
-    std::string mCurrentCommandText = "";
-    float mBackgroundOpaqueness     = 0.0f;
-    bool mEnabled                   = false;
+public:
+    std::vector<ecs::EntityId> mTextCharacterEntities;
 };
 
 ///-----------------------------------------------------------------------------------------------
@@ -40,6 +38,4 @@ public:
 
 }
 
-///-----------------------------------------------------------------------------------------------
-
-#endif /* ConsoleStateSingletonComponent_h */
+#endif /* TextStringComponent_h */

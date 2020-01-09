@@ -27,8 +27,9 @@ namespace input
 /// @param[in] actionType the action type to check for its state.
 /// @param[in] world the singular world of the ECS state.
 /// @returns whether the state of the input action type is TAPPED.
-inline bool IsActionTypeKeyTapped(const InputActionType actionType, const ecs::World& world)
+inline bool IsActionTypeKeyTapped(const InputActionType actionType)
 {
+    auto& world = ecs::World::GetInstance();
     const auto& inputStateComponent = world.GetSingletonComponent<InputStateSingletonComponent>();
     return inputStateComponent.mCurrentInputState.at(actionType) == InputActionState::TAPPED;
 }
@@ -38,8 +39,9 @@ inline bool IsActionTypeKeyTapped(const InputActionType actionType, const ecs::W
 /// @param[in] actionType the action type to check for its state.
 /// @param[in] world the singular world of the ECS state.
 /// @returns whether the state of the input action type is PRESSED.
-inline bool IsActionTypeKeyPressed(const InputActionType actionType, const ecs::World& world)
+inline bool IsActionTypeKeyPressed(const InputActionType actionType)
 {
+    auto& world = ecs::World::GetInstance();
     const auto& inputStateComponent = world.GetSingletonComponent<InputStateSingletonComponent>();
     return inputStateComponent.mCurrentInputState.at(actionType) == InputActionState::PRESSED;
 }
@@ -48,43 +50,11 @@ inline bool IsActionTypeKeyPressed(const InputActionType actionType, const ecs::
 /// @param[in] actionType the action type to check for its state.
 /// @param[in] world the singular world of the ECS state.
 /// @returns whether the state of the input action type is RELEASED.
-inline bool IsActionTypeKeyReleased(const InputActionType actionType, const ecs::World& world)
+inline bool IsActionTypeKeyReleased(const InputActionType actionType)
 {
+    auto& world = ecs::World::GetInstance();
     const auto& inputStateComponent = world.GetSingletonComponent<InputStateSingletonComponent>();
     return inputStateComponent.mCurrentInputState.at(actionType) == InputActionState::RELEASED;
-}
-
-///-----------------------------------------------------------------------------------------------
-
-/// Checks and returns the character from the currently tapped key.
-/// @param[in] world the singular world of the ECS state.
-/// @returns the tapped character, or 0 if no character is currently tapped.
-inline char GetTypedCharacter(const ecs::World& world)
-{
-    const auto& inputStateComponent = world.GetSingletonComponent<InputStateSingletonComponent>();
-
-    // Check whether modifier key is down
-    const auto isShiftDown = IsActionTypeKeyPressed(InputActionType::SHIFT, world);
-
-    // Find tapped key
-    auto keyboardStateLength = 0;
-    const auto* currentKeyboardState = SDL_GetKeyboardState(&keyboardStateLength);    
-    for (auto i = 0U; i < inputStateComponent.mPreviousRawKeyboardState.size(); ++i)
-    {
-        if (currentKeyboardState[i] && !inputStateComponent.mPreviousRawKeyboardState[i])
-        {
-            if (isShiftDown && sKeyResultWithShiftModifier.count(static_cast<SDL_Scancode>(i)) != 0)
-            {
-                return static_cast<char>(sKeyResultWithShiftModifier.at(static_cast<SDL_Scancode>(i)));
-            }
-            else
-            {
-                return static_cast<char>(SDL_GetKeyFromScancode(static_cast<SDL_Scancode>(i)));
-            }            
-        }
-    }
-
-    return 0;
 }
 
 ///-----------------------------------------------------------------------------------------------

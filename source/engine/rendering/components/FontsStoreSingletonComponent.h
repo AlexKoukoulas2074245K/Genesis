@@ -1,18 +1,19 @@
 ///------------------------------------------------------------------------------------------------
-///  ConsoleStateSingletonComponent.h
+///  FontsStoreSingletonComponent.h
 ///  Genesis
 ///
-///  Created by Alex Koukoulas on 06/01/2020.
+///  Created by Alex Koukoulas on 09/01/2020.
 ///-----------------------------------------------------------------------------------------------
 
-#ifndef ConsoleStateSingletonComponent_h
-#define ConsoleStateSingletonComponent_h
+#ifndef FontsStoreSingletonComponent_h
+#define FontsStoreSingletonComponent_h
 
 ///-----------------------------------------------------------------------------------------------
 
 #include "../../ECS.h"
+#include "../../resources/ResourceLoadingService.h"
 
-#include <string>
+#include <unordered_map>
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -21,17 +22,15 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
-namespace debug
+namespace rendering
 {
 
 ///-----------------------------------------------------------------------------------------------
 
-class ConsoleStateSingletonComponent final: public ecs::IComponent
+class FontsStoreSingletonComponent final: public ecs::IComponent
 {
-public:   
-    std::string mCurrentCommandText = "";
-    float mBackgroundOpaqueness     = 0.0f;
-    bool mEnabled                   = false;
+public:
+    std::unordered_map<StringId, std::unordered_map<char, resources::ResourceId>, StringIdHasher> mLoadedFonts;
 };
 
 ///-----------------------------------------------------------------------------------------------
@@ -42,4 +41,4 @@ public:
 
 ///-----------------------------------------------------------------------------------------------
 
-#endif /* ConsoleStateSingletonComponent_h */
+#endif /* FontsStoreSingletonComponent_h */
