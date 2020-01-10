@@ -83,6 +83,16 @@ void LoadFont
         }
     }
 
+    // Add space character
+    fontStoreComponent.mLoadedFonts[fontName][' '] = LoadAndCreateMeshFromAtlasTexCoords
+    (
+        fontAtlasCols - 1,
+        fontAtlasRows - 1,
+        fontAtlasCols,
+        fontAtlasRows,
+        false
+    );
+
     resources::ResourceLoadingService::GetInstance().UnloadResource(fontMapFileResourceId);
 }
 
@@ -137,18 +147,14 @@ ecs::EntityId RenderText
     auto positionCounter = position;
     for (const auto& character : text)
     {
-        if (character != ' ' && fontStoreComponent.mLoadedFonts.at(fontName).count(character) == 0)
+        if (fontStoreComponent.mLoadedFonts.at(fontName).count(character) == 0)
         {
             continue;
         }
-
-        // Don't add transform or model components for whitespace character
-        if (character != ' ')
-        {
-            const auto characterEntityId = RenderCharacter(character, fontName, size, positionCounter, color);
-            textStringComponent->mTextCharacterEntities.push_back(CharacterEntry(characterEntityId, character));
-        }
-
+        
+        const auto characterEntityId = RenderCharacter(character, fontName, size, positionCounter, color);
+        textStringComponent->mTextCharacterEntities.push_back(CharacterEntry(characterEntityId, character));
+        
         positionCounter.x += size * FONT_PADDING_PROPORTION_TO_SIZE;
     }    
 
