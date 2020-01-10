@@ -34,6 +34,9 @@ public:
     void HandleConsoleTextRendering() const;
     void ExecuteCommand() const;
     
+    void AddTextStringToConsolePastText(const ecs::EntityId commandStringTextEntityId) const;
+    void AddCommandTextToCommandHistory(const std::string& commandText) const;
+    void RepositionPastConsoleTextStrings() const;
     bool IsCurrentCommandRenderedTextOutOfDate() const;
 };
 

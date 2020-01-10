@@ -183,39 +183,76 @@ void ConsoleManagementSystem::ExecuteCommand() const
 {
     const auto& world = ecs::World::GetInstance();
     auto& consoleStateComponent = world.GetSingletonComponent<ConsoleStateSingletonComponent>();
+        
+    // Render executed command and add it to command history
+    AddTextStringToConsolePastText(consoleStateComponent.mCurrentCommandRenderedTextEntityId);    
+    AddCommandTextToCommandHistory(consoleStateComponent.mCurrentCommandTextBuffer.substr(0));    
     
-    consoleStateComponent.mPastConsoleTextStringEntityIds.push_back(consoleStateComponent.mCurrentCommandRenderedTextEntityId);
+    // Render executed command's response
+    AddTextStringToConsolePastText(rendering::RenderText("Red response", StringId("console_font"), CONSOLE_TEXT_SIZE, CONSOLE_CURRENT_COMMAND_TEXT_POSITION, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));    
     
+    // Move past console text up
+    RepositionPastConsoleTextStrings();
+
+    // Reset current command text
+    consoleStateComponent.mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;
+    consoleStateComponent.mCurrentCommandTextBuffer = CONSOLE_PROMPT_CHARACTER;
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void ConsoleManagementSystem::AddTextStringToConsolePastText(const ecs::EntityId commandStringTextEntityId) const
+{
+    const auto& world = ecs::World::GetInstance();
+    auto& consoleStateComponent = world.GetSingletonComponent<ConsoleStateSingletonComponent>();
+
+    // Add text string to past console text
+    consoleStateComponent.mPastConsoleTextStringEntityIds.push_back(commandStringTextEntityId);
+
+    // Remove overflowing past text strings (circular buffer style)
     if (consoleStateComponent.mPastConsoleTextStringEntityIds.size() > CONSOLE_MAX_LINES_VISIBLE)
     {
         rendering::ClearRenderedText(consoleStateComponent.mPastConsoleTextStringEntityIds.front());
         consoleStateComponent.mPastConsoleTextStringEntityIds.erase(consoleStateComponent.mPastConsoleTextStringEntityIds.begin());
     }
+}
 
-    if (consoleStateComponent.mCurrentCommandTextBuffer.size() != 1)
+///-----------------------------------------------------------------------------------------------
+
+void ConsoleManagementSystem::AddCommandTextToCommandHistory(const std::string& commandText) const
+{
+    const auto& world = ecs::World::GetInstance();
+    auto& consoleStateComponent = world.GetSingletonComponent<ConsoleStateSingletonComponent>();
+
+    if (commandText.size() != 1)
     {
-        consoleStateComponent.mCommandHistory.insert(consoleStateComponent.mCommandHistory.begin(), consoleStateComponent.mCurrentCommandTextBuffer.substr(1));
+        consoleStateComponent.mCommandHistory.insert(consoleStateComponent.mCommandHistory.begin(), commandText);
         consoleStateComponent.mCommandHistoryIndex = -1;
     }
-    
-    consoleStateComponent.mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;
-    consoleStateComponent.mCurrentCommandTextBuffer = CONSOLE_PROMPT_CHARACTER;
-    
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void ConsoleManagementSystem::RepositionPastConsoleTextStrings() const
+{
+    const auto& world = ecs::World::GetInstance();
+    auto& consoleStateComponent = world.GetSingletonComponent<ConsoleStateSingletonComponent>();
+
     for (auto i = static_cast<int>(consoleStateComponent.mPastConsoleTextStringEntityIds.size()) - 1; i >= 0; --i)
     {
         const auto positionDisplacementIndex = consoleStateComponent.mPastConsoleTextStringEntityIds.size() - i;
         const auto pastConsoleTextStringEntityId = consoleStateComponent.mPastConsoleTextStringEntityIds.at(static_cast<size_t>(i));
         const auto targetPosition = glm::vec3
         (
-            CONSOLE_CURRENT_COMMAND_TEXT_POSITION.x, 
-            CONSOLE_CURRENT_COMMAND_TEXT_POSITION.y + positionDisplacementIndex * CONSOLE_TEXT_SIZE, 
+            CONSOLE_CURRENT_COMMAND_TEXT_POSITION.x,
+            CONSOLE_CURRENT_COMMAND_TEXT_POSITION.y + positionDisplacementIndex * CONSOLE_TEXT_SIZE,
             CONSOLE_CURRENT_COMMAND_TEXT_POSITION.z
         );
 
         rendering::SetTextPosition(pastConsoleTextStringEntityId, targetPosition);
     }
 }
-    
+
 ///-----------------------------------------------------------------------------------------------
 
 bool ConsoleManagementSystem::IsCurrentCommandRenderedTextOutOfDate() const
@@ -225,7 +262,7 @@ bool ConsoleManagementSystem::IsCurrentCommandRenderedTextOutOfDate() const
     const auto& renderedTextStringComponent = world.GetComponent<rendering::TextStringComponent>(consoleStateComponent.mCurrentCommandRenderedTextEntityId);
 
     std::string renderedCommandText = "";
-    for (const auto& characterEntry: renderedTextStringComponent.mTextCharacterEntities)
+    for (const auto& characterEntry : renderedTextStringComponent.mTextCharacterEntities)
     {
         renderedCommandText += characterEntry.mCharacter;
     }
