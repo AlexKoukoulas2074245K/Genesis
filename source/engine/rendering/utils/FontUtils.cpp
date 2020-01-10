@@ -28,11 +28,13 @@ namespace rendering
 
 namespace
 {
-    const StringId FONT_SHADER_NAME                     = StringId("default_gui");
-    const StringId GUI_SHADER_CUSTOM_COLOR_UNIFORM_NAME = StringId("custom_color");
+    static const StringId FONT_SHADER_NAME                     = StringId("default_gui");
+    static const StringId GUI_SHADER_CUSTOM_COLOR_UNIFORM_NAME = StringId("custom_color");
 
-    const std::string FONT_MAP_FILE_EXTENSION           = ".dat";
-    const std::string FONT_ATLAS_TEXTURE_FILE_EXTENSION = ".png";
+    static const std::string FONT_MAP_FILE_EXTENSION           = ".dat";
+    static const std::string FONT_ATLAS_TEXTURE_FILE_EXTENSION = ".png";
+
+    static const float FONT_PADDING_PROPORTION_TO_SIZE = 0.333333f;
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -147,8 +149,10 @@ ecs::EntityId RenderText
             textStringComponent->mTextCharacterEntities.push_back(CharacterEntry(characterEntityId, character));
         }
 
-        positionCounter.x += size/3.0f;
+        positionCounter.x += size * FONT_PADDING_PROPORTION_TO_SIZE;
     }    
+
+    textStringComponent->mSize = size;
 
     auto entity = world.CreateEntity();
     world.AddComponent<TextStringComponent>(entity, std::move(textStringComponent));
@@ -194,7 +198,28 @@ void MoveText
 }
     
 ///-----------------------------------------------------------------------------------------------
-    
+
+void SetTextPosition
+(
+    const ecs::EntityId textStringEntityId,
+    const glm::vec3& position
+)
+{
+    auto& world = ecs::World::GetInstance();
+    auto& textStringComponent = world.GetComponent<TextStringComponent>(textStringEntityId);
+
+    auto positionCounter = position;
+    for (auto i = 0U; i < textStringComponent.mTextCharacterEntities.size(); ++i)
+    {
+        const auto& characterEntry = textStringComponent.mTextCharacterEntities.at(i);
+        world.GetComponent<TransformComponent>(characterEntry.mEntityId).mPosition = positionCounter;
+
+        positionCounter.x += textStringComponent.mSize * FONT_PADDING_PROPORTION_TO_SIZE;
+    }
+}
+
+///-----------------------------------------------------------------------------------------------
+
 }
 
 }

@@ -86,7 +86,18 @@ void MoveText
     const float dx = 0.0f,
     const float dy = 0.0f
 );
-    
+
+///------------------------------------------------------------------------------------------------
+/// Sets the position of a text string.
+///
+/// @param[in] textStringEntityId the id of the entity holding the root TextStringComponent of the text to be moved.
+/// @param[in] position the target position of the text
+void SetTextPosition
+(
+    const ecs::EntityId textStringEntityId,
+    const glm::vec3& position
+);
+
 ///------------------------------------------------------------------------------------------------
 /// Clears a text string. 
 ///

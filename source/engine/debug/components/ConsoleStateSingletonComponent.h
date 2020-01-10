@@ -35,6 +35,7 @@ public:
     ecs::EntityId mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;    
     std::string mCurrentCommandTextBuffer             = "";
     float mBackgroundOpaqueness                       = 0.0f;
+    int mCommandHistoryIndex                          = -1;
     bool mEnabled                                     = false;
 };
 

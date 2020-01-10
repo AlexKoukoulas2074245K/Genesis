@@ -37,6 +37,8 @@ namespace
     static const float CONSOLE_DARKENING_SPEED = 0.005f;
     static const float MAX_OPAQUENESS          = 0.8f;
     
+    static const int CONSOLE_MAX_LINES_VISIBLE = 15;
+
     static const char CONSOLE_PROMPT_CHARACTER = '>';
 }
 
@@ -77,6 +79,13 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
         {
             SDL_StopTextInput();
             consoleStateComponent.mCurrentCommandTextBuffer.clear();
+
+            for (const auto& pastConsoleTextStringEntityIds : consoleStateComponent.mPastConsoleTextStringEntityIds)
+            {
+                rendering::ClearRenderedText(pastConsoleTextStringEntityIds);
+            }
+
+            consoleStateComponent.mPastConsoleTextStringEntityIds.clear();
         }
     }
     // Handle console backspace
@@ -88,6 +97,27 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
             consoleCurrentCommandText       = consoleCurrentCommandText.substr(0, consoleCurrentCommandText.size() - 1);            
         }
     }
+    // Handle previous command cycling
+    else if (input::IsActionTypeKeyTapped(input::InputActionType::UP_ARROW_KEY))
+    {
+        if (consoleStateComponent.mCommandHistory.size() > 0)
+        {
+            consoleStateComponent.mCommandHistoryIndex = math::Min(static_cast<int>(consoleStateComponent.mCommandHistory.size()) - 1, consoleStateComponent.mCommandHistoryIndex + 1);            
+            const auto& targetCommandText = consoleStateComponent.mCommandHistory.at(consoleStateComponent.mCommandHistoryIndex);
+            consoleStateComponent.mCurrentCommandTextBuffer = CONSOLE_PROMPT_CHARACTER + targetCommandText;
+        }
+    }
+    // Handle next command cycling
+    else if (input::IsActionTypeKeyTapped(input::InputActionType::DOWN_ARROW_KEY))
+    {
+        if (consoleStateComponent.mCommandHistory.size() > 0)
+        {
+            consoleStateComponent.mCommandHistoryIndex = math::Max(0, consoleStateComponent.mCommandHistoryIndex - 1);
+            const auto& targetCommandText = consoleStateComponent.mCommandHistory.at(consoleStateComponent.mCommandHistoryIndex);
+            consoleStateComponent.mCurrentCommandTextBuffer = CONSOLE_PROMPT_CHARACTER + targetCommandText;
+        }
+    }
+    // Handle command execution
     else if (input::IsActionTypeKeyTapped(input::InputActionType::ENTER_KEY))
     {
         ExecuteCommand();
@@ -156,18 +186,33 @@ void ConsoleManagementSystem::ExecuteCommand() const
     
     consoleStateComponent.mPastConsoleTextStringEntityIds.push_back(consoleStateComponent.mCurrentCommandRenderedTextEntityId);
     
+    if (consoleStateComponent.mPastConsoleTextStringEntityIds.size() > CONSOLE_MAX_LINES_VISIBLE)
+    {
+        rendering::ClearRenderedText(consoleStateComponent.mPastConsoleTextStringEntityIds.front());
+        consoleStateComponent.mPastConsoleTextStringEntityIds.erase(consoleStateComponent.mPastConsoleTextStringEntityIds.begin());
+    }
+
     if (consoleStateComponent.mCurrentCommandTextBuffer.size() != 1)
     {
-        consoleStateComponent.mCommandHistory.push_back(consoleStateComponent.mCurrentCommandTextBuffer.substr(1));
-
+        consoleStateComponent.mCommandHistory.insert(consoleStateComponent.mCommandHistory.begin(), consoleStateComponent.mCurrentCommandTextBuffer.substr(1));
+        consoleStateComponent.mCommandHistoryIndex = -1;
     }
     
     consoleStateComponent.mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;
     consoleStateComponent.mCurrentCommandTextBuffer = CONSOLE_PROMPT_CHARACTER;
     
-    for (const auto& pastTextStringEntityId: consoleStateComponent.mPastConsoleTextStringEntityIds)
+    for (auto i = static_cast<int>(consoleStateComponent.mPastConsoleTextStringEntityIds.size()) - 1; i >= 0; --i)
     {
-        rendering::MoveText(pastTextStringEntityId, 0.0f, CONSOLE_TEXT_SIZE);
+        const auto positionDisplacementIndex = consoleStateComponent.mPastConsoleTextStringEntityIds.size() - i;
+        const auto pastConsoleTextStringEntityId = consoleStateComponent.mPastConsoleTextStringEntityIds.at(static_cast<size_t>(i));
+        const auto targetPosition = glm::vec3
+        (
+            CONSOLE_CURRENT_COMMAND_TEXT_POSITION.x, 
+            CONSOLE_CURRENT_COMMAND_TEXT_POSITION.y + positionDisplacementIndex * CONSOLE_TEXT_SIZE, 
+            CONSOLE_CURRENT_COMMAND_TEXT_POSITION.z
+        );
+
+        rendering::SetTextPosition(pastConsoleTextStringEntityId, targetPosition);
     }
 }
     

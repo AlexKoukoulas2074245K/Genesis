@@ -82,7 +82,7 @@ void Game::VOnUpdate(const float dt)
     {
         cameraComponent.mPosition -= dt * moveSpeed * cameraComponent.mFrontVector;
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_UP))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::UP_ARROW_KEY))
     {
         cameraComponent.mPitch += lookSpeed * dt;
         if (cameraComponent.mPitch >= 2 * genesis::math::PI)
@@ -90,7 +90,7 @@ void Game::VOnUpdate(const float dt)
             cameraComponent.mPitch = cameraComponent.mPitch - 2 * genesis::math::PI;
         }
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_DOWN))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::DOWN_ARROW_KEY))
     {
         cameraComponent.mPitch -= lookSpeed * dt;
         if (cameraComponent.mPitch <= 0.0f)
@@ -98,7 +98,7 @@ void Game::VOnUpdate(const float dt)
             cameraComponent.mPitch = 2 * genesis::math::PI + cameraComponent.mPitch;
         }
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_LEFT))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::LEFT_ARROW_KEY))
     {
         cameraComponent.mYaw += lookSpeed * dt;
         if (cameraComponent.mYaw >= 2 * genesis::math::PI)
@@ -106,7 +106,7 @@ void Game::VOnUpdate(const float dt)
             cameraComponent.mYaw = cameraComponent.mYaw - 2 * genesis::math::PI;
         }        
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_LOOK_RIGHT))
+    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::RIGHT_ARROW_KEY))
     {
         cameraComponent.mYaw -= lookSpeed * dt;
         if (cameraComponent.mYaw <= 0.0f)

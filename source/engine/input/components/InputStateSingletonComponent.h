@@ -39,17 +39,17 @@ enum class InputActionType
     CAMERA_MOVE_LEFT,
     CAMERA_MOVE_RIGHT,
     CAMERA_MOVE_FORWARD,
-    CAMERA_MOVE_BACKWARD,   
-    CAMERA_LOOK_UP,
-    CAMERA_LOOK_DOWN,
-    CAMERA_LOOK_LEFT,
-    CAMERA_LOOK_RIGHT,
+    CAMERA_MOVE_BACKWARD,       
     CAMERA_ZOOM_IN,
     CAMERA_ZOOM_OUT,
     CONSOLE_TOGGLE,
     SHIFT_KEY,
     BACKSPACE_KEY,
-    ENTER_KEY
+    ENTER_KEY,
+    UP_ARROW_KEY,
+    DOWN_ARROW_KEY,
+    LEFT_ARROW_KEY,
+    RIGHT_ARROW_KEY
 };
 
 ///-----------------------------------------------------------------------------------------------
@@ -71,17 +71,17 @@ public:
         { InputActionType::CAMERA_MOVE_LEFT,     InputActionState::RELEASED },
         { InputActionType::CAMERA_MOVE_RIGHT,    InputActionState::RELEASED },
         { InputActionType::CAMERA_MOVE_FORWARD,  InputActionState::RELEASED },
-        { InputActionType::CAMERA_MOVE_BACKWARD, InputActionState::RELEASED },
-        { InputActionType::CAMERA_LOOK_UP,       InputActionState::RELEASED },
-        { InputActionType::CAMERA_LOOK_DOWN,     InputActionState::RELEASED },
-        { InputActionType::CAMERA_LOOK_LEFT,     InputActionState::RELEASED },
-        { InputActionType::CAMERA_LOOK_RIGHT,    InputActionState::RELEASED },
+        { InputActionType::CAMERA_MOVE_BACKWARD, InputActionState::RELEASED },        
         { InputActionType::CAMERA_ZOOM_IN,       InputActionState::RELEASED },
         { InputActionType::CAMERA_ZOOM_OUT,      InputActionState::RELEASED },
         { InputActionType::CONSOLE_TOGGLE,       InputActionState::RELEASED },
         { InputActionType::SHIFT_KEY,            InputActionState::RELEASED },
         { InputActionType::BACKSPACE_KEY,        InputActionState::RELEASED },
         { InputActionType::ENTER_KEY,            InputActionState::RELEASED },
+        { InputActionType::UP_ARROW_KEY,         InputActionState::RELEASED },
+        { InputActionType::DOWN_ARROW_KEY,       InputActionState::RELEASED },
+        { InputActionType::LEFT_ARROW_KEY,       InputActionState::RELEASED },
+        { InputActionType::RIGHT_ARROW_KEY,      InputActionState::RELEASED }        
     };
 
     std::unordered_map<SDL_Scancode, InputActionType> mKeybindings =
@@ -91,17 +91,17 @@ public:
         { SDL_SCANCODE_W,         InputActionType::CAMERA_MOVE_FORWARD },
         { SDL_SCANCODE_S,         InputActionType::CAMERA_MOVE_BACKWARD },
         { SDL_SCANCODE_A,         InputActionType::CAMERA_MOVE_LEFT },
-        { SDL_SCANCODE_D,         InputActionType::CAMERA_MOVE_RIGHT },
-        { SDL_SCANCODE_UP,        InputActionType::CAMERA_LOOK_UP },
-        { SDL_SCANCODE_DOWN,      InputActionType::CAMERA_LOOK_DOWN },
-        { SDL_SCANCODE_LEFT,      InputActionType::CAMERA_LOOK_LEFT },
-        { SDL_SCANCODE_RIGHT,     InputActionType::CAMERA_LOOK_RIGHT },
+        { SDL_SCANCODE_D,         InputActionType::CAMERA_MOVE_RIGHT },        
         { SDL_SCANCODE_Z,         InputActionType::CAMERA_ZOOM_IN },
         { SDL_SCANCODE_X,         InputActionType::CAMERA_ZOOM_OUT },
         { SDL_SCANCODE_GRAVE,     InputActionType::CONSOLE_TOGGLE },
         { SDL_SCANCODE_LSHIFT,    InputActionType::SHIFT_KEY },
         { SDL_SCANCODE_BACKSPACE, InputActionType::BACKSPACE_KEY },
-        { SDL_SCANCODE_RETURN,    InputActionType::ENTER_KEY }
+        { SDL_SCANCODE_RETURN,    InputActionType::ENTER_KEY },
+        { SDL_SCANCODE_UP,        InputActionType::UP_ARROW_KEY },
+        { SDL_SCANCODE_DOWN,      InputActionType::DOWN_ARROW_KEY },
+        { SDL_SCANCODE_LEFT,      InputActionType::LEFT_ARROW_KEY },
+        { SDL_SCANCODE_RIGHT,     InputActionType::RIGHT_ARROW_KEY }
     };
 
     // Needed for tapped input checks 
