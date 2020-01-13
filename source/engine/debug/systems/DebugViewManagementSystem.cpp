@@ -24,10 +24,12 @@ namespace debug
 
 namespace
 {    
-    static const glm::vec3 FPS_TEXT_POSITION                    = glm::vec3(0.65f, 0.3f, 0.0f);
-    static const glm::vec3 FPS_NUMBER_POSITION                  = glm::vec3(0.85f, 0.3f, 0.0f);
-    static const glm::vec3 SYSTEM_NAMES_STARTING_POSITION       = glm::vec3(-0.2f, 0.15f, 0.0f);
-    static const glm::vec3 SYSTEM_UPDATE_TIME_STARTING_POSITION = glm::vec3(0.8f, 0.15f, 0.0f);
+    static const glm::vec3 FPS_TEXT_POSITION                    = glm::vec3(0.55f, 0.8f, 0.0f);
+    static const glm::vec3 FPS_NUMBER_POSITION                  = glm::vec3(0.75f, 0.8f, 0.0f);
+    static const glm::vec3 ENTITY_COUNT_TEXT_POSITION           = glm::vec3(0.38f, 0.7f, 0.0f);
+    static const glm::vec3 ENTITY_COUNT_NUMBER_POSITION         = glm::vec3(0.75f, 0.7f, 0.0f);
+    static const glm::vec3 SYSTEM_NAMES_STARTING_POSITION       = glm::vec3(-0.3f, 0.6f, 0.0f);
+    static const glm::vec3 SYSTEM_UPDATE_TIME_STARTING_POSITION = glm::vec3(0.6f, 0.6f, 0.0f);
 
     static const StringId TEXT_FONT_NAME = StringId("console_font");    
     static const float TEXT_SIZE         = 0.1f;    
@@ -57,6 +59,7 @@ void DebugViewManagementSystem::HandleFrameStatsDisplay() const
     
     if (debugViewStateComponent.mFrameStatsDisplayEnabled)
     {
+        // Update text only once per second
         if (debugViewStateComponent.mFpsStrings.second == ecs::NULL_ENTITY_ID ||
             !rendering::IsTextStringTheSameAsText
         (
@@ -65,6 +68,7 @@ void DebugViewManagementSystem::HandleFrameStatsDisplay() const
         ))
         {
             RenderFpsString();
+            RenderEntityCountString();
             RenderSystemUpdateStrings();
         }                   
     }
@@ -88,6 +92,15 @@ void DebugViewManagementSystem::ClearFrameStatsStrings() const
 
         debugViewStateComponent.mFpsStrings.first  = ecs::NULL_ENTITY_ID;
         debugViewStateComponent.mFpsStrings.second = ecs::NULL_ENTITY_ID;
+    }
+
+    if (debugViewStateComponent.mEntityCountStrings.first != ecs::NULL_ENTITY_ID)
+    {
+        rendering::DestroyRenderedText(debugViewStateComponent.mEntityCountStrings.first);
+        rendering::DestroyRenderedText(debugViewStateComponent.mEntityCountStrings.second);
+
+        debugViewStateComponent.mEntityCountStrings.first = ecs::NULL_ENTITY_ID;
+        debugViewStateComponent.mEntityCountStrings.second = ecs::NULL_ENTITY_ID;
     }
 
     if (debugViewStateComponent.mSystemNamesAndUpdateTimeStrings.size() > 0)
@@ -142,6 +155,34 @@ void DebugViewManagementSystem::RenderFpsString() const
 
 ///-----------------------------------------------------------------------------------------------
 
+void DebugViewManagementSystem::RenderEntityCountString() const
+{
+    const auto& world = ecs::World::GetInstance();
+    auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();
+
+    debugViewStateComponent.mEntityCountStrings.first = rendering::RenderTextIfDifferentToPreviousString
+    (
+        "Entities: ",
+        debugViewStateComponent.mEntityCountStrings.first,
+        TEXT_FONT_NAME,
+        TEXT_SIZE,
+        ENTITY_COUNT_TEXT_POSITION,
+        rendering::colors::BLACK
+    );
+
+    debugViewStateComponent.mEntityCountStrings.second = rendering::RenderTextIfDifferentToPreviousString
+    (
+        std::to_string(world.GetActiveEntities().size()),
+        debugViewStateComponent.mEntityCountStrings.second,
+        TEXT_FONT_NAME,
+        TEXT_SIZE,
+        ENTITY_COUNT_NUMBER_POSITION,
+        rendering::colors::BLACK
+    );
+}
+
+///-----------------------------------------------------------------------------------------------
+
 void DebugViewManagementSystem::RenderSystemUpdateStrings() const
 {
     const auto& world = ecs::World::GetInstance();
@@ -180,7 +221,7 @@ void DebugViewManagementSystem::RenderSystemUpdateStrings() const
 
         auto systemUpdateTimeString = rendering::RenderTextIfDifferentToPreviousString
         (
-            std::to_string(systemNameUpdateTimePair.second) + " ms",
+            std::to_string(systemNameUpdateTimePair.second) + " micros",
             previousSystemUpdateTimeString,
             TEXT_FONT_NAME,
             TEXT_SIZE,

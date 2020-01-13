@@ -177,16 +177,15 @@ void GenesisEngine::UpdateFrameStatistics(float& dt, float& elapsedTicks, float&
     dtAccumulator += dt;
 
     if (dtAccumulator > 1.0f)
-    {
-#ifndef NDEBUG            
+    {     
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
         auto& world = ecs::World::GetInstance();
         if (world.HasSingletonComponent<debug::DebugViewStateSingletonComponent>())
         {
             world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>().mCurrentFps = static_cast<int>(framesAccumulator);
         }            
-#endif
         Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator)).c_str());
-
+#endif
         framesAccumulator = 0;
         dtAccumulator = 0.0f;
     }        
@@ -319,7 +318,7 @@ void GenesisEngine::BindDefaultEngineFunctionsToLua() const
 
 void GenesisEngine::RegisterDefaultEngineConsoleCommands() const
 {
-#ifndef NDEBUG     
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
     debug::RegisterConsoleCommand(StringId("frame_stats"), [](const std::vector<std::string>& commandTextComponents)
     {
         static const std::unordered_set<std::string> sAllowedOptions = { "on", "off" };
@@ -371,7 +370,6 @@ void GenesisEngine::RegisterDefaultEngineConsoleCommands() const
 
         return debug::ConsoleCommandResult(true, output);
     });
-    
 #endif
 }
 
@@ -387,7 +385,7 @@ bool AppShouldQuit()
         {
             case SDL_QUIT: return true;
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
             case SDL_TEXTINPUT:
             {
                 auto& world = ecs::World::GetInstance();

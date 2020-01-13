@@ -22,7 +22,8 @@ namespace ecs
 { 
 
 ///------------------------------------------------------------------------------------------------
-#ifndef NDEBUG
+
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
 static StringId GetSystemNameFromTypeIdString(const std::string& typeIdString)
 {
     const auto& systemNameSplitByWhiteSpace = StringSplit(typeIdString, ' ');
@@ -68,16 +69,17 @@ void World::Update(const float dt)
 
     for(const auto& system: mSystems)
     {     
-#ifndef NDEBUG  
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
         const auto& start = std::chrono::high_resolution_clock::now();
-#endif        
+#endif
+
         system->VUpdateAssociatedComponents(dt);
         InsertNewEntitiesIntoActiveCollection();
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
         const auto& systemName = GetSystemNameFromTypeIdString(std::string(typeid(*system).name()));
         const auto& end = std::chrono::high_resolution_clock::now();
-        const auto& duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        const auto& duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
         mSystemUpdateToDuration[StringId(systemName)] = duration.count();
 #endif
     }

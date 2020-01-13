@@ -34,6 +34,7 @@ private:
     void HandleFrameStatsDisplay() const;
     void ClearFrameStatsStrings() const;
     void RenderFpsString() const;
+    void RenderEntityCountString() const;
     void RenderSystemUpdateStrings() const;
 };
 

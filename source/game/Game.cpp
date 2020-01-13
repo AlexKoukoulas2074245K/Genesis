@@ -27,7 +27,7 @@ void Game::VOnSystemsInit()
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::input::RawInputHandlingSystem>());    
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::scripting::ScriptingSystem>());
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::debug::ConsoleManagementSystem>());
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::debug::DebugViewManagementSystem>());
 #endif

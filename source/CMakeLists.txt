@@ -19,7 +19,7 @@ endfunction(assign_source_group)
 
 # Write demo-config.h
 message("Generating header file: ${CMAKE_BINARY_DIR}/demo-config.h")
-set(DEMO_ENABLE_MULTISAMPLE 0 CACHE BOOL "Enable multisample anti-aliasing")
+set(CONSOLE_ENABLED_ON_RELEASE 1 CACHE BOOL "Enable console on debug builds")
 configure_file(demo-config.h.in "${CMAKE_BINARY_DIR}/demo-config.h")
 
 # Find SDL2 and OpenGL
