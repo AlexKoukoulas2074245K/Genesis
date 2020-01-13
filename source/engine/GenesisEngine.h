@@ -27,7 +27,8 @@ public:
     GenesisEngine();
 
     /// Main game startup method
-    /// @param[in] startupParameters 
+    /// @param[in] startupParameters the parameters that determine the startup configuration of the engine.
+    /// @param[in] game the reference to the IGame implementation to run.
     void RunGame(const GameStartupParameters& startupParameters, IGame& game);
 
 private:
@@ -36,7 +37,8 @@ private:
     void InitializeServices() const;
     void InitializeDefaultConsoleFont() const;
     void UpdateFrameStatistics(float& dt, float& elapsedTicks, float& dtAccumulator, long long& framesAccumulator) const;    
-    void BindDefaultFunctionsToLua() const;
+    void BindDefaultEngineFunctionsToLua() const;
+    void RegisterDefaultEngineConsoleCommands() const;
 };
 
 }

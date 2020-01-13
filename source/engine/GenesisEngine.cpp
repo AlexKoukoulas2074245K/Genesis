@@ -10,7 +10,8 @@
 #include "common/utils/Logging.h"
 #include "common/utils/MathUtils.h"
 #include "common/utils/OSMessageBox.h"
-#include "debug/components/ConsoleStateSingletonComponent.h"
+#include "debug/utils/ConsoleCommandUtils.h"
+#include "debug/components/DebugViewStateSingletonComponent.h"
 #include "input/components/InputStateSingletonComponent.h"
 #include "input/systems/RawInputHandlingSystem.h"
 #include "input/utils/InputUtils.h"
@@ -57,6 +58,7 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
 
     game.VOnSystemsInit();
     InitializeDefaultConsoleFont();
+    RegisterDefaultEngineConsoleCommands();
     game.VOnGameInit();
 
 
@@ -150,7 +152,7 @@ void GenesisEngine::InitializeServices() const
     sound::SoundService::GetInstance().Initialize();
     scripting::LuaScriptingService::GetInstance().Initialize();
 
-    BindDefaultFunctionsToLua();
+    BindDefaultEngineFunctionsToLua();    
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -176,6 +178,13 @@ void GenesisEngine::UpdateFrameStatistics(float& dt, float& elapsedTicks, float&
 
     if (dtAccumulator > 1.0f)
     {
+#ifndef NDEBUG            
+        auto& world = ecs::World::GetInstance();
+        if (world.HasSingletonComponent<debug::DebugViewStateSingletonComponent>())
+        {
+            world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>().mCurrentFps = static_cast<int>(framesAccumulator);
+        }            
+#endif
         Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator)).c_str());
 
         framesAccumulator = 0;
@@ -199,7 +208,7 @@ void GenesisEngine::UpdateFrameStatistics(float& dt, float& elapsedTicks, float&
 
 ///-----------------------------------------------------------------------------------------------
 
-void GenesisEngine::BindDefaultFunctionsToLua() const
+void GenesisEngine::BindDefaultEngineFunctionsToLua() const
 {
     using scripting::LuaScriptingService;
 
@@ -304,6 +313,66 @@ void GenesisEngine::BindDefaultFunctionsToLua() const
 
         return 0;
     });
+}
+
+///------------------------------------------------------------------------------------------------
+
+void GenesisEngine::RegisterDefaultEngineConsoleCommands() const
+{
+#ifndef NDEBUG     
+    debug::RegisterConsoleCommand(StringId("frame_stats"), [](const std::vector<std::string>& commandTextComponents)
+    {
+        static const std::unordered_set<std::string> sAllowedOptions = { "on", "off" };
+
+        const std::string USAGE_STRING = "Usage: frame_stats on|off";
+
+        if (commandTextComponents.size() != 2 || sAllowedOptions.count(StringToLower(commandTextComponents[1])) == 0)
+        {
+            return debug::ConsoleCommandResult(false, USAGE_STRING);
+        }
+       
+        const auto& world = ecs::World::GetInstance();
+        auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();        
+        
+        debugViewStateComponent.mFrameStatsDisplayEnabled = StringToLower(commandTextComponents[1]) == "on";
+        
+        return debug::ConsoleCommandResult(true);
+    });
+
+    debug::RegisterConsoleCommand(StringId("commands"), [](const std::vector<std::string>& commandTextComponents)
+    {
+        const std::string USAGE_STRING = "Usage: commands";
+
+        if (commandTextComponents.size() != 1)
+        {
+            return debug::ConsoleCommandResult(false, USAGE_STRING);
+        }
+
+        const auto& world = ecs::World::GetInstance();
+        auto& consoleStateComponent = world.GetSingletonComponent<debug::ConsoleStateSingletonComponent>();
+
+        // Gather command names
+        std::vector<std::string> commandNames;
+        for (const auto& registeredConsoleCommandEntry: consoleStateComponent.mRegisterdConsoleCommands)
+        {
+            commandNames.push_back(registeredConsoleCommandEntry.first.GetString());
+        }
+        
+        // Sort command names
+        std::sort(commandNames.begin(), commandNames.end());
+
+        // Print command names alphabetically line by line        
+        std::string output = "Available commands:\n";
+
+        for (const auto& commandName : commandNames)
+        {            
+            output += commandName + '\n';
+        }                
+
+        return debug::ConsoleCommandResult(true, output);
+    });
+    
+#endif
 }
 
 ///------------------------------------------------------------------------------------------------

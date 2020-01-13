@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "../engine/ECS.h"
 #include "../engine/debug/systems/ConsoleManagementSystem.h"
+#include "../engine/debug/systems/DebugViewManagementSystem.h"
 #include "../engine/input/components/InputStateSingletonComponent.h"
 #include "../engine/input/utils/InputUtils.h"
 #include "../engine/input/systems/RawInputHandlingSystem.h"
@@ -28,6 +29,7 @@ void Game::VOnSystemsInit()
 
 #ifndef NDEBUG
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::debug::ConsoleManagementSystem>());
+    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::debug::DebugViewManagementSystem>());
 #endif
 
     genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::rendering::RenderingSystem>());    

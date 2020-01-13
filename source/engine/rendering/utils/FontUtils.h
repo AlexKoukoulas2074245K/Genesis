@@ -102,7 +102,7 @@ void SetTextPosition
 /// Clears a text string. 
 ///
 /// @param[in] textStringEntityId the id of the entity holding the root TextStringComponent of the text to be cleared.
-void ClearRenderedText
+void DestroyRenderedText
 (
     const ecs::EntityId textStringEntityId
 );

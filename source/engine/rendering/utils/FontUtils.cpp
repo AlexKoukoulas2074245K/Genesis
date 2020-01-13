@@ -168,7 +168,7 @@ ecs::EntityId RenderText
 
 ///-----------------------------------------------------------------------------------------------
 
-void ClearRenderedText
+void DestroyRenderedText
 (
     const ecs::EntityId textStringEntityId
 )

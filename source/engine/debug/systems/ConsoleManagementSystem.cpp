@@ -10,6 +10,7 @@
 #include "../../input/utils/InputUtils.h"
 #include "../../rendering/components/RenderableComponent.h"
 #include "../../rendering/components/TextStringComponent.h"
+#include "../../rendering/utils/Colors.h"
 #include "../../rendering/utils/FontUtils.h"
 
 ///-----------------------------------------------------------------------------------------------
@@ -82,7 +83,7 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
 
             for (const auto& pastConsoleTextStringEntityIds : consoleStateComponent.mPastConsoleTextStringEntityIds)
             {
-                rendering::ClearRenderedText(pastConsoleTextStringEntityIds);
+                rendering::DestroyRenderedText(pastConsoleTextStringEntityIds);
             }
 
             consoleStateComponent.mPastConsoleTextStringEntityIds.clear();
@@ -100,7 +101,7 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
     // Handle previous command cycling
     else if (input::IsActionTypeKeyTapped(input::InputActionType::UP_ARROW_KEY))
     {
-        if (consoleStateComponent.mCommandHistory.size() > 0)
+        if (consoleStateComponent.mEnabled && consoleStateComponent.mCommandHistory.size() > 0)
         {
             consoleStateComponent.mCommandHistoryIndex = math::Min(static_cast<int>(consoleStateComponent.mCommandHistory.size()) - 1, consoleStateComponent.mCommandHistoryIndex + 1);            
             const auto& targetCommandText = consoleStateComponent.mCommandHistory.at(consoleStateComponent.mCommandHistoryIndex);
@@ -110,7 +111,7 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
     // Handle next command cycling
     else if (input::IsActionTypeKeyTapped(input::InputActionType::DOWN_ARROW_KEY))
     {
-        if (consoleStateComponent.mCommandHistory.size() > 0)
+        if (consoleStateComponent.mEnabled && consoleStateComponent.mCommandHistory.size() > 0)
         {
             consoleStateComponent.mCommandHistoryIndex = math::Max(0, consoleStateComponent.mCommandHistoryIndex - 1);
             const auto& targetCommandText = consoleStateComponent.mCommandHistory.at(consoleStateComponent.mCommandHistoryIndex);
@@ -120,7 +121,10 @@ void ConsoleManagementSystem::HandleConsoleSpecialInput() const
     // Handle command execution
     else if (input::IsActionTypeKeyTapped(input::InputActionType::ENTER_KEY))
     {
-        ExecuteCommand();
+        if (consoleStateComponent.mEnabled)
+        {
+            ExecuteCommand();
+        }
     }
 }
 
@@ -163,7 +167,7 @@ void ConsoleManagementSystem::HandleConsoleTextRendering() const
     {
         if (consoleStateComponent.mCurrentCommandRenderedTextEntityId != ecs::NULL_ENTITY_ID)
         {
-            rendering::ClearRenderedText(consoleStateComponent.mCurrentCommandRenderedTextEntityId);            
+            rendering::DestroyRenderedText(consoleStateComponent.mCurrentCommandRenderedTextEntityId);            
         }
 
         consoleStateComponent.mCurrentCommandRenderedTextEntityId = rendering::RenderText
@@ -184,12 +188,60 @@ void ConsoleManagementSystem::ExecuteCommand() const
     const auto& world = ecs::World::GetInstance();
     auto& consoleStateComponent = world.GetSingletonComponent<ConsoleStateSingletonComponent>();
         
-    // Render executed command and add it to command history
-    AddTextStringToConsolePastText(consoleStateComponent.mCurrentCommandRenderedTextEntityId);    
-    AddCommandTextToCommandHistory(consoleStateComponent.mCurrentCommandTextBuffer.substr(0));    
+    // Add command-to-be-executed to past console text
+    AddTextStringToConsolePastText(consoleStateComponent.mCurrentCommandRenderedTextEntityId);          
     
-    // Render executed command's response
-    AddTextStringToConsolePastText(rendering::RenderText("Red response", StringId("console_font"), CONSOLE_TEXT_SIZE, CONSOLE_CURRENT_COMMAND_TEXT_POSITION, glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)));    
+    // Add to command history and execute command if nonempty text 
+    if (consoleStateComponent.mCurrentCommandTextBuffer.size() != 1)
+    {        
+        AddCommandTextToCommandHistory(consoleStateComponent.mCurrentCommandTextBuffer.substr(1));
+
+        const auto& commandSplitBySpace = StringSplit(consoleStateComponent.mCurrentCommandTextBuffer.substr(1), ' ');
+
+        // If command not found let user know
+        if (consoleStateComponent.mRegisterdConsoleCommands.count(commandSplitBySpace[0]) == 0)
+        {
+            // Render command not found text
+            AddTextStringToConsolePastText(rendering::RenderText
+            (
+                "Command not found.",
+                CONSOLE_TEXT_FONT_NAME,
+                CONSOLE_TEXT_SIZE, 
+                CONSOLE_CURRENT_COMMAND_TEXT_POSITION, 
+                rendering::colors::RED
+            ));
+            AddTextStringToConsolePastText(rendering::RenderText
+            (
+                "Type \"commands\" to see all available ones.",
+                CONSOLE_TEXT_FONT_NAME,
+                CONSOLE_TEXT_SIZE,
+                CONSOLE_CURRENT_COMMAND_TEXT_POSITION,
+                rendering::colors::RED
+            ));
+        }
+        // Otherwise execute to command logic and print result if any
+        else
+        {
+            // Execute command
+            const auto& commandResult = consoleStateComponent.mRegisterdConsoleCommands.at(commandSplitBySpace[0])(commandSplitBySpace);
+            if (!commandResult.mResponseText.empty())
+            {
+                // Print result text line by line
+                const auto& commandResultSplitByNewline = StringSplit(commandResult.mResponseText, '\n');
+                for (const auto& commandResultTextLine: commandResultSplitByNewline)
+                {
+                    AddTextStringToConsolePastText(rendering::RenderText
+                    (
+                        commandResultTextLine,
+                        CONSOLE_TEXT_FONT_NAME,
+                        CONSOLE_TEXT_SIZE,
+                        CONSOLE_CURRENT_COMMAND_TEXT_POSITION,
+                        commandResult.mSuccess ? rendering::colors::GREEN : rendering::colors::RED                    
+                    ));
+                }
+            }
+        }
+    }    
     
     // Move past console text up
     RepositionPastConsoleTextStrings();
@@ -212,7 +264,7 @@ void ConsoleManagementSystem::AddTextStringToConsolePastText(const ecs::EntityId
     // Remove overflowing past text strings (circular buffer style)
     if (consoleStateComponent.mPastConsoleTextStringEntityIds.size() > CONSOLE_MAX_LINES_VISIBLE)
     {
-        rendering::ClearRenderedText(consoleStateComponent.mPastConsoleTextStringEntityIds.front());
+        rendering::DestroyRenderedText(consoleStateComponent.mPastConsoleTextStringEntityIds.front());
         consoleStateComponent.mPastConsoleTextStringEntityIds.erase(consoleStateComponent.mPastConsoleTextStringEntityIds.begin());
     }
 }

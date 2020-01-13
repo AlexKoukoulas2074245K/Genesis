@@ -12,7 +12,9 @@
 
 #include "../../ECS.h"
 
+#include <functional>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 ///-----------------------------------------------------------------------------------------------
@@ -27,9 +29,28 @@ namespace debug
 
 ///-----------------------------------------------------------------------------------------------
 
+struct ConsoleCommandResult
+{
+    ConsoleCommandResult(const bool success, const std::string responseText = "")
+        : mSuccess(success)
+        , mResponseText(responseText)        
+    {
+    }
+
+    const bool mSuccess;
+    const std::string mResponseText;
+};
+
+///-----------------------------------------------------------------------------------------------
+
+using ConsoleCommand = std::function<ConsoleCommandResult(const std::vector<std::string>&)>;
+
+///-----------------------------------------------------------------------------------------------
+
 class ConsoleStateSingletonComponent final: public ecs::IComponent
 {
 public:
+    std::unordered_map<StringId, ConsoleCommand, StringIdHasher> mRegisterdConsoleCommands;
     std::vector<std::string> mCommandHistory;
     std::vector<ecs::EntityId> mPastConsoleTextStringEntityIds;
     ecs::EntityId mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;    
