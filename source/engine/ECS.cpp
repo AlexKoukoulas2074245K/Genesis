@@ -8,6 +8,7 @@
 #include "ECS.h"
 #include "common/components/NameComponent.h"
 
+#include <chrono>
 #include <typeinfo>
 
 ///------------------------------------------------------------------------------------------------
@@ -19,6 +20,16 @@ namespace genesis
 
 namespace ecs
 { 
+
+///------------------------------------------------------------------------------------------------
+#ifndef NDEBUG
+static StringId GetSystemNameFromTypeIdString(const std::string& typeIdString)
+{
+    const auto& systemNameSplitByWhiteSpace = StringSplit(typeIdString, ' ');
+    const auto& systemNameSplitByColumn = StringSplit(systemNameSplitByWhiteSpace[systemNameSplitByWhiteSpace.size() - 1], ':');
+    return StringId(systemNameSplitByColumn[systemNameSplitByColumn.size() - 1]);
+}
+#endif
 
 ///------------------------------------------------------------------------------------------------
 
@@ -37,6 +48,13 @@ const std::vector<EntityId>& World::GetActiveEntities() const
 
 ///------------------------------------------------------------------------------------------------
 
+const std::unordered_map<StringId, long long, StringIdHasher>& World::GetSystemUpdateTimes() const
+{
+    return mSystemUpdateToDuration;
+}
+
+///------------------------------------------------------------------------------------------------
+
 void World::Update(const float dt)
 {
     if (!mHasRunFirstUpdate)
@@ -49,9 +67,19 @@ void World::Update(const float dt)
     CongregateActiveEntitiesInCurrentFrame();
 
     for(const auto& system: mSystems)
-    {
+    {     
+#ifndef NDEBUG  
+        const auto& start = std::chrono::high_resolution_clock::now();
+#endif        
         system->VUpdateAssociatedComponents(dt);
         InsertNewEntitiesIntoActiveCollection();
+
+#ifndef NDEBUG
+        const auto& systemName = GetSystemNameFromTypeIdString(std::string(typeid(*system).name()));
+        const auto& end = std::chrono::high_resolution_clock::now();
+        const auto& duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+        mSystemUpdateToDuration[StringId(systemName)] = duration.count();
+#endif
     }
 }
 

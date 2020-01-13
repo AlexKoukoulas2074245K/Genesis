@@ -12,6 +12,8 @@
 
 #include "../../ECS.h"
 
+#include <vector>
+
 ///-----------------------------------------------------------------------------------------------
 
 namespace genesis
@@ -28,7 +30,8 @@ namespace debug
 class DebugViewStateSingletonComponent final: public ecs::IComponent
 {
 public:
-    ecs::EntityId mFpsStringEntityId = ecs::NULL_ENTITY_ID;
+    std::vector<std::pair<ecs::EntityId, ecs::EntityId>> mSystemNamesAndUpdateTimeStrings;    
+    std::pair<ecs::EntityId, ecs::EntityId> mFpsStrings;    
     int mCurrentFps                  = 0;
     bool mFrameStatsDisplayEnabled   = false;
 };

@@ -45,7 +45,7 @@ class TextStringComponent final: public ecs::IComponent
 {
 public:
     std::vector<CharacterEntry> mTextCharacterEntities;
-    float mSize;
+    float mCharacterSize;
 };
 
 ///-----------------------------------------------------------------------------------------------

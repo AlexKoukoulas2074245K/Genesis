@@ -158,12 +158,37 @@ ecs::EntityId RenderText
         positionCounter.x += size * FONT_PADDING_PROPORTION_TO_SIZE;
     }    
 
-    textStringComponent->mSize = size;
+    textStringComponent->mCharacterSize = size;
 
     auto entity = world.CreateEntity();
     world.AddComponent<TextStringComponent>(entity, std::move(textStringComponent));
 
     return entity;
+}
+
+///-----------------------------------------------------------------------------------------------
+
+ecs::EntityId RenderTextIfDifferentToPreviousString
+(
+    const std::string& text,
+    const ecs::EntityId previousString,
+    const StringId fontName,
+    const float size,
+    const glm::vec3& position,
+    const glm::vec4& color /* glm::vec4(0.0f, 0.0f, 0.0f, 0.0f) */
+)
+{
+    if (previousString != ecs::NULL_ENTITY_ID && IsTextStringTheSameAsText(previousString, text))
+    {
+        return previousString;
+    }
+    
+    if (previousString != ecs::NULL_ENTITY_ID)
+    {
+        DestroyRenderedText(previousString);
+    }
+
+    return RenderText(text, fontName, size, position, color);
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -220,8 +245,35 @@ void SetTextPosition
         const auto& characterEntry = textStringComponent.mTextCharacterEntities.at(i);
         world.GetComponent<TransformComponent>(characterEntry.mEntityId).mPosition = positionCounter;
 
-        positionCounter.x += textStringComponent.mSize * FONT_PADDING_PROPORTION_TO_SIZE;
+        positionCounter.x += textStringComponent.mCharacterSize * FONT_PADDING_PROPORTION_TO_SIZE;
     }
+}
+
+///-----------------------------------------------------------------------------------------------
+
+bool IsTextStringTheSameAsText
+(
+    const ecs::EntityId textStringEntityId,
+    const std::string& textToTest
+)
+{
+    auto& world = ecs::World::GetInstance();
+    auto& textStringComponent = world.GetComponent<TextStringComponent>(textStringEntityId);
+
+    if (textStringComponent.mTextCharacterEntities.size() != textToTest.size())
+    {
+        return false;
+    }
+
+    for (auto i = 0U; i < textToTest.size(); ++i)
+    {
+        if (textStringComponent.mTextCharacterEntities[i].mCharacter != textToTest[i])
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 ///-----------------------------------------------------------------------------------------------

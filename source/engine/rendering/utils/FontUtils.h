@@ -75,6 +75,28 @@ ecs::EntityId RenderText
 );
 
 ///------------------------------------------------------------------------------------------------
+/// Renders a text string with the given font if the text is different from the previous entity's text. 
+/// 
+/// In case of inequality the old entity will be destroyed.
+/// @param[in] text the text to render.
+/// @param[in] previousString the entity hodling a TextStringComponent that the first argument will be compared against.
+/// @param[in] fontName the name of the font to use in the text rendering.
+/// @param[in] size the size of the rendered text's individual glyphs.
+/// @param[in] position the position to render the string at.
+/// @param[in] color (optional) specifies the custom color of the rendered string.
+/// @returns the id of an entity holding the root TextStringComponent which contains all 
+/// the character entities of the input string (will be the second argument in case of equality).
+ecs::EntityId RenderTextIfDifferentToPreviousString
+(
+    const std::string& text,
+    const ecs::EntityId previousString,
+    const StringId fontName,
+    const float size,
+    const glm::vec3& position,
+    const glm::vec4& color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f)
+);
+
+///------------------------------------------------------------------------------------------------
 /// Moves a text string by a certain displacement.
 ///
 /// @param[in] textStringEntityId the id of the entity holding the root TextStringComponent of the text to be moved.
@@ -105,6 +127,19 @@ void SetTextPosition
 void DestroyRenderedText
 (
     const ecs::EntityId textStringEntityId
+);
+
+///------------------------------------------------------------------------------------------------
+/// Checks whether the TextStringComponent of the entity passed in represents the same string as the second argument. 
+///
+/// @param[in] textStringEntityId the id of the entity holding the root TextStringComponent of the text to be checked.
+/// @param[in] textToTest the string to test against.
+/// @returns whether or not the individual characters of the TextStringComponent held by the first argument represents 
+/// the same string as the second argument.
+bool IsTextStringTheSameAsText
+(
+    const ecs::EntityId textStringEntityId,
+    const std::string& textToTest
 );
 
 ///------------------------------------------------------------------------------------------------

@@ -32,6 +32,9 @@ public:
 
 private:
     void HandleFrameStatsDisplay() const;
+    void ClearFrameStatsStrings() const;
+    void RenderFpsString() const;
+    void RenderSystemUpdateStrings() const;
 };
 
 ///-----------------------------------------------------------------------------------------------

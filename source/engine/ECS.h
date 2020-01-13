@@ -105,6 +105,9 @@ public:
     /// @returns a non-mutable reference to the active entity component store.
     [[nodiscard]] const std::vector<EntityId>& GetActiveEntities() const;
 
+    /// @returns a map containing the system name strings mapped to their current update times in miliseconds.
+    const std::unordered_map<StringId, long long, StringIdHasher>& GetSystemUpdateTimes() const;
+
     /// Performs a single update of the world simulation.
     /// @param[in] dt the inter-frame delta time in seconds.
     void Update(const float dt);
@@ -384,7 +387,9 @@ private:
     EntityComponentStoreMap mEntityComponentStore;
     ComponentMaskMap        mComponentMasks;    
     ComponentMap            mSingletonComponents;
-                  
+               
+    std::unordered_map<StringId, long long, StringIdHasher> mSystemUpdateToDuration;
+
     std::vector<std::unique_ptr<BaseSystem>> mSystems;
     std::vector<std::size_t> mSystemHashesToRemove;
     std::vector<EntityId> mActiveEntitiesInFrame;
