@@ -59,7 +59,7 @@ void DebugViewManagementSystem::HandleFrameStatsDisplay() const
     
     if (debugViewStateComponent.mFrameStatsDisplayEnabled)
     {
-        // Update text only once per second
+        // Update text only once per second (once the fps counter changes)
         if (debugViewStateComponent.mFpsStrings.second == ecs::NULL_ENTITY_ID ||
             !rendering::IsTextStringTheSameAsText
         (

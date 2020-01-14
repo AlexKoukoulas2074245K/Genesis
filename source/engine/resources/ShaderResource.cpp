@@ -22,7 +22,7 @@ namespace resources
 
 ShaderResource::ShaderResource
 (
-    const std::unordered_map<StringId, GLuint, StringIdHasher> uniformNamesToLocations,
+    const tsl::robin_map<StringId, GLuint, StringIdHasher> uniformNamesToLocations,
     const GLuint programId
 )
     : mShaderUniformNamesToLocations(uniformNamesToLocations) 
@@ -97,7 +97,7 @@ GLuint ShaderResource::GetProgramId() const
 
 ///------------------------------------------------------------------------------------------------
 
-const std::unordered_map<StringId, GLuint, StringIdHasher>& ShaderResource::GetUniformNamesToLocations() const
+const tsl::robin_map<StringId, GLuint, StringIdHasher>& ShaderResource::GetUniformNamesToLocations() const
 {
     return mShaderUniformNamesToLocations;
 }

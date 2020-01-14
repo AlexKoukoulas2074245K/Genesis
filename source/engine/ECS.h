@@ -23,7 +23,7 @@
 #include <cassert>
 #include <map>
 #include <memory>
-#include <unordered_map>
+#include <tsl/robin_map.h>
 #include <vector>        
 
 ///------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ public:
     [[nodiscard]] const std::vector<EntityId>& GetActiveEntities() const;
 
     /// @returns a map containing the system name strings mapped to their current update times in miliseconds.
-    const std::unordered_map<StringId, long long, StringIdHasher>& GetSystemUpdateTimes() const;
+    const tsl::robin_map<StringId, long long, StringIdHasher>& GetSystemUpdateTimes() const;
 
     /// Performs a single update of the world simulation.
     /// @param[in] dt the inter-frame delta time in seconds.
@@ -377,7 +377,7 @@ private:
     }  
     
 private:                
-    using ComponentMap = std::unordered_map<ComponentTypeId, std::unique_ptr<IComponent>, ComponentTypeIdHasher>;
+    using ComponentMap = tsl::robin_map<ComponentTypeId, std::unique_ptr<IComponent>, ComponentTypeIdHasher>;
     
     struct EntityComponentsAndMask
     {
@@ -385,14 +385,14 @@ private:
         ComponentMask mComponentMask;
     };
 
-    using EntityComponentStoreMap = std::unordered_map<EntityId, EntityComponentsAndMask, EntityIdHasher>;
-    using ComponentMaskMap        = std::unordered_map<ComponentTypeId, ComponentMask, ComponentTypeIdHasher>;
+    using EntityComponentStoreMap = tsl::robin_map<EntityId, EntityComponentsAndMask, EntityIdHasher>;
+    using ComponentMaskMap        = tsl::robin_map<ComponentTypeId, ComponentMask, ComponentTypeIdHasher>;
 
     EntityComponentStoreMap mEntityComponentStore;
     ComponentMaskMap        mComponentMasks;    
     ComponentMap            mSingletonComponents;
                
-    std::unordered_map<StringId, long long, StringIdHasher> mSystemUpdateToDuration;
+    tsl::robin_map<StringId, long long, StringIdHasher> mSystemUpdateToDuration;
 
     std::vector<std::unique_ptr<BaseSystem>> mSystems;
     std::vector<std::size_t> mSystemHashesToRemove;

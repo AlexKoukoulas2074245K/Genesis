@@ -15,7 +15,7 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
+#include <tsl/robin_map.h>
 
 ///------------------------------------------------------------------------------------------------
 
@@ -48,7 +48,7 @@ private:
     ShaderLoader() = default;
     
     std::string ReadFileContents(const std::string& filePath) const;
-    std::unordered_map<StringId, GLuint, StringIdHasher> GetUniformNamesToLocationsMap
+    tsl::robin_map<StringId, GLuint, StringIdHasher> GetUniformNamesToLocationsMap
     (
         const GLuint programId,
         const std::string& vertexShaderFileContents,

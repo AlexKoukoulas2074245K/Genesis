@@ -14,7 +14,7 @@
 #include "../../common/utils/MathUtils.h"
 #include "../../common/utils/StringUtils.h"
 
-#include <unordered_map>
+#include <tsl/robin_map.h>
 #include <vector>
 
 ///-----------------------------------------------------------------------------------------------
@@ -35,9 +35,9 @@ using ResourceId = unsigned int;
 
 struct ShaderUniforms final
 {
-    std::unordered_map<StringId, float, StringIdHasher> mShaderFloatUniforms;
-    std::unordered_map<StringId, glm::vec4, StringIdHasher> mShaderFloatVec4Uniforms;
-    std::unordered_map<StringId, glm::mat4, StringIdHasher> mShaderMatrixUniforms;
+    tsl::robin_map<StringId, float, StringIdHasher> mShaderFloatUniforms;
+    tsl::robin_map<StringId, glm::vec4, StringIdHasher> mShaderFloatVec4Uniforms;
+    tsl::robin_map<StringId, glm::mat4, StringIdHasher> mShaderMatrixUniforms;
 };
 
 ///-----------------------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ struct ShaderUniforms final
 class RenderableComponent final: public ecs::IComponent
 {
 public:    
-    std::unordered_map<StringId, std::vector<ResourceId>, StringIdHasher> mAnimationsToMeshes;    
+    tsl::robin_map<StringId, std::vector<ResourceId>, StringIdHasher> mAnimationsToMeshes;
     ShaderUniforms mShaderUniforms;
     StringId mShaderNameId                 = StringId();    
     StringId mActiveAnimationNameId        = StringId();

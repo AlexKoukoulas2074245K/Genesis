@@ -13,7 +13,7 @@
 #include "../../ECS.h"
 
 #include <SDL_keyboard.h>
-#include <unordered_map>
+#include <tsl/robin_map.h>
 #include <vector>
 
 ///-----------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ enum class InputActionState
 class InputStateSingletonComponent final: public ecs::IComponent
 {
 public:
-    std::unordered_map<InputActionType, InputActionState> mCurrentInputState =
+    tsl::robin_map<InputActionType, InputActionState> mCurrentInputState =
     {        
         { InputActionType::CAMERA_MOVE_UP,       InputActionState::RELEASED },
         { InputActionType::CAMERA_MOVE_DOWN,     InputActionState::RELEASED },
@@ -84,7 +84,7 @@ public:
         { InputActionType::RIGHT_ARROW_KEY,      InputActionState::RELEASED }        
     };
 
-    std::unordered_map<SDL_Scancode, InputActionType> mKeybindings =
+    tsl::robin_map<SDL_Scancode, InputActionType> mKeybindings =
     {        
         { SDL_SCANCODE_Q,         InputActionType::CAMERA_MOVE_UP },
         { SDL_SCANCODE_E,         InputActionType::CAMERA_MOVE_DOWN },

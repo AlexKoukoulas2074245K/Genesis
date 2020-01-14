@@ -15,7 +15,7 @@
 #include "../common/utils/StringUtils.h"
 
 #include <string>
-#include <unordered_map>
+#include <tsl/robin_map.h>
 
 ///------------------------------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ public:
     ShaderResource() = default;
     ShaderResource
     (
-        const std::unordered_map<StringId, GLuint, StringIdHasher> uniformNamesToLocations,
+        const tsl::robin_map<StringId, GLuint, StringIdHasher> uniformNamesToLocations,
         const GLuint programId
     );
     ShaderResource& operator = (const ShaderResource&);
@@ -52,12 +52,12 @@ public:
     GLuint GetProgramId() const;    
 
 private:
-    const std::unordered_map<StringId, GLuint, StringIdHasher>& GetUniformNamesToLocations() const;
+    const tsl::robin_map<StringId, GLuint, StringIdHasher>& GetUniformNamesToLocations() const;
 
     void CopyConstruction(const ShaderResource&);
     
 private:
-    std::unordered_map<StringId, GLuint, StringIdHasher> mShaderUniformNamesToLocations;
+    tsl::robin_map<StringId, GLuint, StringIdHasher> mShaderUniformNamesToLocations;
     GLuint mProgramId;    
 };
 

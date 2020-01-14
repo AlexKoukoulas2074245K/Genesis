@@ -162,14 +162,14 @@ std::string ShaderLoader::ReadFileContents(const std::string& filePath) const
 
 ///------------------------------------------------------------------------------------------------
 
-std::unordered_map<StringId, GLuint, StringIdHasher> ShaderLoader::GetUniformNamesToLocationsMap
+tsl::robin_map<StringId, GLuint, StringIdHasher> ShaderLoader::GetUniformNamesToLocationsMap
 (
     const GLuint programId,
     const std::string& vertexShaderFileContents,
     const std::string& fragmentShaderFileContents
 ) const
 {
-    std::unordered_map<StringId, GLuint, StringIdHasher> uniformNamesToLocationsMap;
+    tsl::robin_map<StringId, GLuint, StringIdHasher> uniformNamesToLocationsMap;
     
     const auto vertexShaderContentSplitByNewline = StringSplit(vertexShaderFileContents, '\n');
     for (const auto& vertexShaderLine: vertexShaderContentSplitByNewline)

@@ -13,7 +13,7 @@
 #include "../../ECS.h"
 #include "../../resources/ResourceLoadingService.h"
 
-#include <unordered_map>
+#include <tsl/robin_map.h>
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -30,7 +30,7 @@ namespace rendering
 class FontsStoreSingletonComponent final: public ecs::IComponent
 {
 public:
-    std::unordered_map<StringId, std::unordered_map<char, resources::ResourceId>, StringIdHasher> mLoadedFonts;
+    tsl::robin_map<StringId, tsl::robin_map<char, resources::ResourceId>, StringIdHasher> mLoadedFonts;
 };
 
 ///-----------------------------------------------------------------------------------------------

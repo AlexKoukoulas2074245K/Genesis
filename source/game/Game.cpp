@@ -20,6 +20,8 @@
 #include "../engine/scripting/service/LuaScriptingService.h"
 #include "../engine/scripting/systems/ScriptingSystem.h"
 
+#include "tsl/robin_map.h"
+
 ///------------------------------------------------------------------------------------------------
 
 void Game::VOnSystemsInit()
@@ -47,6 +49,7 @@ void Game::VOnGameInit()
     genesis::ecs::World::GetInstance().AddComponent<genesis::scripting::ScriptComponent>(monkeyEntityId, std::move(scriptComponent));
 
     genesis::rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), StringId("console_background"));    
+
 }
 
 ///------------------------------------------------------------------------------------------------

@@ -22,10 +22,15 @@ message("Generating header file: ${CMAKE_BINARY_DIR}/demo-config.h")
 set(CONSOLE_ENABLED_ON_RELEASE 1 CACHE BOOL "Enable console on debug builds")
 configure_file(demo-config.h.in "${CMAKE_BINARY_DIR}/demo-config.h")
 
-# Find SDL2 and OpenGL
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/build_utilities")
+
+# Find Lua 
 find_package(Lua REQUIRED)
+
+# Find SDL2
 find_package(SDL2 REQUIRED COMPONENTS main)
+
+# OSX specific packages
 if(NOT WIN32)
     find_package(SDL2_image REQUIRED)
     find_package(SDL2_mixer REQUIRED)
@@ -38,8 +43,11 @@ set(GLM_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/extern/glm-0.9.9.3")
 # Find Nlohmann Json
 set(JSON_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/extern/json-3.5.0")
 
+# Find robin-map
+set(ROBIN_MAP_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/extern/robin-map/include")
+
 # Define executable target
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${SDL2main_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${CMAKE_BINARY_DIR} ${GLM_INCLUDE_DIRS} ${JSON_INCLUDE_DIRS} ${LUA_INCLUDE_DIR})
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL_MIXER_INCLUDE_DIRS} ${SDL2main_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIR} ${CMAKE_BINARY_DIR} ${GLM_INCLUDE_DIRS} ${JSON_INCLUDE_DIRS} ${LUA_INCLUDE_DIR} ${ROBIN_MAP_INCLUDE_DIR})
 
 file(GLOB_RECURSE SOURCE_DIR
         "*.h"

@@ -15,7 +15,7 @@
 
 #include <memory>
 #include <string>        
-#include <unordered_map>
+#include <tsl/robin_map.h>
 #include <vector>
 
 ///------------------------------------------------------------------------------------------------
@@ -171,8 +171,8 @@ private:
     std::string AdjustResourcePath(const std::string& resourcePath) const;
     
 private:
-    std::unordered_map<ResourceId, std::unique_ptr<IResource>, ResourceIdHasher> mResourceMap;
-    std::unordered_map<StringId, IResourceLoader*, StringIdHasher> mResourceExtensionsToLoadersMap;
+    tsl::robin_map<ResourceId, std::unique_ptr<IResource>, ResourceIdHasher> mResourceMap;
+    tsl::robin_map<StringId, IResourceLoader*, StringIdHasher> mResourceExtensionsToLoadersMap;
     std::vector<std::unique_ptr<IResourceLoader>> mResourceLoaders;
 };
 

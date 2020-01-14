@@ -9,6 +9,8 @@
 #include "../components/ScriptComponent.h"
 #include "../service/LuaScriptingService.h"
 
+#include <tsl/robin_map.h>
+
 ///-----------------------------------------------------------------------------------------------
 
 namespace genesis
@@ -21,7 +23,7 @@ namespace scripting
 
 ///-----------------------------------------------------------------------------------------------
   
-static std::unordered_map<ScriptType, std::string> sScriptTypeToLuaFuncName = 
+static tsl::robin_map<ScriptType, std::string> sScriptTypeToLuaFuncName =
 {
     { ScriptType::CONTINUOUS_EXECUTION, "Update" },
     { ScriptType::SINGLE_EXECUTION, "Execute" }

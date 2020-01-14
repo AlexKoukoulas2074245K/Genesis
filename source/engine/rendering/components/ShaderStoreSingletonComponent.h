@@ -31,7 +31,7 @@ namespace rendering
 class ShaderStoreSingletonComponent final: public ecs::IComponent
 {
 public:
-    std::unordered_map<StringId, resources::ShaderResource, StringIdHasher> mShaders;
+    tsl::robin_map<StringId, resources::ShaderResource, StringIdHasher> mShaders;
 };
 
 ///-----------------------------------------------------------------------------------------------

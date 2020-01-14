@@ -49,7 +49,7 @@ const std::vector<EntityId>& World::GetActiveEntities() const
 
 ///------------------------------------------------------------------------------------------------
 
-const std::unordered_map<StringId, long long, StringIdHasher>& World::GetSystemUpdateTimes() const
+const tsl::robin_map<StringId, long long, StringIdHasher>& World::GetSystemUpdateTimes() const
 {
     return mSystemUpdateToDuration;
 }

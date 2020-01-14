@@ -14,7 +14,7 @@
 
 #include <functional>
 #include <string>
-#include <unordered_map>
+#include <tsl/robin_map.h>
 #include <vector>
 
 ///-----------------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ using ConsoleCommand = std::function<ConsoleCommandResult(const std::vector<std:
 class ConsoleStateSingletonComponent final: public ecs::IComponent
 {
 public:
-    std::unordered_map<StringId, ConsoleCommand, StringIdHasher> mRegisterdConsoleCommands;
+    tsl::robin_map<StringId, ConsoleCommand, StringIdHasher> mRegisterdConsoleCommands;
     std::vector<std::string> mCommandHistory;
     std::vector<ecs::EntityId> mPastConsoleTextStringEntityIds;
     ecs::EntityId mCurrentCommandRenderedTextEntityId = ecs::NULL_ENTITY_ID;    
