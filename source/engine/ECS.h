@@ -116,6 +116,10 @@ public:
     /// @param[in] dt the inter-frame delta time in seconds.
     void Update(const float dt);
 
+    /// Adds a system to the world and takes ownership of it
+    /// @param[in] system the system instance to add to the world and take ownership over.
+    void AddSystem(std::unique_ptr<BaseSystem> system);
+
     /// Removes the given entity from the world.        
     ///
     /// Internally simply clears the component store for the given entity since all entities 
@@ -144,12 +148,12 @@ public:
     /// Creates a named entity and returns its corresponding entity id.
     /// @param[in] name the name to associate the entity with.
     /// @returns the entity id of the newly constructed entity.
-    EntityId CreateEntity(const StringId name);
+    EntityId CreateEntity(const StringId& name);
     
     /// Finds and returns the entity based on the name provided.
     /// @param[in] name the name to search for the entity with.
     /// @returns the entity id of the entity found, or NULL_ENTITY_ID otherwise
-    EntityId FindEntity(const StringId entityName);
+    EntityId FindEntity(const StringId& entityName);
 
     /// Gets the respective component from the entity with the given entity id.
     ///
@@ -300,15 +304,8 @@ public:
             "A Singleton component of the specified type does not exist");
 
         mSingletonComponents.erase(componentTypeId);
-    }
-        
-    /// Adds a system to the world and takes ownership of it
-    /// @param[in] system the system instance to add to the world and take ownership over.
-    inline void AddSystem(std::unique_ptr<BaseSystem> system)
-    {
-        mSystems.push_back(std::move(system));
-    }            
-
+    }    
+    
     /// Calculates the bit mask of the given template arguments.
     /// @tparam FirstUtilizedComponentType a component's type class
     template<class FirstUtilizedComponentType>
@@ -440,6 +437,7 @@ private:
 
 private:
     ComponentMask mComponentUsageMask;
+    StringId mSystemName;
     
 };
 

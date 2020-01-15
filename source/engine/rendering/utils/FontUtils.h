@@ -33,7 +33,7 @@ namespace rendering
 /// @param[in] fontAtlasRows the number of rows in the font atlas texture.
 void LoadFont
 (
-    const StringId fontName, 
+    const StringId& fontName, 
     const int fontAtlasCols, 
     const int fontAtlasRows
 );
@@ -50,7 +50,7 @@ void LoadFont
 ecs::EntityId RenderCharacter
 (
     const char character,
-    const StringId fontName,
+    const StringId& fontName,
     const float size,
     const glm::vec3& position,
     const glm::vec4& color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f)
@@ -68,7 +68,7 @@ ecs::EntityId RenderCharacter
 ecs::EntityId RenderText
 (
     const std::string& text,
-    const StringId fontName,
+    const StringId& fontName,
     const float size,
     const glm::vec3& position,
     const glm::vec4& color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f)
@@ -90,7 +90,7 @@ ecs::EntityId RenderTextIfDifferentToPreviousString
 (
     const std::string& text,
     const ecs::EntityId previousString,
-    const StringId fontName,
+    const StringId& fontName,
     const float size,
     const glm::vec3& position,
     const glm::vec4& color = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f)

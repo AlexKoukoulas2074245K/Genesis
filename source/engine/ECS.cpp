@@ -54,6 +54,18 @@ const tsl::robin_map<StringId, long long, StringIdHasher>& World::GetSystemUpdat
     return mSystemUpdateToDuration;
 }
 
+
+///------------------------------------------------------------------------------------------------
+
+void World::AddSystem(std::unique_ptr<BaseSystem> system)
+{
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
+    system->mSystemName = GetSystemNameFromTypeIdString(std::string(typeid(*system).name()));
+#endif
+
+    mSystems.push_back(std::move(system));
+}
+
 ///------------------------------------------------------------------------------------------------
 
 void World::Update(const float dt)
@@ -76,11 +88,10 @@ void World::Update(const float dt)
         system->VUpdateAssociatedComponents(dt);
         InsertNewEntitiesIntoActiveCollection();
 
-#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
-        const auto& systemName = GetSystemNameFromTypeIdString(std::string(typeid(*system).name()));
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)        
         const auto& end = std::chrono::high_resolution_clock::now();
         const auto& duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-        mSystemUpdateToDuration[StringId(systemName)] = duration.count();
+        mSystemUpdateToDuration[StringId(system->mSystemName)] = duration.count();
 #endif
     }
 }
@@ -112,7 +123,7 @@ ComponentMask World::CalculateComponentUsageMaskForEntity(const EntityId entityI
 
 ///------------------------------------------------------------------------------------------------
 
-EntityId World::CreateEntity(const StringId name)
+EntityId World::CreateEntity(const StringId& name)
 {
     const auto entity = CreateEntity();    
     AddComponent<NameComponent>(entity, std::make_unique<NameComponent>(name));
@@ -121,7 +132,7 @@ EntityId World::CreateEntity(const StringId name)
 
 ///------------------------------------------------------------------------------------------------
 
-EntityId World::FindEntity(const StringId entityName)
+EntityId World::FindEntity(const StringId& entityName)
 {
     const auto findIter = std::find_if
     (

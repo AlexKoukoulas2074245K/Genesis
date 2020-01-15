@@ -16,6 +16,8 @@
 #include <glm/vec2.hpp>                 // vec2
 #include <glm/vec3.hpp>                 // vec3
 #include <glm/mat4x4.hpp>               // mat4
+#include <glm/gtc/quaternion.hpp>
+#include <glm/ext/quaternion_float.hpp> // for quat
 #include <glm/gtc/matrix_transform.hpp> // mat helpers
 #include <glm/gtc/matrix_access.hpp>    // mat helpers
 #include <random>
@@ -143,6 +145,15 @@ inline glm::vec2 Vec3ToVec2(const glm::vec3& vec)
 inline glm::vec3 Vec2ToVec3(const glm::vec2& vec)
 {
     return glm::vec3(vec.x, vec.y, 0.0f);
+}
+
+///-----------------------------------------------------------------------------------------------
+/// Converts a pitch,yaw,roll euler angle vec to a glm::quat.
+/// @param[in] vec3 the pitch,yaw,roll euler angles to transform into a quaternion.
+/// @returns a quaternion representing the rotation passed in.
+inline glm::quat EulerAnglesToQuat(const glm::vec3& eulerAngles)
+{
+    return glm::quat(eulerAngles);
 }
 
 ///-----------------------------------------------------------------------------------------------

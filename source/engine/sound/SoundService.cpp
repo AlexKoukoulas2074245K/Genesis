@@ -98,7 +98,7 @@ void SoundService::Initialize() const
 
 ///------------------------------------------------------------------------------------------------
 
-void SoundService::PlaySfx(const StringId sfxName, const bool overrideCurrentPlaying /* true */)
+void SoundService::PlaySfx(const StringId& sfxName, const bool overrideCurrentPlaying /* true */)
 {
     auto& resourceLoadingService = resources::ResourceLoadingService::GetInstance();
 
@@ -121,7 +121,7 @@ void SoundService::PlaySfx(const StringId sfxName, const bool overrideCurrentPla
 
 ///------------------------------------------------------------------------------------------------
 
-void SoundService::PlayMusic(const StringId musicTrackName, const bool fadeOutEnabled /* true */)
+void SoundService::PlayMusic(const StringId& musicTrackName, const bool fadeOutEnabled /* true */)
 {    
     auto& resourceLoadingService = resources::ResourceLoadingService::GetInstance();
 

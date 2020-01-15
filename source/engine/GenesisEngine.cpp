@@ -318,26 +318,7 @@ void GenesisEngine::BindDefaultEngineFunctionsToLua() const
 
 void GenesisEngine::RegisterDefaultEngineConsoleCommands() const
 {
-#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
-    debug::RegisterConsoleCommand(StringId("frame_stats"), [](const std::vector<std::string>& commandTextComponents)
-    {
-        static const std::unordered_set<std::string> sAllowedOptions = { "on", "off" };
-
-        const std::string USAGE_STRING = "Usage: frame_stats on|off";
-
-        if (commandTextComponents.size() != 2 || sAllowedOptions.count(StringToLower(commandTextComponents[1])) == 0)
-        {
-            return debug::ConsoleCommandResult(false, USAGE_STRING);
-        }
-       
-        const auto& world = ecs::World::GetInstance();
-        auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();        
-        
-        debugViewStateComponent.mFrameStatsDisplayEnabled = StringToLower(commandTextComponents[1]) == "on";
-        
-        return debug::ConsoleCommandResult(true);
-    });
-
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)    
     debug::RegisterConsoleCommand(StringId("commands"), [](const std::vector<std::string>& commandTextComponents)
     {
         const std::string USAGE_STRING = "Usage: commands";
@@ -369,6 +350,25 @@ void GenesisEngine::RegisterDefaultEngineConsoleCommands() const
         }                
 
         return debug::ConsoleCommandResult(true, output);
+    });
+
+    debug::RegisterConsoleCommand(StringId("frame_stats"), [](const std::vector<std::string>& commandTextComponents)
+    {
+        static const std::unordered_set<std::string> sAllowedOptions = { "on", "off" };
+
+        const std::string USAGE_STRING = "Usage: frame_stats on|off";
+
+        if (commandTextComponents.size() != 2 || sAllowedOptions.count(StringToLower(commandTextComponents[1])) == 0)
+        {
+            return debug::ConsoleCommandResult(false, USAGE_STRING);
+        }
+
+        const auto& world = ecs::World::GetInstance();
+        auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();
+
+        debugViewStateComponent.mFrameStatsDisplayEnabled = StringToLower(commandTextComponents[1]) == "on";
+
+        return debug::ConsoleCommandResult(true);
     });
 #endif
 }

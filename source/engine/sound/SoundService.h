@@ -53,13 +53,13 @@ public:
     ///
     /// @param[in] sfxName the name of the sound effect to play (that is the filename of the sfx without the extension).
     /// @param[in] overrideCurrentPlaying whether or not the currently playing sfx should stop playing and get overridden by the new one.
-    void PlaySfx(const StringId sfxName, const bool overrideCurrentPlaying = true);
+    void PlaySfx(const StringId& sfxName, const bool overrideCurrentPlaying = true);
 
     /// Plays a music track with the given name (this is the filename of the music track without the extension).
     ///
     /// @param[in] musicTrackName the name of the music track to play
     /// @param[in] fadeOutEnabled whether or not the currently playing music track should fade out giving way to the new one.
-    void PlayMusic(const StringId musicTrackName, const bool fadeOutEnabled = true);
+    void PlayMusic(const StringId& musicTrackName, const bool fadeOutEnabled = true);
 
     /// Mutes the volume of the music track channel.   
     void MuteMusic();

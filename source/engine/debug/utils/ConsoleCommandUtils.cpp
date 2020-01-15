@@ -21,7 +21,7 @@ namespace debug
 
 void RegisterConsoleCommand
 (
-    const StringId consoleCommandName,
+    const StringId& consoleCommandName,
     const ConsoleCommand& consoleCommand
 )
 {

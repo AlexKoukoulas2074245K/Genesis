@@ -50,7 +50,7 @@ ShaderResource::ShaderResource(const ShaderResource& rhs)
 
 bool ShaderResource::SetMatrix4fv
 (
-    const StringId uniformName, 
+    const StringId& uniformName, 
     const glm::mat4& matrix, 
     const GLuint count /* 1 */,
     const bool transpose /* false */
@@ -66,7 +66,7 @@ bool ShaderResource::SetMatrix4fv
 
 ///------------------------------------------------------------------------------------------------
 
-bool ShaderResource::SetFloatVec4(const StringId uniformName, const glm::vec4& vec) const
+bool ShaderResource::SetFloatVec4(const StringId& uniformName, const glm::vec4& vec) const
 {
     if (mShaderUniformNamesToLocations.count(uniformName) > 0)
     {
@@ -78,7 +78,7 @@ bool ShaderResource::SetFloatVec4(const StringId uniformName, const glm::vec4& v
 
 ///------------------------------------------------------------------------------------------------
 
-bool ShaderResource::SetFloat(const StringId uniformName, const float value) const
+bool ShaderResource::SetFloat(const StringId& uniformName, const float value) const
 {
     if (mShaderUniformNamesToLocations.count(uniformName) > 0)
     {

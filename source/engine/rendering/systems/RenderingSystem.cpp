@@ -165,8 +165,8 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
                 }
 
                 RenderEntityInternal
-                (
-                    entityId,
+                (                    
+                    transformComponent,
                     renderableComponent,                    
                     cameraComponent,
                     shaderStoreComponent,
@@ -183,9 +183,11 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     for (const auto& entityId : guiEntities)
     {
         const auto& renderableComponent = world.GetComponent<RenderableComponent>(entityId);
+        const auto& transformComponent = world.GetComponent<TransformComponent>(entityId);
+
         RenderEntityInternal
-        (
-            entityId,
+        (            
+            transformComponent,
             renderableComponent,            
             cameraComponent,
             shaderStoreComponent,
@@ -201,8 +203,8 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
 ///-----------------------------------------------------------------------------------------------
 
 void RenderingSystem::RenderEntityInternal
-(
-    const genesis::ecs::EntityId entityId,
+(    
+    const TransformComponent& transformComponent,
     const RenderableComponent& renderableComponent,    
     const CameraSingletonComponent& cameraComponent, 
     const ShaderStoreSingletonComponent& shaderStoreComponent,
@@ -230,9 +232,8 @@ void RenderingSystem::RenderEntityInternal
         currentShader = renderingContextComponent.previousShader;
     }
 
-    // Get currently active mesh for this entity
-    const auto& transformComponent = ecs::World::GetInstance().GetComponent<TransformComponent>(entityId);
-    const auto& activeMeshes       = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
+    // Get currently active mesh for this entity    
+    const auto& activeMeshes = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
 
     // Update current mesh if necessary
     const resources::MeshResource* currentMesh = nullptr;
@@ -263,9 +264,7 @@ void RenderingSystem::RenderEntityInternal
     }  
 
     world = glm::translate(world, position);
-    world = glm::rotate(world, rotation.x, math::X_AXIS);
-    world = glm::rotate(world, rotation.y, math::Y_AXIS);
-    world = glm::rotate(world, rotation.z, math::Z_AXIS);
+    world *= glm::mat4_cast(math::EulerAnglesToQuat(rotation));
     world = glm::scale(world, scale);
        
 

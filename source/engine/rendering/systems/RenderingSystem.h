@@ -25,6 +25,10 @@ namespace genesis
 
 ///-----------------------------------------------------------------------------------------------
 
+class TransformComponent;
+
+///-----------------------------------------------------------------------------------------------
+
 namespace rendering
 {
 
@@ -47,8 +51,8 @@ public:
 
 private:
     void RenderEntityInternal
-    (
-        const genesis::ecs::EntityId entityId,
+    (        
+        const TransformComponent& entityTransformComponent,
         const RenderableComponent& entityRenderableComponent,        
         const CameraSingletonComponent& globalCameraComponent,
         const ShaderStoreSingletonComponent& globalShaderStoreComponent,

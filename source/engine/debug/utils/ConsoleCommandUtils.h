@@ -28,7 +28,7 @@ namespace debug
 /// @param[in] consoleCommand the console command function
 void RegisterConsoleCommand
 (
-    const StringId consoleCommandName,
+    const StringId& consoleCommandName,
     const ConsoleCommand& consoleCommand
 );
 
