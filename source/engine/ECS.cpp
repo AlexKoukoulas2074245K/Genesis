@@ -60,7 +60,8 @@ const tsl::robin_map<StringId, long long, StringIdHasher>& World::GetSystemUpdat
 void World::AddSystem(std::unique_ptr<BaseSystem> system)
 {
 #if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
-    system->mSystemName = GetSystemNameFromTypeIdString(std::string(typeid(*system).name()));
+    auto& systemRef = *system;
+    system->mSystemName = GetSystemNameFromTypeIdString(std::string(typeid(systemRef).name()));
 #endif
 
     mSystems.push_back(std::move(system));
