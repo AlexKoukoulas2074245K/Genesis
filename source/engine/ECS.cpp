@@ -133,7 +133,7 @@ EntityId World::CreateEntity(const StringId& name)
 
 ///------------------------------------------------------------------------------------------------
 
-EntityId World::FindEntity(const StringId& entityName)
+EntityId World::FindEntity(const StringId& entityName) const
 {
     const auto findIter = std::find_if
     (

@@ -223,7 +223,7 @@ void ConsoleManagementSystem::ExecuteCommand() const
         else
         {
             // Execute command
-            const auto& commandResult = consoleStateComponent.mRegisterdConsoleCommands.at(commandSplitBySpace[0])(commandSplitBySpace);
+            const auto& commandResult = consoleStateComponent.mRegisterdConsoleCommands.at(StringId(commandSplitBySpace[0]))(commandSplitBySpace);
             if (!commandResult.mResponseText.empty())
             {
                 // Print result text line by line

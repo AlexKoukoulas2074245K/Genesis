@@ -153,7 +153,7 @@ public:
     /// Finds and returns the entity based on the name provided.
     /// @param[in] name the name to search for the entity with.
     /// @returns the entity id of the entity found, or NULL_ENTITY_ID otherwise
-    EntityId FindEntity(const StringId& entityName);
+    EntityId FindEntity(const StringId& entityName) const;
 
     /// Gets the respective component from the entity with the given entity id.
     ///
