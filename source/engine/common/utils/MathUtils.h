@@ -34,8 +34,10 @@ namespace math
 
 ///-----------------------------------------------------------------------------------------------
 
-static constexpr float PI           = 3.141592f;
-static constexpr float EQ_THRESHOLD = 1e-4f;
+static constexpr float PI              = 3.141592f;
+static constexpr float EQ_THRESHOLD    = 1e-4f;
+static constexpr float DEGREES_PER_RAD = 57.2958f;
+static constexpr float RADS_PER_DEGREE = 0.0174532925f;
 
 static const glm::vec3 X_AXIS = glm::vec3(1.0f, 0.0f, 0.0f);
 static const glm::vec3 Y_AXIS = glm::vec3(0.0f, 1.0f, 0.0f);

@@ -63,7 +63,6 @@ void GenesisEngine::RunGame(const GameStartupParameters& startupParameters, IGam
     debug::RegisterDefaultEngineConsoleCommands();
     game.VOnGameInit();
 
-
     auto dt                = 0.0f;
     auto elapsedTicks      = 0.0f;
     auto dtAccumulator     = 0.0f;
