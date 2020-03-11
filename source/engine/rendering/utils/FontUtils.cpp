@@ -111,11 +111,10 @@ ecs::EntityId RenderCharacter
     auto& fontStoreComponent = world.GetSingletonComponent<FontsStoreSingletonComponent>();
 
     auto renderableComponent = std::make_unique<RenderableComponent>();
-    renderableComponent->mTextureResourceId = resources::ResourceLoadingService::GetInstance().LoadResource(resources::ResourceLoadingService::RES_ATLASES_ROOT + fontName.GetString() + FONT_ATLAS_TEXTURE_FILE_EXTENSION);
-    renderableComponent->mActiveAnimationNameId = StringId("default");
+    renderableComponent->mTextureResourceId = resources::ResourceLoadingService::GetInstance().LoadResource(resources::ResourceLoadingService::RES_ATLASES_ROOT + fontName.GetString() + FONT_ATLAS_TEXTURE_FILE_EXTENSION);    
     renderableComponent->mShaderNameId = FONT_SHADER_NAME;
     renderableComponent->mIsGuiComponent = true;
-    renderableComponent->mAnimationsToMeshes[renderableComponent->mActiveAnimationNameId].push_back(fontStoreComponent.mLoadedFonts.at(fontName).at(character));
+    renderableComponent->mMeshResourceId = fontStoreComponent.mLoadedFonts.at(fontName).at(character);
     renderableComponent->mShaderUniforms.mShaderFloatVec4Uniforms[GUI_SHADER_CUSTOM_COLOR_UNIFORM_NAME] = color;
 
     auto transformComponent = std::make_unique<TransformComponent>();    

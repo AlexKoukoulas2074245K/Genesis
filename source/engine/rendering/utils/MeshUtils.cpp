@@ -62,15 +62,12 @@ ecs::EntityId LoadAndCreateModelByName
     auto transformComponent = std::make_unique<TransformComponent>();
     transformComponent->mPosition = initialPosition;
 
-    auto renderableComponent = std::make_unique<RenderableComponent>();    
-    renderableComponent->mActiveAnimationNameId = StringId("default");        
+    auto renderableComponent = std::make_unique<RenderableComponent>();        
     renderableComponent->mShaderNameId = DEFAULT_MODEL_SHADER;
 
-    renderableComponent->mAnimationsToMeshes[StringId("default")].push_back
-    (
+    renderableComponent->mMeshResourceId =     
         resources::ResourceLoadingService::GetInstance().
-        LoadResource(resources::ResourceLoadingService::RES_MODELS_ROOT + modelName + ".obj"
-    ));
+        LoadResource(resources::ResourceLoadingService::RES_MODELS_ROOT + modelName + ".obj");
         
     renderableComponent->mTextureResourceId = resources::ResourceLoadingService::GetInstance().LoadResource
     (
@@ -105,15 +102,12 @@ ecs::EntityId LoadAndCreateGuiSprite
     auto transformComponent = std::make_unique<TransformComponent>();
     transformComponent->mPosition = initialPosition;
 
-    auto renderableComponent = std::make_unique<RenderableComponent>();
-    renderableComponent->mActiveAnimationNameId = StringId("default");
+    auto renderableComponent = std::make_unique<RenderableComponent>();    
     renderableComponent->mShaderNameId = shaderName;
     renderableComponent->mIsGuiComponent = true;
-    renderableComponent->mAnimationsToMeshes[StringId("default")].push_back
-    (
+    renderableComponent->mMeshResourceId =     
         resources::ResourceLoadingService::GetInstance().
-        LoadResource(resources::ResourceLoadingService::RES_MODELS_ROOT + modelName + ".obj"
-    ));
+        LoadResource(resources::ResourceLoadingService::RES_MODELS_ROOT + modelName + ".obj");
 
     renderableComponent->mTextureResourceId = resources::ResourceLoadingService::GetInstance().LoadResource
     (

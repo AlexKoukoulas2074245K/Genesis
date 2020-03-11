@@ -148,9 +148,8 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
             }            
             else
             {            
-                const auto& transformComponent = world.GetComponent<TransformComponent>(entityId);
-                const auto& activeMeshes       = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
-                const auto& currentMesh        = resources::ResourceLoadingService::GetInstance().GetResource<resources::MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
+                const auto& transformComponent = world.GetComponent<TransformComponent>(entityId);                
+                const auto& currentMesh        = resources::ResourceLoadingService::GetInstance().GetResource<resources::MeshResource>(renderableComponent.mMeshResourceId);
 
                 // Frustum culling
                 if (!IsMeshInsideCameraFrustum
@@ -232,18 +231,15 @@ void RenderingSystem::RenderEntityInternal
         currentShader = renderingContextComponent.previousShader;
     }
 
-    // Get currently active mesh for this entity    
-    const auto& activeMeshes = renderableComponent.mAnimationsToMeshes.at(renderableComponent.mActiveAnimationNameId);
-
     // Update current mesh if necessary
     const resources::MeshResource* currentMesh = nullptr;
-    if (activeMeshes[renderableComponent.mActiveMeshIndex] != renderingContextComponent.previousMeshResourceId)
+    if (renderableComponent.mMeshResourceId != renderingContextComponent.previousMeshResourceId)
     {
-        currentMesh = &resources::ResourceLoadingService::GetInstance().GetResource<resources::MeshResource>(activeMeshes[renderableComponent.mActiveMeshIndex]);
+        currentMesh = &resources::ResourceLoadingService::GetInstance().GetResource<resources::MeshResource>(renderableComponent.mMeshResourceId);
         GL_CHECK(glBindVertexArray(currentMesh->GetVertexArrayObject()));
 
         renderingContextComponent.previousMesh           = currentMesh;
-        renderingContextComponent.previousMeshResourceId = activeMeshes[renderableComponent.mActiveMeshIndex];
+        renderingContextComponent.previousMeshResourceId = renderableComponent.mMeshResourceId;
     }
     else
     {

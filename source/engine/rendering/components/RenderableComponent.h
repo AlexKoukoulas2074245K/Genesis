@@ -45,14 +45,12 @@ struct ShaderUniforms final
 class RenderableComponent final: public ecs::IComponent
 {
 public:    
-    tsl::robin_map<StringId, std::vector<ResourceId>, StringIdHasher> mAnimationsToMeshes;
     ShaderUniforms mShaderUniforms;
-    StringId mShaderNameId                 = StringId();    
-    StringId mActiveAnimationNameId        = StringId();
-    size_t mActiveMeshIndex                = 0;
-    ResourceId mTextureResourceId          = 0;            
-    bool mIsGuiComponent                   = false;
-    bool mVisibility                       = true;    
+    ResourceId mMeshResourceId    = 0;
+    ResourceId mTextureResourceId = 0;            
+    StringId mShaderNameId        = StringId();        
+    bool mIsGuiComponent          = false;
+    bool mVisibility              = true;    
 };
 
 ///-----------------------------------------------------------------------------------------------
