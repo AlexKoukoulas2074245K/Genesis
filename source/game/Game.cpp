@@ -41,7 +41,7 @@ void Game::VOnSystemsInit()
 
 void Game::VOnGameInit()
 {
-    const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("monkey", glm::vec3(0.1f, 0.2f, 0.3f), StringId("monkey"));
+    const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("spaceship", glm::vec3(0.1f, 0.2f, 0.3f), StringId("spaceship"));
 
     auto scriptComponent = std::make_unique<genesis::scripting::ScriptComponent>();
     scriptComponent->mScriptName = StringId("test");
