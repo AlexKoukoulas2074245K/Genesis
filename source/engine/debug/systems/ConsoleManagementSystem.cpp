@@ -12,6 +12,7 @@
 #include "../../rendering/components/TextStringComponent.h"
 #include "../../rendering/utils/Colors.h"
 #include "../../rendering/utils/FontUtils.h"
+#include "../../rendering/utils/MeshUtils.h"
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -54,13 +55,22 @@ ConsoleManagementSystem::ConsoleManagementSystem()
 ///-----------------------------------------------------------------------------------------------
 
 void ConsoleManagementSystem::VUpdateAssociatedComponents(const float) const
-{   
+{
+    CreateConsoleBackgroundEntityIfNotAlive();
     HandleConsoleSpecialInput();
     HandleConsoleBackgroundAnimation();
     HandleConsoleTextRendering();
 }
 
 ///-----------------------------------------------------------------------------------------------
+
+void ConsoleManagementSystem::CreateConsoleBackgroundEntityIfNotAlive() const
+{
+    if (ecs::World::GetInstance().FindEntity(CONSOLE_BACKGROUND_ENTITY_NAME) == ecs::NULL_ENTITY_ID)
+    {
+        rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), CONSOLE_BACKGROUND_ENTITY_NAME);
+    }
+}
 
 void ConsoleManagementSystem::HandleConsoleSpecialInput() const
 {
@@ -152,9 +162,13 @@ void ConsoleManagementSystem::HandleConsoleBackgroundAnimation() const
         }
     }
 
+    
     const auto consoleBackgroundEntity = ecs::World::GetInstance().FindEntity(CONSOLE_BACKGROUND_ENTITY_NAME);
-    auto& consoleBackgroundRenderableComponent = ecs::World::GetInstance().GetComponent<rendering::RenderableComponent>(consoleBackgroundEntity);
-    consoleBackgroundRenderableComponent.mShaderUniforms.mShaderFloatUniforms[CONSOLE_OPAQUENESS_UNIFORM_NAME] = consoleStateComponent.mBackgroundOpaqueness;
+    if (consoleBackgroundEntity != ecs::NULL_ENTITY_ID)
+    {
+        auto& consoleBackgroundRenderableComponent = ecs::World::GetInstance().GetComponent<rendering::RenderableComponent>(consoleBackgroundEntity);
+        consoleBackgroundRenderableComponent.mShaderUniforms.mShaderFloatUniforms[CONSOLE_OPAQUENESS_UNIFORM_NAME] = consoleStateComponent.mBackgroundOpaqueness;
+    }
 }
 
 ///-----------------------------------------------------------------------------------------------

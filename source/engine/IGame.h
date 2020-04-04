@@ -25,6 +25,7 @@ public:
     ///
     /// This is the first initialization method to be called, and is 
     /// where all ecs systems used by the game should be initialized.
+    /// The initialization order of the systems will also determine their order of execution.
     virtual void VOnSystemsInit() = 0;
 
     /// Game initialization method. 

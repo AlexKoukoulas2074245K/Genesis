@@ -29,6 +29,7 @@ public:
     ConsoleManagementSystem();
 
     void VUpdateAssociatedComponents(const float dt) const override;
+    void CreateConsoleBackgroundEntityIfNotAlive() const;
     void HandleConsoleSpecialInput() const;
     void HandleConsoleBackgroundAnimation() const;
     void HandleConsoleTextRendering() const;
