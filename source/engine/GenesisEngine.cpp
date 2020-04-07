@@ -184,8 +184,9 @@ void GenesisEngine::UpdateFrameStatistics(float& dt, float& elapsedTicks, float&
         {
             world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>().mCurrentFps = static_cast<int>(framesAccumulator);
         }            
-        Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator)).c_str());
+        Log(LogType::INFO, (std::string("FPS: ") + std::to_string(framesAccumulator) + " | Entities: " + std::to_string(world.GetActiveEntities().size())).c_str());
 #endif
+        
         framesAccumulator = 0;
         dtAccumulator = 0.0f;
     }        

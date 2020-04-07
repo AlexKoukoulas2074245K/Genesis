@@ -129,7 +129,13 @@ public:
     
     /// Calculates the aggregate component mask for a given entity id.    
     /// @param[in] entityId.
-    ComponentMask CalculateComponentUsageMaskForEntity(const EntityId entityId) const;
+    inline const ComponentMask& GetComponentUsageMaskForEntity(const EntityId entityId) const
+    {
+        assert(entityId != NULL_ENTITY_ID &&
+            "Mask calculation requested for NULL_ENTITY_ID");
+
+        return mEntityComponentStore.at(entityId).mMask;
+    }
 
     /// Creates an entity and returns its corresponding entity id.     
     /// @returns the entity id of the newly constructed entity.
@@ -174,10 +180,10 @@ public:
         const auto componentTypeId = GetTypeHash<ComponentType>();
         const auto& entityEntry = mEntityComponentStore.at(entityId);
 
-        assert(entityEntry.mComponentMap.count(componentTypeId) != 0 &&
+        assert(entityEntry.mComponents[componentTypeId] &&
             "Component is not present in this entity's component store");
         
-        return static_cast<ComponentType&>(*entityEntry.mComponentMap.at(componentTypeId));
+        return static_cast<ComponentType&>(*entityEntry.mComponents[componentTypeId]);
     }
 
     /// Checks whether the given entity has a component of the given component class type.
@@ -194,7 +200,7 @@ public:
             "Entity does not exist in the world");
 
         const auto componentTypeId = GetTypeHash<ComponentType>();
-        return mEntityComponentStore.at(entityId).mComponentMap.count(componentTypeId) != 0;
+        return mEntityComponentStore.at(entityId).mComponents[componentTypeId] != nullptr;
     }
 
     /// Adds and <b>takes ownership</b> of the given component and adds it to the entity with the given id.
@@ -213,16 +219,11 @@ public:
         const auto componentTypeId = GetTypeHash<ComponentType>();
 
         auto& entityEntry = mEntityComponentStore.at(entityId);
-        assert(entityEntry.mComponentMap.count(componentTypeId) == 0 &&
+        assert(entityEntry.mComponents[componentTypeId] == nullptr &&
             "Component is already present in this entity's component store");
-
-        if (mComponentMasks.count(componentTypeId) == 0)
-        {
-            RegisterComponentType<ComponentType>();
-        }        
         
-        entityEntry.mComponentMap[componentTypeId] = std::move(component);
-        entityEntry.mComponentMask |= mComponentMasks.at(componentTypeId);
+        entityEntry.mComponents[componentTypeId] = std::move(component);
+        entityEntry.mMask |= 1 << componentTypeId;
     }
 
     /// Removes the component with the given type from the entity with the given entity id.
@@ -240,11 +241,11 @@ public:
         const auto componentTypeId = GetTypeHash<ComponentType>();
         auto& entityEntry = mEntityComponentStore.at(entityId);
 
-        assert(entityEntry.mComponentMap.count(componentTypeId) != 0 &&
+        assert(entityEntry.mComponents[componentTypeId] &&
             "Component is not present in this entity's component store");
         
-        entityEntry.mComponentMap.erase(componentTypeId);
-        entityEntry.mComponentMask ^= mComponentMasks.at(componentTypeId);
+        entityEntry.mComponents[componentTypeId] = nullptr;
+        entityEntry.mMask ^= 1 << componentTypeId;
     }
     
     /// Get the registered singleton component with the given type.
@@ -313,14 +314,8 @@ public:
     {
         static_assert(std::is_base_of<IComponent, FirstUtilizedComponentType>::value,
             "Attempted to extract mask from class not derived from IComponent");
-
-        const auto componentTypeId = GetTypeHash<FirstUtilizedComponentType>();
-        if (mComponentMasks.count(componentTypeId) == 0)
-        {
-            RegisterComponentType<FirstUtilizedComponentType>();
-        }
-
-        return mComponentMasks.at(componentTypeId);
+        
+        return 1 << GetTypeHash<FirstUtilizedComponentType>();
     }
 
     /// Calculates the bit mask of the given template arguments.
@@ -333,12 +328,8 @@ public:
             "Attempted to extract mask from class not derived from IComponent");
 
         const auto componentTypeId = GetTypeHash<FirstUtilizedComponentType>();
-        if (mComponentMasks.count(componentTypeId) == 0)
-        {
-            RegisterComponentType<FirstUtilizedComponentType>();
-        }
 
-        return mComponentMasks.at(componentTypeId) |
+        return (1 << componentTypeId) |
             CalculateComponentUsageMask<SecondUtilizedComponentType, RestUtilizedComponentTypes...>();
     }    
 
@@ -357,36 +348,18 @@ private:
 
     // Handles entities that are added mid system update, so that the rest of the system updates will pick it up.
     void InsertNewEntitiesIntoActiveCollection();
-
-    // Registers the given component type (ComponentType) to the world
-    // and computes its mask. All components that are used as data containers 
-    // for entities, must be registered here first before used.
-    template<class ComponentType>
-    inline void RegisterComponentType()
-    {
-        static_assert(std::is_base_of<IComponent, ComponentType>::value,
-            "ComponentType does not derive from IComponent");
-        assert(mComponentMasks.size() != MAX_COMPONENTS &&
-            "Exceeded maximum number of different component types");
-
-        const auto componentTypeId = GetTypeHash<ComponentType>();
-        mComponentMasks[componentTypeId] = 1LL << mComponentMasks.size();
-    }  
     
-private:                
-    using ComponentMap = tsl::robin_map<ComponentTypeId, std::unique_ptr<IComponent>, ComponentTypeIdHasher>;
-    
-    struct EntityComponentsAndMask
+private:
+    struct EntityEntry
     {
-        ComponentMap mComponentMap;
-        ComponentMask mComponentMask;
+        std::array<std::unique_ptr<IComponent>, MAX_COMPONENTS> mComponents;
+        ComponentMask mMask;
     };
 
-    using EntityComponentStoreMap = tsl::robin_map<EntityId, EntityComponentsAndMask, EntityIdHasher>;
-    using ComponentMaskMap        = tsl::robin_map<ComponentTypeId, ComponentMask, ComponentTypeIdHasher>;
-
+    using EntityComponentStoreMap = tsl::robin_map<EntityId, EntityEntry, EntityIdHasher>;
+    using ComponentMap = tsl::robin_map<ComponentTypeId, std::unique_ptr<IComponent>, ComponentTypeIdHasher>;
+    
     EntityComponentStoreMap mEntityComponentStore;
-    ComponentMaskMap        mComponentMasks;    
     ComponentMap            mSingletonComponents;
                
     tsl::robin_map<StringId, long long, StringIdHasher> mSystemUpdateToDuration;

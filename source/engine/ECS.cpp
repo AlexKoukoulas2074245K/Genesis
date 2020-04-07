@@ -107,19 +107,7 @@ void World::DestroyEntity(const EntityId entityId)
     assert(mEntityComponentStore.count(entityId) != 0 &&
         "Entity does not exist in the world");
 
-    auto& entityEntry = mEntityComponentStore.at(entityId);
-    entityEntry.mComponentMap.clear();   
-    entityEntry.mComponentMask.reset();
-}
-
-///------------------------------------------------------------------------------------------------
-
-ComponentMask World::CalculateComponentUsageMaskForEntity(const EntityId entityId) const
-{
-    assert(entityId != NULL_ENTITY_ID &&
-        "Mask calculation requested for NULL_ENTITY_ID");
-
-    return mEntityComponentStore.at(entityId).mComponentMask;
+    mEntityComponentStore.at(entityId).mMask.reset();
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -176,10 +164,8 @@ void World::RemoveEntitiesWithoutAnyComponents()
     auto entityIter = mEntityComponentStore.begin();
     while (entityIter != mEntityComponentStore.end())
     {                
-        if (entityIter->second.mComponentMap.size() == 0)
+        if (entityIter->second.mMask.any() == false)
         {
-            const auto id = entityIter->first;
-            (void)id;
             entityIter = mEntityComponentStore.erase(entityIter);
         }
         else
@@ -234,7 +220,7 @@ bool BaseSystem::ShouldProcessEntity(const EntityId entityId) const
     assert(entityId != NULL_ENTITY_ID &&
         "Entity process check for NULL_ENTITY_ID");
 
-    return (World::GetInstance().CalculateComponentUsageMaskForEntity(entityId) & mComponentUsageMask) == mComponentUsageMask;
+    return (World::GetInstance().GetComponentUsageMaskForEntity(entityId) & mComponentUsageMask) == mComponentUsageMask;
 }
 
 ///------------------------------------------------------------------------------------------------

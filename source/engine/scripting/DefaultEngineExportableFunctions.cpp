@@ -129,6 +129,50 @@ void BindDefaultEngineFunctionsToLua()
 
         return 0;
     });
+    
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("GetEntityRotation", "GetEntityRotation(entityId) -> rx,ry,rz", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 1)
+        {
+            const auto entityId = luaScriptingService.LuaToIntegral(1);
+            const auto& transformComponent = ecs::World::GetInstance().GetComponent<TransformComponent>(entityId);
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mRotation.x));
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mRotation.y));
+            luaScriptingService.LuaPushDouble(static_cast<double>(transformComponent.mRotation.z));
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling GetEntityPosition");
+        }
+
+        return 3;
+    });
+
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("SetEntityRotation", "SetEntityRotation(entityId, rx, ry, rz) -> void", [](lua_State*)
+    {
+        const auto& luaScriptingService = LuaScriptingService::GetInstance();
+        const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
+
+        if (stackSize == 4)
+        {
+            const auto entityId  = luaScriptingService.LuaToIntegral(1);
+            const auto rotationX = luaScriptingService.LuaToDouble(2);
+            const auto rotationY = luaScriptingService.LuaToDouble(3);
+            const auto rotationZ = luaScriptingService.LuaToDouble(4);
+
+            auto& transformComponent = ecs::World::GetInstance().GetComponent<TransformComponent>(entityId);
+            transformComponent.mRotation = glm::vec3(rotationX, rotationY, rotationZ);
+        }
+        else
+        {
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 4) when calling SetEntityPosition");
+        }
+
+        return 0;
+    });
 }
 
 ///------------------------------------------------------------------------------------------------

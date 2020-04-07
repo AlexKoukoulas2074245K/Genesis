@@ -7,6 +7,8 @@
 
 #include "Game.h"
 #include "../engine/ECS.h"
+#include "../engine/common/components/TransformComponent.h"
+#include "../engine/common/utils/MathUtils.h"
 #include "../engine/debug/systems/ConsoleManagementSystem.h"
 #include "../engine/debug/systems/DebugViewManagementSystem.h"
 #include "../engine/input/components/InputStateSingletonComponent.h"
@@ -37,14 +39,30 @@ void Game::VOnSystemsInit()
 
 ///------------------------------------------------------------------------------------------------
 
-void Game::VOnGameInit()
+static void CreateSpaceshipAtRandomPosition()
 {
-    const auto monkeyEntityId = genesis::rendering::LoadAndCreateModelByName("spaceship", glm::vec3(0.1f, 0.2f, 0.3f), StringId("spaceship"));
-
+    const auto spaceshipEntityId = genesis::rendering::LoadAndCreateModelByName
+    (
+        "spaceship",
+        glm::vec3(genesis::math::RandomFloat(-1.5f, 1.5f), genesis::math::RandomFloat(-1.5f, 1.5f), genesis::math::RandomFloat(-1.5f, 1.5f)),
+        StringId("spaceship")
+    );
+    
+    auto& transformComponent = genesis::ecs::World::GetInstance().GetComponent<genesis::TransformComponent>(spaceshipEntityId);
+    transformComponent.mRotation.y = genesis::math::RandomFloat(0.0f, genesis::math::PI);
+    
     auto scriptComponent = std::make_unique<genesis::scripting::ScriptComponent>();
     scriptComponent->mScriptName = StringId("test");
     scriptComponent->mScriptType = genesis::scripting::ScriptType::CONTINUOUS_EXECUTION;
-    genesis::ecs::World::GetInstance().AddComponent<genesis::scripting::ScriptComponent>(monkeyEntityId, std::move(scriptComponent));
+    genesis::ecs::World::GetInstance().AddComponent<genesis::scripting::ScriptComponent>(spaceshipEntityId, std::move(scriptComponent));
+}
+
+void Game::VOnGameInit()
+{
+    for (int i = 0; i < 1000; ++i)
+    {
+        CreateSpaceshipAtRandomPosition();
+    }
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -56,7 +74,7 @@ void Game::VOnUpdate(const float dt)
     auto& cameraComponent = world.GetSingletonComponent<genesis::rendering::CameraSingletonComponent>();
     float moveSpeed = 5.0f;
     float lookSpeed = 1.0f;
-    float zoomSpeed = 0.2f;
+    //float zoomSpeed = 0.2f;
 
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_MOVE_UP))
     {
@@ -116,11 +134,11 @@ void Game::VOnUpdate(const float dt)
     }
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_IN))
     {    
-        cameraComponent.mFieldOfView -= zoomSpeed * dt;
+        genesis::ecs::World::GetInstance().DestroyEntity(genesis::ecs::World::GetInstance().FindEntity(StringId("spaceship")));
     }
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_OUT))
     {
-        cameraComponent.mFieldOfView += zoomSpeed * dt;
+        CreateSpaceshipAtRandomPosition();
     }      
 
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
