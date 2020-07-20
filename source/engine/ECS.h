@@ -76,14 +76,6 @@ struct EntityIdHasher
     }
 };
 
-struct SystemTypeIdHasher
-{
-    std::size_t operator()(const SystemTypeId& key) const
-    {
-        return static_cast<std::size_t>(key);
-    }
-};
-
 ///------------------------------------------------------------------------------------------------
 /// Base class of all components in the engine. All custom components needs to inherit from
 /// this class.
@@ -105,9 +97,6 @@ public:
     /// the first time it is needed.
     /// @returns a reference to the single instance of this class.    
     static World& GetInstance();
-
-    /// @returns a non-mutable reference to the active entity component store.
-    [[nodiscard]] const std::vector<EntityId>& GetActiveEntities() const;
 
     /// @returns a map containing the system name strings mapped to their current update times in miliseconds.
     const tsl::robin_map<StringId, long long, StringIdHasher>& GetSystemUpdateTimes() const;
@@ -142,12 +131,6 @@ public:
     inline EntityId CreateEntity()
     {
         mEntityComponentStore.operator[](mEntityCounter);
-        
-        if (mHasRunFirstUpdate)
-            mAddedEntitiesBySystemsUpdate.push_back(mEntityCounter);
-        else
-            mActiveEntitiesInFrame.push_back(mEntityCounter);
-        
         return mEntityCounter++;
     }
     
@@ -160,7 +143,11 @@ public:
     /// @param[in] name the name to search for the entity with.
     /// @returns the entity id of the entity found, or NULL_ENTITY_ID otherwise
     EntityId FindEntity(const StringId& entityName) const;
-
+    
+    /// Returns the current entity count.
+    /// @returns the current entity count in this world
+    std::size_t GetEntityCount() const;
+    
     /// Gets the respective component from the entity with the given entity id.
     ///
     /// The accessor will fail silently if the entity does not have a component of the respective component class.
@@ -224,6 +211,8 @@ public:
         
         entityEntry.mComponents[componentTypeId] = std::move(component);
         entityEntry.mMask |= 1 << componentTypeId;
+        
+        OnEntityChanged(entityId, entityEntry.mMask);
     }
 
     /// Removes the component with the given type from the entity with the given entity id.
@@ -246,6 +235,8 @@ public:
         
         entityEntry.mComponents[componentTypeId] = nullptr;
         entityEntry.mMask ^= 1 << componentTypeId;
+        
+        OnEntityChanged(entityId, entityEntry.mMask);
     }
     
     /// Get the registered singleton component with the given type.
@@ -335,19 +326,13 @@ public:
 
 private:        
     // Reserves space for the anticipated entity count.
-    World();    
-    
-    // Removes all systems that have been marked to be removed.
-    void RemoveMarkedSystems();
+    World();
 
     // Removes all entities with no components currently attached to them.
     void RemoveEntitiesWithoutAnyComponents();
-
-    // Collects all active entities (with at least one component) for processing by systems for this frame.
-    void CongregateActiveEntitiesInCurrentFrame();
-
-    // Handles entities that are added mid system update, so that the rest of the system updates will pick it up.
-    void InsertNewEntitiesIntoActiveCollection();
+    
+    // Adjusts the systems' entities to process accordingly
+    void OnEntityChanged(const EntityId entityId, const ComponentMask& newComponentMask);
     
 private:
     struct EntityEntry
@@ -363,15 +348,11 @@ private:
     ComponentMap            mSingletonComponents;
                
     tsl::robin_map<StringId, long long, StringIdHasher> mSystemUpdateToDuration;
-
+    tsl::robin_map<std::type_index, std::vector<EntityId>> mEntitiesToUpdatePerSystem;
+    
     std::vector<std::unique_ptr<BaseSystem>> mSystems;
-    std::vector<std::size_t> mSystemHashesToRemove;
-    std::vector<EntityId> mActiveEntitiesInFrame;
-    std::vector<EntityId> mAddedEntitiesBySystemsUpdate;
 
     EntityId mEntityCounter = 1LL;
-
-    bool mHasRunFirstUpdate;
 };
 
 ///------------------------------------------------------------------------------------------------
@@ -388,9 +369,8 @@ public:
     const BaseSystem& operator = (const BaseSystem&) = delete;  
         
 protected:
-    // Determines whether the given entity (entityId) should be processed by this system
-    // based on their respective component usage masks
-    bool ShouldProcessEntity(EntityId) const;
+    // Determines whether the given component mask should be processed by this system
+    bool ShouldProcessComponentMask(const ComponentMask& componentMask) const;
         
     template<class FirstUtilizedComponentType>
     void CalculateAndSetComponentUsageMask()
@@ -406,7 +386,7 @@ protected:
     }    
         
 private:    
-    virtual void VUpdateAssociatedComponents(const float dt) const = 0;
+    virtual void VUpdate(const float dt, const std::vector<EntityId>& entitiesToProcess) const = 0;
 
 private:
     ComponentMask mComponentUsageMask;

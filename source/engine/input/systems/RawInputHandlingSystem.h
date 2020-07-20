@@ -28,7 +28,7 @@ class RawInputHandlingSystem final : public ecs::BaseSystem
 public:
     RawInputHandlingSystem();
 
-    void VUpdateAssociatedComponents(const float dt) const override;
+    void VUpdate(const float dt, const std::vector<ecs::EntityId>&) const override;
 };
 
 ///-----------------------------------------------------------------------------------------------

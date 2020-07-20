@@ -36,7 +36,7 @@ namespace
     static const StringId CONSOLE_OPAQUENESS_UNIFORM_NAME = StringId("opaqueness");
 
     static const float CONSOLE_TEXT_SIZE       = 0.1f;
-    static const float CONSOLE_DARKENING_SPEED = 0.005f;
+    static const float CONSOLE_DARKENING_SPEED = 0.1f;
     static const float MAX_OPAQUENESS          = 0.8f;
     
     static const int CONSOLE_MAX_LINES_VISIBLE = 15;
@@ -54,7 +54,7 @@ ConsoleManagementSystem::ConsoleManagementSystem()
 
 ///-----------------------------------------------------------------------------------------------
 
-void ConsoleManagementSystem::VUpdateAssociatedComponents(const float) const
+void ConsoleManagementSystem::VUpdate(const float, const std::vector<ecs::EntityId>&) const
 {
     CreateConsoleBackgroundEntityIfNotAlive();
     HandleConsoleSpecialInput();

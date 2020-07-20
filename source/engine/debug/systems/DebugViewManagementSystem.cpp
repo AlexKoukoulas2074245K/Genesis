@@ -45,7 +45,7 @@ DebugViewManagementSystem::DebugViewManagementSystem()
 
 ///-----------------------------------------------------------------------------------------------
 
-void DebugViewManagementSystem::VUpdateAssociatedComponents(const float) const
+void DebugViewManagementSystem::VUpdate(const float, const std::vector<ecs::EntityId>&) const
 {
     HandleFrameStatsDisplay();    
 }
@@ -172,7 +172,7 @@ void DebugViewManagementSystem::RenderEntityCountString() const
 
     debugViewStateComponent.mEntityCountStrings.second = rendering::RenderTextIfDifferentToPreviousString
     (
-        std::to_string(world.GetActiveEntities().size()),
+        std::to_string(world.GetEntityCount()),
         debugViewStateComponent.mEntityCountStrings.second,
         TEXT_FONT_NAME,
         TEXT_SIZE,

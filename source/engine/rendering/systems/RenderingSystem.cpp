@@ -71,15 +71,15 @@ RenderingSystem::RenderingSystem()
 
 ///-----------------------------------------------------------------------------------------------
 
-void RenderingSystem::VUpdateAssociatedComponents(const float) const
+void RenderingSystem::VUpdate(const float, const std::vector<ecs::EntityId>& entitiesToProcess) const
 {    
     auto& world = ecs::World::GetInstance();
 
     // Get common rendering singleton components
-    const auto& windowComponent               = world.GetSingletonComponent<WindowSingletonComponent>();
-    const auto& shaderStoreComponent          = world.GetSingletonComponent<ShaderStoreSingletonComponent>();
-    auto& cameraComponent                     = world.GetSingletonComponent<CameraSingletonComponent>();
-    auto& renderingContextComponent           = world.GetSingletonComponent<RenderingContextSingletonComponent>();
+    const auto& windowComponent      = world.GetSingletonComponent<WindowSingletonComponent>();
+    const auto& shaderStoreComponent = world.GetSingletonComponent<ShaderStoreSingletonComponent>();
+    auto& cameraComponent            = world.GetSingletonComponent<CameraSingletonComponent>();
+    auto& renderingContextComponent  = world.GetSingletonComponent<RenderingContextSingletonComponent>();
     
     // Calculate render-constant camera view matrix
     cameraComponent.mViewMatrix = glm::lookAtLH(cameraComponent.mPosition, cameraComponent.mPosition + cameraComponent.mFrontVector, cameraComponent.mUpVector);
@@ -99,17 +99,7 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
     cameraComponent.mFrustum = CalculateCameraFrustum(cameraComponent.mViewMatrix, cameraComponent.mProjectionMatrix);
     
     // Collect all entities that need to be processed
-    std::vector<ecs::EntityId> applicableEntities; 
-    std::copy_if
-    (
-        world.GetActiveEntities().begin(),
-        world.GetActiveEntities().end(),
-        std::back_inserter(applicableEntities), 
-        [this](const ecs::EntityId entityId)     
-    {
-        return ShouldProcessEntity(entityId); 
-    });
-
+    std::vector<ecs::EntityId> applicableEntities = entitiesToProcess;
     std::vector<genesis::ecs::EntityId> guiEntities;    
     
     // Set background color
@@ -138,41 +128,38 @@ void RenderingSystem::VUpdateAssociatedComponents(const float) const
 
     for (const auto& entityId : applicableEntities)
     {
-        if (ShouldProcessEntity(entityId))
+        const auto& renderableComponent = world.GetComponent<RenderableComponent>(entityId);
+        if (renderableComponent.mIsGuiComponent)
         {
-            const auto& renderableComponent = world.GetComponent<RenderableComponent>(entityId);
-            if (renderableComponent.mIsGuiComponent)
+            guiEntities.push_back(entityId);
+            continue;
+        }
+        else
+        {
+            const auto& transformComponent = world.GetComponent<TransformComponent>(entityId);
+            const auto& currentMesh        = resources::ResourceLoadingService::GetInstance().GetResource<resources::MeshResource>(renderableComponent.mMeshResourceId);
+
+            // Frustum culling
+            if (!IsMeshInsideCameraFrustum
+            (
+                transformComponent.mPosition,
+                transformComponent.mScale,
+                currentMesh.GetDimensions(),
+                cameraComponent.mFrustum
+            ))
             {
-                guiEntities.push_back(entityId);
                 continue;
-            }            
-            else
-            {            
-                const auto& transformComponent = world.GetComponent<TransformComponent>(entityId);                
-                const auto& currentMesh        = resources::ResourceLoadingService::GetInstance().GetResource<resources::MeshResource>(renderableComponent.mMeshResourceId);
+            }
 
-                // Frustum culling
-                if (!IsMeshInsideCameraFrustum
-                (
-                    transformComponent.mPosition,
-                    transformComponent.mScale,
-                    currentMesh.GetDimensions(),
-                    cameraComponent.mFrustum
-                ))
-                {                    
-                    continue;
-                }
-
-                RenderEntityInternal
-                (                    
-                    transformComponent,
-                    renderableComponent,                    
-                    cameraComponent,
-                    shaderStoreComponent,
-                    windowComponent,                    
-                    renderingContextComponent
-                );
-            }            
+            RenderEntityInternal
+            (
+                transformComponent,
+                renderableComponent,
+                cameraComponent,
+                shaderStoreComponent,
+                windowComponent,
+                renderingContextComponent
+            );
         }
     }
     

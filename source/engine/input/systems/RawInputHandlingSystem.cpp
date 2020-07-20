@@ -31,7 +31,7 @@ RawInputHandlingSystem::RawInputHandlingSystem()
 
 ///-----------------------------------------------------------------------------------------------
 
-void RawInputHandlingSystem::VUpdateAssociatedComponents(const float) const
+void RawInputHandlingSystem::VUpdate(const float, const std::vector<ecs::EntityId>&) const
 {   
     auto keyboardStateLength         = 0;
     const auto* currentKeyboardState = SDL_GetKeyboardState(&keyboardStateLength);

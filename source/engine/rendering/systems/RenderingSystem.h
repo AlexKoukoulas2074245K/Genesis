@@ -47,7 +47,7 @@ class RenderingSystem final: public ecs::BaseSystem
 public:
     RenderingSystem();
     
-    void VUpdateAssociatedComponents(const float dt) const override;
+    void VUpdate(const float dt, const std::vector<ecs::EntityId>&) const override;
 
 private:
     void RenderEntityInternal

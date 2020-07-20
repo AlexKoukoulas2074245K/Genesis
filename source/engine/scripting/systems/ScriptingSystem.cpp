@@ -39,19 +39,17 @@ ScriptingSystem::ScriptingSystem()
 
 ///-----------------------------------------------------------------------------------------------
 
-void ScriptingSystem::VUpdateAssociatedComponents(const float dt) const
+void ScriptingSystem::VUpdate(const float dt, const std::vector<ecs::EntityId>& entitiesToProcess) const
 {
     static float dtAccum = 0.0f;
     dtAccum += dt;
 
-    for (const auto& entityId : ecs::World::GetInstance().GetActiveEntities())
+    for (const auto& entityId : entitiesToProcess)
     {
-        if (ShouldProcessEntity(entityId))
-        {
-            const auto& scriptComponent = ecs::World::GetInstance().GetComponent<ScriptComponent>(entityId);
-            LuaScriptingService::GetInstance().RunLuaScript(scriptComponent.mScriptName.GetString());            
-            LuaScriptingService::GetInstance().LuaCallGlobalFunction(sScriptTypeToLuaFuncName.at(scriptComponent.mScriptType), 3, entityId, dt, dtAccum);            
-        }
+        const auto& scriptComponent = ecs::World::GetInstance().GetComponent<ScriptComponent>(entityId);
+        LuaScriptingService::GetInstance().RunLuaScript(scriptComponent.mScriptName.GetString());
+        LuaScriptingService::GetInstance().LuaCallGlobalFunction(sScriptTypeToLuaFuncName.at(scriptComponent.mScriptType), 3, entityId, dt, dtAccum);
+        
     }
 }
 

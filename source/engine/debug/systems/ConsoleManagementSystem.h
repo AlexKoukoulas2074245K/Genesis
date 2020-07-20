@@ -28,7 +28,7 @@ class ConsoleManagementSystem final : public ecs::BaseSystem
 public:
     ConsoleManagementSystem();
 
-    void VUpdateAssociatedComponents(const float dt) const override;
+    void VUpdate(const float dt, const std::vector<ecs::EntityId>&) const override;
     void CreateConsoleBackgroundEntityIfNotAlive() const;
     void HandleConsoleSpecialInput() const;
     void HandleConsoleBackgroundAnimation() const;

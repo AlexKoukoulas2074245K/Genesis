@@ -29,7 +29,7 @@ class ScriptingSystem final : public ecs::BaseSystem
 public:
     ScriptingSystem();
 
-    void VUpdateAssociatedComponents(const float dt) const override;
+    void VUpdate(const float dt, const std::vector<ecs::EntityId>& entitiesToProcess) const override;
 };
 
 ///-----------------------------------------------------------------------------------------------

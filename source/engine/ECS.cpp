@@ -42,13 +42,6 @@ World& World::GetInstance()
 
 ///------------------------------------------------------------------------------------------------
 
-const std::vector<EntityId>& World::GetActiveEntities() const
-{
-    return mActiveEntitiesInFrame;
-}
-
-///------------------------------------------------------------------------------------------------
-
 const tsl::robin_map<StringId, long long, StringIdHasher>& World::GetSystemUpdateTimes() const
 {
     return mSystemUpdateToDuration;
@@ -59,35 +52,31 @@ const tsl::robin_map<StringId, long long, StringIdHasher>& World::GetSystemUpdat
 
 void World::AddSystem(std::unique_ptr<BaseSystem> system)
 {
-#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
     auto& systemRef = *system;
+    
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
     system->mSystemName = GetSystemNameFromTypeIdString(std::string(typeid(systemRef).name()));
 #endif
 
     mSystems.push_back(std::move(system));
+    mEntitiesToUpdatePerSystem[typeid(systemRef)];
 }
 
 ///------------------------------------------------------------------------------------------------
 
 void World::Update(const float dt)
 {
-    if (!mHasRunFirstUpdate)
-    {
-        mHasRunFirstUpdate = true;
-    }
-
-    RemoveMarkedSystems();
     RemoveEntitiesWithoutAnyComponents();
-    CongregateActiveEntitiesInCurrentFrame();
 
     for(const auto& system: mSystems)
     {     
 #if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
         const auto& start = std::chrono::high_resolution_clock::now();
 #endif
-
-        system->VUpdateAssociatedComponents(dt);
-        InsertNewEntitiesIntoActiveCollection();
+        auto& systemRef = *system;
+        const auto& entityVec = mEntitiesToUpdatePerSystem.at(typeid(systemRef));
+        
+        system->VUpdate(dt, entityVec);
 
 #if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)        
         const auto& end = std::chrono::high_resolution_clock::now();
@@ -108,6 +97,7 @@ void World::DestroyEntity(const EntityId entityId)
         "Entity does not exist in the world");
 
     mEntityComponentStore.at(entityId).mMask.reset();
+    OnEntityChanged(entityId, ComponentMask());
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -123,38 +113,23 @@ EntityId World::CreateEntity(const StringId& name)
 
 EntityId World::FindEntity(const StringId& entityName) const
 {
-    const auto findIter = std::find_if
-    (
-        mActiveEntitiesInFrame.cbegin(),
-        mActiveEntitiesInFrame.cend(),
-        [this, &entityName](const EntityId& entityId) 
+    for (const auto& entityComponentStoreEntry: mEntityComponentStore)
     {
-        return HasComponent<NameComponent>(entityId) && GetComponent<NameComponent>(entityId).mName == entityName;
-    });
-
-    return findIter != mActiveEntitiesInFrame.cend() ? *findIter : NULL_ENTITY_ID;
+        const auto& entityId = entityComponentStoreEntry.first;
+        if (HasComponent<NameComponent>(entityId) && GetComponent<NameComponent>(entityId).mName == entityName)
+        {
+            return entityId;
+        }
+    }
+    
+    return ecs::NULL_ENTITY_ID;
 }
 
 ///------------------------------------------------------------------------------------------------
 
-void World::RemoveMarkedSystems()
+std::size_t World::GetEntityCount() const
 {
-    for (const auto& systemHash: mSystemHashesToRemove)
-    {
-        auto systemsIter = mSystems.begin();
-        while (systemsIter != mSystems.end())
-        {
-            auto& system = *(*systemsIter);
-            if (GetStringHash(typeid(system).name()) == systemHash)
-            {
-                systemsIter = mSystems.erase(systemsIter);
-            }
-            else
-            {
-                systemsIter++;
-            }
-        }
-    }
+    return mEntityComponentStore.size();
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -177,32 +152,35 @@ void World::RemoveEntitiesWithoutAnyComponents()
 
 ///------------------------------------------------------------------------------------------------
 
-void World::CongregateActiveEntitiesInCurrentFrame()
+void World::OnEntityChanged(const EntityId entityId, const ComponentMask& newComponentMask)
 {
-    mActiveEntitiesInFrame.clear();
-    mActiveEntitiesInFrame.reserve(mEntityComponentStore.size());
-
-    for (const auto& entityEntry : mEntityComponentStore)
+    for (auto& system: mSystems)
     {
-        mActiveEntitiesInFrame.push_back(entityEntry.first);
-    }
-}
-
-///------------------------------------------------------------------------------------------------
-
-void World::InsertNewEntitiesIntoActiveCollection()
-{
-    if (mAddedEntitiesBySystemsUpdate.size() > 0)
-    {
-        mActiveEntitiesInFrame.insert(mActiveEntitiesInFrame.end(), mAddedEntitiesBySystemsUpdate.begin(), mAddedEntitiesBySystemsUpdate.end());
-        mAddedEntitiesBySystemsUpdate.clear();
+        auto& systemRef = *system;
+        auto& systemEntityVec = mEntitiesToUpdatePerSystem[typeid(systemRef)];
+        
+        if
+        (
+            system->ShouldProcessComponentMask(newComponentMask) &&
+            std::find(systemEntityVec.cbegin(), systemEntityVec.cend(), entityId) == systemEntityVec.cend()
+        )
+        {
+            systemEntityVec.push_back(entityId);
+        }
+        else if
+        (
+            system->ShouldProcessComponentMask(newComponentMask) == false &&
+            std::find(systemEntityVec.cbegin(), systemEntityVec.cend(), entityId) != systemEntityVec.cend()
+        )
+        {
+            systemEntityVec.erase(std::remove(systemEntityVec.begin(), systemEntityVec.end(), entityId), systemEntityVec.end());
+        }
     }
 }
 
 ///------------------------------------------------------------------------------------------------
 
 World::World()
-    : mHasRunFirstUpdate(false)
 {
     mEntityComponentStore.reserve(ANTICIPATED_ENTITY_COUNT);
 }
@@ -215,12 +193,9 @@ BaseSystem::BaseSystem()
 
 ///------------------------------------------------------------------------------------------------
 
-bool BaseSystem::ShouldProcessEntity(const EntityId entityId) const
+bool BaseSystem::ShouldProcessComponentMask(const ComponentMask& componentMask) const
 {
-    assert(entityId != NULL_ENTITY_ID &&
-        "Entity process check for NULL_ENTITY_ID");
-
-    return (World::GetInstance().GetComponentUsageMaskForEntity(entityId) & mComponentUsageMask) == mComponentUsageMask;
+    return (componentMask & mComponentUsageMask) == mComponentUsageMask;
 }
 
 ///------------------------------------------------------------------------------------------------
