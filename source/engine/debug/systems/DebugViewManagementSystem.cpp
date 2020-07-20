@@ -32,7 +32,7 @@ namespace
     static const glm::vec3 SYSTEM_UPDATE_TIME_STARTING_POSITION = glm::vec3(0.6f, 0.6f, 0.0f);
 
     static const StringId TEXT_FONT_NAME = StringId("console_font");    
-    static const float TEXT_SIZE         = 0.1f;    
+    static const float TEXT_SIZE         = 0.06f;    
 }
 
 ///-----------------------------------------------------------------------------------------------
