@@ -61,12 +61,11 @@ bool IsMeshInsideCameraFrustum
 ///-----------------------------------------------------------------------------------------------
 
 RenderingSystem::RenderingSystem()
-    : genesis::ecs::BaseSystem()
+    : BaseSystem()
 {
     InitializeRenderingWindowAndContext();
     InitializeCamera();
     CompileAndLoadShaders();
-    CalculateAndSetComponentUsageMask<RenderableComponent, TransformComponent>();
 }
 
 ///-----------------------------------------------------------------------------------------------

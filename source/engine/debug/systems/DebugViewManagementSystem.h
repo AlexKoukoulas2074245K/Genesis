@@ -23,7 +23,7 @@ namespace debug
 {
 
 ///-----------------------------------------------------------------------------------------------
-class DebugViewManagementSystem final : public ecs::BaseSystem
+class DebugViewManagementSystem final : public ecs::BaseSystem<ecs::NullComponent>
 {
 public:
     DebugViewManagementSystem();

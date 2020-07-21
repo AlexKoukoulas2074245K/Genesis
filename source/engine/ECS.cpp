@@ -50,7 +50,7 @@ const tsl::robin_map<StringId, long long, StringIdHasher>& World::GetSystemUpdat
 
 ///------------------------------------------------------------------------------------------------
 
-void World::AddSystem(std::unique_ptr<BaseSystem> system)
+void World::AddSystem(std::unique_ptr<ISystem> system)
 {
     auto& systemRef = *system;
     
@@ -88,6 +88,23 @@ void World::Update(const float dt)
 
 ///------------------------------------------------------------------------------------------------
 
+EntityId World::CreateEntity()
+{
+    mEntityComponentStore.operator[](mEntityCounter);
+    return mEntityCounter++;
+}
+
+///------------------------------------------------------------------------------------------------
+
+EntityId World::CreateEntity(const StringId& name)
+{
+    const auto entity = CreateEntity();    
+    AddComponent<NameComponent>(entity, std::make_unique<NameComponent>(name));
+    return entity;
+}
+
+///------------------------------------------------------------------------------------------------
+
 void World::DestroyEntity(const EntityId entityId)
 {
     assert(entityId != NULL_ENTITY_ID &&
@@ -98,15 +115,6 @@ void World::DestroyEntity(const EntityId entityId)
 
     mEntityComponentStore.at(entityId).mMask.reset();
     OnEntityChanged(entityId, ComponentMask());
-}
-
-///------------------------------------------------------------------------------------------------
-
-EntityId World::CreateEntity(const StringId& name)
-{
-    const auto entity = CreateEntity();    
-    AddComponent<NameComponent>(entity, std::make_unique<NameComponent>(name));
-    return entity;
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -141,6 +149,7 @@ void World::RemoveEntitiesWithoutAnyComponents()
     {                
         if (entityIter->second.mMask.any() == false)
         {
+            
             entityIter = mEntityComponentStore.erase(entityIter);
         }
         else
@@ -183,19 +192,6 @@ void World::OnEntityChanged(const EntityId entityId, const ComponentMask& newCom
 World::World()
 {
     mEntityComponentStore.reserve(ANTICIPATED_ENTITY_COUNT);
-}
-
-///------------------------------------------------------------------------------------------------
-
-BaseSystem::BaseSystem()
-{
-}
-
-///------------------------------------------------------------------------------------------------
-
-bool BaseSystem::ShouldProcessComponentMask(const ComponentMask& componentMask) const
-{
-    return (componentMask & mComponentUsageMask) == mComponentUsageMask;
 }
 
 ///------------------------------------------------------------------------------------------------

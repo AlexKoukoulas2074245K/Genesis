@@ -41,16 +41,13 @@ static constexpr int MAX_COMPONENTS = 32;
 /// so that multiple resizes won't be needed
 static constexpr int ANTICIPATED_ENTITY_COUNT = 1000;
 
-/// Empty component mask constant
-static constexpr int EMPTY_COMPONENT_MASK = 0;
-
 /// Null entity ID
 static constexpr long long NULL_ENTITY_ID = 0LL;
 
 ///------------------------------------------------------------------------------------------------
 
 class World;
-class BaseSystem;
+class ISystem;
 class IComponent;
 
 using ComponentMask   = std::bitset<MAX_COMPONENTS>;
@@ -87,6 +84,12 @@ public:
 };
 
 ///------------------------------------------------------------------------------------------------
+/// To be used when a system doesn't care about any component types in its update
+class NullComponent final: public IComponent
+{
+};
+
+///------------------------------------------------------------------------------------------------
 /// The kernel of the ECS engine. Manages all registered systems and entities.
 class World final
 {
@@ -107,37 +110,23 @@ public:
 
     /// Adds a system to the world and takes ownership of it
     /// @param[in] system the system instance to add to the world and take ownership over.
-    void AddSystem(std::unique_ptr<BaseSystem> system);
-
-    /// Removes the given entity from the world.        
-    ///
-    /// Internally simply clears the component store for the given entity since all entities 
-    /// with no attached components will be cleaned up at the beginning of the next frame.  
-    /// @param[in] entityId the entity with this id will be destroyed.
-    void DestroyEntity(const EntityId entityId);
-    
-    /// Calculates the aggregate component mask for a given entity id.    
-    /// @param[in] entityId.
-    inline const ComponentMask& GetComponentUsageMaskForEntity(const EntityId entityId) const
-    {
-        assert(entityId != NULL_ENTITY_ID &&
-            "Mask calculation requested for NULL_ENTITY_ID");
-
-        return mEntityComponentStore.at(entityId).mMask;
-    }
+    void AddSystem(std::unique_ptr<ISystem> system);
 
     /// Creates an entity and returns its corresponding entity id.     
     /// @returns the entity id of the newly constructed entity.
-    inline EntityId CreateEntity()
-    {
-        mEntityComponentStore.operator[](mEntityCounter);
-        return mEntityCounter++;
-    }
+    EntityId CreateEntity();
     
     /// Creates a named entity and returns its corresponding entity id.
     /// @param[in] name the name to associate the entity with.
     /// @returns the entity id of the newly constructed entity.
     EntityId CreateEntity(const StringId& name);
+    
+    /// Removes the given entity from the world.
+    ///
+    /// Internally simply clears the component store for the given entity since all entities
+    /// with no attached components will be cleaned up at the beginning of the next frame.
+    /// @param[in] entityId the entity with this id will be destroyed.
+    void DestroyEntity(const EntityId entityId);
     
     /// Finds and returns the entity based on the name provided.
     /// @param[in] name the name to search for the entity with.
@@ -313,25 +302,34 @@ public:
     /// @tparam FirstUtilizedComponentType a component's type class
     /// @tparam SecondUtilizedComponentType a component's type class
     template<class FirstUtilizedComponentType, class SecondUtilizedComponentType, class ...RestUtilizedComponentTypes>
-    inline ComponentMask CalculateComponentUsageMask()
+    [[nodiscard]] inline ComponentMask CalculateComponentUsageMask()
     {
         static_assert(std::is_base_of<IComponent, FirstUtilizedComponentType>::value,
             "Attempted to extract mask from class not derived from IComponent");
 
         const auto componentTypeId = GetTypeHash<FirstUtilizedComponentType>();
 
-        return (1 << componentTypeId) |
+        return ComponentMask(1 << componentTypeId) |
             CalculateComponentUsageMask<SecondUtilizedComponentType, RestUtilizedComponentTypes...>();
-    }    
+    }
+    
+    /// Explicit specialization for NullComponent to return a full component mask.
+    template<>
+    [[nodiscard]] inline ComponentMask CalculateComponentUsageMask<NullComponent>()
+    {
+        return ~ComponentMask();
+    }
 
 private:        
-    // Reserves space for the anticipated entity count.
+    /// Reserves space for the anticipated entity count.
     World();
 
-    // Removes all entities with no components currently attached to them.
+    /// Removes all entities with no components currently attached to them.
     void RemoveEntitiesWithoutAnyComponents();
     
-    // Adjusts the systems' entities to process accordingly
+    /// Adjusts the systems' entities to process accordingly
+    /// @param[in] entityId the entity that has changed
+    /// @param[in] newComponentMask the new component mask of the entity
     void OnEntityChanged(const EntityId entityId, const ComponentMask& newComponentMask);
     
 private:
@@ -350,47 +348,58 @@ private:
     tsl::robin_map<StringId, long long, StringIdHasher> mSystemUpdateToDuration;
     tsl::robin_map<std::type_index, std::vector<EntityId>> mEntitiesToUpdatePerSystem;
     
-    std::vector<std::unique_ptr<BaseSystem>> mSystems;
+    std::vector<std::unique_ptr<ISystem>> mSystems;
 
     EntityId mEntityCounter = 1LL;
 };
 
 ///------------------------------------------------------------------------------------------------
-/// Base class of all systems in the ECS engine. All systems need to inherit from this class.
-class BaseSystem
+
+class ISystem
 {
     friend class World;
-
 public:
-    BaseSystem();
+    ISystem() = default;
+    virtual ~ISystem() = default;
+    ISystem(const ISystem&) = delete;
+    const ISystem& operator = (const ISystem&) = delete;
+    
+private:
+    [[nodiscard]] virtual inline bool ShouldProcessComponentMask(const ComponentMask& componentMask) const = 0;
+    
+    /// Main system update method. To be implemented by all systems
+    /// @param[in] dt the delta-time in seconds that has elapsed since the last frame
+    /// @param[in] entitiesToProcess the entities that match this system's signature (mask) and that should be processed
+    virtual void VUpdate(const float dt, const std::vector<EntityId>& entitiesToProcess) const = 0;
+    
+private:
+    StringId mSystemName;
+};
+
+///------------------------------------------------------------------------------------------------
+/// Base class of all systems in the ECS engine. All systems need to inherit from this class.
+template<class... UtilizedComponentTypes>
+class BaseSystem: public ISystem
+{
+public:
+    BaseSystem()
+        : mComponentUsageMask(World::GetInstance().CalculateComponentUsageMask<UtilizedComponentTypes...>())
+    {
+    }
         
     virtual ~BaseSystem() = default;
     BaseSystem(const BaseSystem&) = delete;
     const BaseSystem& operator = (const BaseSystem&) = delete;  
         
-protected:
+private:
     // Determines whether the given component mask should be processed by this system
-    bool ShouldProcessComponentMask(const ComponentMask& componentMask) const;
-        
-    template<class FirstUtilizedComponentType>
-    void CalculateAndSetComponentUsageMask()
+    [[nodiscard]] inline bool ShouldProcessComponentMask(const ComponentMask& componentMask) const override
     {
-        mComponentUsageMask = World::GetInstance().CalculateComponentUsageMask<FirstUtilizedComponentType>();
-    }
-        
-    template<class FirstUtilizedComponentType, class SecondUtilizedComponentType, class ...RestUtilizedComponentTypes>
-    void CalculateAndSetComponentUsageMask()
-    {
-        mComponentUsageMask = World::GetInstance().CalculateComponentUsageMask<FirstUtilizedComponentType>() |
-                              World::GetInstance().CalculateComponentUsageMask<SecondUtilizedComponentType, RestUtilizedComponentTypes...>();
-    }    
-        
-private:    
-    virtual void VUpdate(const float dt, const std::vector<EntityId>& entitiesToProcess) const = 0;
+        return (componentMask & mComponentUsageMask) == mComponentUsageMask;
+    };
 
 private:
     ComponentMask mComponentUsageMask;
-    StringId mSystemName;
     
 };
 

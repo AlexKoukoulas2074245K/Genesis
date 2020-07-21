@@ -24,7 +24,11 @@ namespace scripting
 
 ///-----------------------------------------------------------------------------------------------
 
-class ScriptingSystem final : public ecs::BaseSystem
+class ScriptComponent;
+
+///-----------------------------------------------------------------------------------------------
+
+class ScriptingSystem final : public ecs::BaseSystem<ScriptComponent>
 {
 public:
     ScriptingSystem();

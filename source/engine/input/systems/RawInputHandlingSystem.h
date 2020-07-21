@@ -23,7 +23,7 @@ namespace input
 {
 
 ///-----------------------------------------------------------------------------------------------
-class RawInputHandlingSystem final : public ecs::BaseSystem
+class RawInputHandlingSystem final : public ecs::BaseSystem<ecs::NullComponent>
 {
 public:
     RawInputHandlingSystem();

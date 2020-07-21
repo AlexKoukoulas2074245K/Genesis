@@ -42,7 +42,7 @@ class WindowSingletonComponent;
 
 ///-----------------------------------------------------------------------------------------------
 
-class RenderingSystem final: public ecs::BaseSystem
+class RenderingSystem final: public ecs::BaseSystem<TransformComponent, RenderableComponent>
 {
 public:
     RenderingSystem();

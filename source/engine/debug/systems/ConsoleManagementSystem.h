@@ -23,7 +23,7 @@ namespace debug
 {
 
 ///-----------------------------------------------------------------------------------------------
-class ConsoleManagementSystem final : public ecs::BaseSystem
+class ConsoleManagementSystem final : public ecs::BaseSystem<ecs::NullComponent>
 {
 public:
     ConsoleManagementSystem();

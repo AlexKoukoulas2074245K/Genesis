@@ -32,9 +32,7 @@ static tsl::robin_map<ScriptType, std::string> sScriptTypeToLuaFuncName =
 ///-----------------------------------------------------------------------------------------------
 
 ScriptingSystem::ScriptingSystem()
-    : BaseSystem()
 {
-    CalculateAndSetComponentUsageMask<ScriptComponent>();
 }
 
 ///-----------------------------------------------------------------------------------------------
