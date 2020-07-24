@@ -6,18 +6,28 @@
 ///------------------------------------------------------------------------------------------------
 
 #include "Game.h"
+#include "physics/systems/PhysicsMovementApplicationSystem.h"
+#include "physics/systems/PhysicsCollisionDetectionSystem.h"
+#include "physics/systems/PhysicsCollisionResponseSystem.h"
+#include "scene/systems/SceneUpdaterSystem.h"
 #include "../engine/ECS.h"
 #include "../engine/common/components/TransformComponent.h"
+#include "../engine/common/utils/Logging.h"
 #include "../engine/common/utils/MathUtils.h"
+#include "../engine/debug/components/DebugViewStateSingletonComponent.h"
 #include "../engine/debug/systems/ConsoleManagementSystem.h"
 #include "../engine/debug/systems/DebugViewManagementSystem.h"
+#include "../engine/debug/utils/ConsoleCommandUtils.h"
 #include "../engine/input/components/InputStateSingletonComponent.h"
 #include "../engine/input/utils/InputUtils.h"
 #include "../engine/input/systems/RawInputHandlingSystem.h"
 #include "../engine/rendering/components/CameraSingletonComponent.h"
+#include "../engine/rendering/components/RenderableComponent.h"
 #include "../engine/rendering/utils/FontUtils.h"
 #include "../engine/rendering/utils/MeshUtils.h"
 #include "../engine/rendering/systems/RenderingSystem.h"
+#include "../engine/resources/MeshResource.h"
+#include "../engine/resources/ResourceLoadingService.h"
 #include "../engine/scripting/components/ScriptComponent.h"
 #include "../engine/scripting/service/LuaScriptingService.h"
 #include "../engine/scripting/systems/ScriptingSystem.h"
@@ -26,42 +36,58 @@
 
 void Game::VOnSystemsInit()
 {
-    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::input::RawInputHandlingSystem>());    
-    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::scripting::ScriptingSystem>());
+    auto& world = genesis::ecs::World::GetInstance();
+    world.AddSystem(std::make_unique<genesis::input::RawInputHandlingSystem>());
+    world.AddSystem(std::make_unique<genesis::scripting::ScriptingSystem>());
 
 #if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
-    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::debug::ConsoleManagementSystem>());
-    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::debug::DebugViewManagementSystem>());
+    world.AddSystem(std::make_unique<genesis::debug::ConsoleManagementSystem>());
+    world.AddSystem(std::make_unique<genesis::debug::DebugViewManagementSystem>());
 #endif
-
-    genesis::ecs::World::GetInstance().AddSystem(std::make_unique<genesis::rendering::RenderingSystem>());    
+    
+    world.AddSystem(std::make_unique<physics::PhysicsMovementApplicationSystem>());
+    world.AddSystem(std::make_unique<scene::SceneUpdaterSystem>());
+    world.AddSystem(std::make_unique<physics::PhysicsCollisionDetectionSystem>());
+    world.AddSystem(std::make_unique<physics::PhysicsCollisionResponseSystem>());
+    world.AddSystem(std::make_unique<genesis::rendering::RenderingSystem>());
 }
 
 ///------------------------------------------------------------------------------------------------
 
-static void CreateSpaceshipAtRandomPosition()
+static void CreateSphereAtRandomPosition()
 {
-    const auto spaceshipEntityId = genesis::rendering::LoadAndCreateModelByName
+    const auto sphereEntityId = genesis::rendering::LoadAndCreateModelByName
     (
-        "spaceship",
-        glm::vec3(genesis::math::RandomFloat(-1.5f, 1.5f), genesis::math::RandomFloat(-1.5f, 1.5f), genesis::math::RandomFloat(-1.5f, 1.5f)),
-        StringId("spaceship")
+        "sphere",
+        glm::vec3(genesis::math::RandomFloat(-1.0f, 1.0f), genesis::math::RandomFloat(-1.0f, 1.0f), 0.12f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.03f, 0.03f, 0.03f),
+        StringId("sphere")
     );
     
-    auto& transformComponent = genesis::ecs::World::GetInstance().GetComponent<genesis::TransformComponent>(spaceshipEntityId);
+    auto& world = genesis::ecs::World::GetInstance();
+    
+    auto& transformComponent = world.GetComponent<genesis::TransformComponent>(sphereEntityId);
     transformComponent.mRotation.y = genesis::math::RandomFloat(0.0f, genesis::math::PI);
     
-    auto scriptComponent = std::make_unique<genesis::scripting::ScriptComponent>();
-    scriptComponent->mScriptName = StringId("test");
-    scriptComponent->mScriptType = genesis::scripting::ScriptType::CONTINUOUS_EXECUTION;
-    genesis::ecs::World::GetInstance().AddComponent<genesis::scripting::ScriptComponent>(spaceshipEntityId, std::move(scriptComponent));
+    auto& renderableComponent = world.GetComponent<genesis::rendering::RenderableComponent>(sphereEntityId);
+    auto& resource = genesis::resources::ResourceLoadingService::GetInstance().GetResource<genesis::resources::MeshResource>(renderableComponent.mMeshResourceId);
+    
+    auto physicsComponent = std::make_unique<physics::PhysicsComponent>();
+    physicsComponent->mCollidableDimensions = transformComponent.mScale * resource.GetDimensions();
+    physicsComponent->mDirection = glm::vec3(genesis::math::RandomFloat(-1.0f, 1.0f), genesis::math::RandomFloat(-1.0f, 1.0f), 0.0f);
+    physicsComponent->mDirection = glm::normalize(physicsComponent->mDirection);
+    physicsComponent->mVelocitySpeed = 0.2f;
+    
+    world.AddComponent<physics::PhysicsComponent>(sphereEntityId, std::move(physicsComponent));
 }
 
 void Game::VOnGameInit()
 {
-    for (int i = 0; i < 1000; ++i)
+    RegisterConsoleCommands();
+    for (int i = 0; i < 280; ++i)
     {
-        CreateSpaceshipAtRandomPosition();
+        CreateSphereAtRandomPosition();
     }
 }
 
@@ -133,12 +159,16 @@ void Game::VOnUpdate(const float dt)
         }
     }
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_IN))
-    {    
-        genesis::ecs::World::GetInstance().DestroyEntity(genesis::ecs::World::GetInstance().FindEntity(StringId("spaceship")));
+    {
+        auto entityId = world.FindEntityWithName(StringId("sphere"));
+        if (entityId != genesis::ecs::NULL_ENTITY_ID)
+        {
+            world.DestroyEntity(entityId);
+        }
     }
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_OUT))
     {
-        CreateSpaceshipAtRandomPosition();
+        CreateSphereAtRandomPosition();
     }      
 
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);
@@ -147,3 +177,27 @@ void Game::VOnUpdate(const float dt)
 }
 
 ///------------------------------------------------------------------------------------------------
+
+void Game::RegisterConsoleCommands() const
+{
+#if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
+    genesis::debug::RegisterConsoleCommand(StringId("scene_debug"), [](const std::vector<std::string>& commandTextComponents)
+    {
+        static const std::unordered_set<std::string> sAllowedOptions = { "on", "off" };
+
+        const std::string USAGE_STRING = "Usage: scene_debug on|off";
+
+        if (commandTextComponents.size() != 2 || sAllowedOptions.count(StringToLower(commandTextComponents[1])) == 0)
+        {
+            return genesis::debug::ConsoleCommandResult(false, USAGE_STRING);
+        }
+
+        const auto& world = genesis::ecs::World::GetInstance();
+        auto& debugViewStateComponent = world.GetSingletonComponent<genesis::debug::DebugViewStateSingletonComponent>();
+
+        debugViewStateComponent.mSceneGraphDisplayEnabled = StringToLower(commandTextComponents[1]) == "on";
+
+        return genesis::debug::ConsoleCommandResult(true);
+    });
+#endif
+}

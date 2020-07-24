@@ -67,7 +67,7 @@ void World::AddSystem(std::unique_ptr<ISystem> system)
 void World::Update(const float dt)
 {
     RemoveEntitiesWithoutAnyComponents();
-
+    
     for(const auto& system: mSystems)
     {     
 #if !defined(NDEBUG) || defined(CONSOLE_ENABLED_ON_RELEASE)
@@ -105,6 +105,13 @@ EntityId World::CreateEntity(const StringId& name)
 
 ///------------------------------------------------------------------------------------------------
 
+bool World::HasEntity(const EntityId entityId) const
+{
+    return mEntityComponentStore.count(entityId) != 0;
+}
+
+///------------------------------------------------------------------------------------------------
+
 void World::DestroyEntity(const EntityId entityId)
 {
     assert(entityId != NULL_ENTITY_ID &&
@@ -119,7 +126,17 @@ void World::DestroyEntity(const EntityId entityId)
 
 ///------------------------------------------------------------------------------------------------
 
-EntityId World::FindEntity(const StringId& entityName) const
+void World::DestroyEntities(const std::vector<EntityId>& entityIds)
+{
+    std::for_each(entityIds.cbegin(), entityIds.cend(), [&](const EntityId& entityId)
+    {
+        DestroyEntity(entityId);
+    });
+}
+
+///------------------------------------------------------------------------------------------------
+
+EntityId World::FindEntityWithName(const StringId& entityName) const
 {
     for (const auto& entityComponentStoreEntry: mEntityComponentStore)
     {
@@ -131,6 +148,24 @@ EntityId World::FindEntity(const StringId& entityName) const
     }
     
     return ecs::NULL_ENTITY_ID;
+}
+
+///------------------------------------------------------------------------------------------------
+
+std::vector<EntityId> World::FindAllEntitiesWithName(const StringId &entityName) const
+{
+    std::vector<EntityId> mEntityIds;
+    
+    for (const auto& entityComponentStoreEntry: mEntityComponentStore)
+    {
+        const auto& entityId = entityComponentStoreEntry.first;
+        if (HasComponent<NameComponent>(entityId) && GetComponent<NameComponent>(entityId).mName == entityName)
+        {
+            mEntityIds.push_back(entityId);
+        }
+    }
+    
+    return mEntityIds;
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -149,7 +184,6 @@ void World::RemoveEntitiesWithoutAnyComponents()
     {                
         if (entityIter->second.mMask.any() == false)
         {
-            
             entityIter = mEntityComponentStore.erase(entityIter);
         }
         else

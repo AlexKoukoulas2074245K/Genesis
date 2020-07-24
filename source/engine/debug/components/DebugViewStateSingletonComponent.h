@@ -34,8 +34,9 @@ public:
     std::pair<ecs::EntityId, ecs::EntityId> mFpsStrings;    
     std::pair<ecs::EntityId, ecs::EntityId> mEntityCountStrings;
 
-    int mCurrentFps                  = 0;
-    bool mFrameStatsDisplayEnabled   = false;
+    int mCurrentFps                = 0;
+    bool mFrameStatsDisplayEnabled = false;
+    bool mSceneGraphDisplayEnabled = false;
 };
 
 ///-----------------------------------------------------------------------------------------------

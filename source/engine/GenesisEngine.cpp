@@ -23,6 +23,7 @@
 #include "scripting/service/LuaScriptingService.h"
 #include "scripting/DefaultEngineExportableFunctions.h"
 #include "sound/SoundService.h"
+#include "../game/scene/scenegraphs/QuadtreeSceneGraph.h"
 
 #include <SDL.h> 
 #include <SDL_events.h> 
@@ -190,7 +191,7 @@ void GenesisEngine::UpdateFrameStatistics(float& dt, float& elapsedTicks, float&
         framesAccumulator = 0;
         dtAccumulator = 0.0f;
     }        
-
+    
     // Make sure the console system has been registered at all
     if (ecs::World::GetInstance().HasSingletonComponent<debug::ConsoleStateSingletonComponent>() == false)
     {

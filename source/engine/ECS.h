@@ -121,6 +121,13 @@ public:
     /// @returns the entity id of the newly constructed entity.
     EntityId CreateEntity(const StringId& name);
     
+    /// Checks whether the entity with the respective entity id exists in the world.
+    ///
+    /// Should be used before accessing components of entities indirectly; e.g.
+    /// in a system that uses components that store entity id references
+    /// @param[in] entityId the entity id to check for.
+    bool HasEntity(const EntityId entityId) const;
+    
     /// Removes the given entity from the world.
     ///
     /// Internally simply clears the component store for the given entity since all entities
@@ -128,10 +135,19 @@ public:
     /// @param[in] entityId the entity with this id will be destroyed.
     void DestroyEntity(const EntityId entityId);
     
-    /// Finds and returns the entity based on the name provided.
-    /// @param[in] name the name to search for the entity with.
+    /// Removes all entities with the given ids from the world.
+    /// @param[in] entityIds the ids of all entities to be destroyed.
+    void DestroyEntities(const std::vector<EntityId>& entityIds);
+    
+    /// Finds and returns the first entity found with the name provided.
+    /// @param[in] name the name to search for the entities with.
     /// @returns the entity id of the entity found, or NULL_ENTITY_ID otherwise
-    EntityId FindEntity(const StringId& entityName) const;
+    EntityId FindEntityWithName(const StringId& entityName) const;
+    
+    /// Finds and returns all entities found with the name provided.
+    /// @param[in] name the name to search for the entity with.
+    /// @returns a vector of all entity ids found
+    std::vector<EntityId> FindAllEntitiesWithName(const StringId& entityName) const;
     
     /// Returns the current entity count.
     /// @returns the current entity count in this world

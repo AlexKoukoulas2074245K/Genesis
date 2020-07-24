@@ -99,7 +99,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);
@@ -139,7 +139,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);
@@ -176,7 +176,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);
@@ -230,7 +230,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);
@@ -281,7 +281,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);
@@ -329,7 +329,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);
@@ -373,7 +373,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);
@@ -413,7 +413,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);
@@ -450,7 +450,7 @@ void RegisterDefaultEngineConsoleCommands()
         const auto& world = ecs::World::GetInstance();
 
         // make sure entity exists
-        const auto foundEntityId = world.FindEntity(entityName);
+        const auto foundEntityId = world.FindEntityWithName(entityName);
         if (foundEntityId == ecs::NULL_ENTITY_ID)
         {
             return debug::ConsoleCommandResult(false, ENTITY_NOT_FOUND_STRING);

@@ -66,7 +66,7 @@ void ConsoleManagementSystem::VUpdate(const float, const std::vector<ecs::Entity
 
 void ConsoleManagementSystem::CreateConsoleBackgroundEntityIfNotAlive() const
 {
-    if (ecs::World::GetInstance().FindEntity(CONSOLE_BACKGROUND_ENTITY_NAME) == ecs::NULL_ENTITY_ID)
+    if (ecs::World::GetInstance().FindEntityWithName(CONSOLE_BACKGROUND_ENTITY_NAME) == ecs::NULL_ENTITY_ID)
     {
         rendering::LoadAndCreateGuiSprite("gui_base", "debug_square", StringId("console"), glm::vec3(0.0f, 0.0f, 0.0f), CONSOLE_BACKGROUND_ENTITY_NAME);
     }
@@ -163,7 +163,7 @@ void ConsoleManagementSystem::HandleConsoleBackgroundAnimation() const
     }
 
     
-    const auto consoleBackgroundEntity = ecs::World::GetInstance().FindEntity(CONSOLE_BACKGROUND_ENTITY_NAME);
+    const auto consoleBackgroundEntity = ecs::World::GetInstance().FindEntityWithName(CONSOLE_BACKGROUND_ENTITY_NAME);
     if (consoleBackgroundEntity != ecs::NULL_ENTITY_ID)
     {
         auto& consoleBackgroundRenderableComponent = ecs::World::GetInstance().GetComponent<rendering::RenderableComponent>(consoleBackgroundEntity);

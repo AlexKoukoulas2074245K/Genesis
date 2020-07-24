@@ -50,7 +50,7 @@ void BindDefaultEngineFunctionsToLua()
         return 1;
     });
 
-    LuaScriptingService::GetInstance().BindNativeFunctionToLua("FindEntity", "FindEntity(entityName) -> entityId", [](lua_State*)
+    LuaScriptingService::GetInstance().BindNativeFunctionToLua("FindEntityWithName", "FindEntityWithName(entityName) -> entityId", [](lua_State*)
     {
         const auto& luaScriptingService = LuaScriptingService::GetInstance();
         const auto stackSize = luaScriptingService.LuaGetIndexOfTopElement();
@@ -58,11 +58,11 @@ void BindDefaultEngineFunctionsToLua()
         if (stackSize == 1)
         {
             const auto entityName = StringId(luaScriptingService.LuaToString(1));
-            luaScriptingService.LuaPushIntegral(ecs::World::GetInstance().FindEntity(entityName));
+            luaScriptingService.LuaPushIntegral(ecs::World::GetInstance().FindEntityWithName(entityName));
         }
         else
         {
-            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling FindEntity");
+            luaScriptingService.ReportLuaScriptError("Illegal argument count (expected 1) when calling FindEntityWithName");
         }
 
         return 1;

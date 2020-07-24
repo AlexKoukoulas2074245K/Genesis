@@ -36,7 +36,7 @@ private:
     void InitializeSdlContextAndWindow(const GameStartupParameters& startupParameters);    
     void InitializeServices() const;
     void InitializeDefaultConsoleFont() const;
-    void UpdateFrameStatistics(float& dt, float& elapsedTicks, float& dtAccumulator, long long& framesAccumulator) const;            
+    void UpdateFrameStatistics(float& dt, float& elapsedTicks, float& dtAccumulator, long long& framesAccumulator) const;
 };
 
 }

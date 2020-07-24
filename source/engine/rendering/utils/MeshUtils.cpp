@@ -53,6 +53,8 @@ ecs::EntityId LoadAndCreateModelByName
 (
     const std::string& modelName,    
     const glm::vec3& initialPosition /* glm::vec3(0.0f, 0.0f, 0.0f) */,
+    const glm::vec3& initialRotation /* glm::vec3(0.0f, 0.0f, 0.0f) */,
+    const glm::vec3& initialScale /* glm::vec3(1.0f, 1.0f, 1.0f) */,
     const StringId entityName /* StringId() */
 )
 {
@@ -61,6 +63,8 @@ ecs::EntityId LoadAndCreateModelByName
 
     auto transformComponent = std::make_unique<TransformComponent>();
     transformComponent->mPosition = initialPosition;
+    transformComponent->mRotation = initialRotation;
+    transformComponent->mScale = initialScale;
 
     auto renderableComponent = std::make_unique<RenderableComponent>();        
     renderableComponent->mShaderNameId = DEFAULT_MODEL_SHADER;
