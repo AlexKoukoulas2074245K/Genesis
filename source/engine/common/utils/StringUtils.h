@@ -20,6 +20,16 @@
 #include <vector>
 
 ///-----------------------------------------------------------------------------------------------
+/// Checks whether the given string represents an integer number.
+/// @param[in] s the string to check.
+/// @returns whether or not the given string can be cast to an int.
+inline bool StringIsInt(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(),
+    s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
+}
+
+///-----------------------------------------------------------------------------------------------
 /// Checks whether the given string starts with a given pattern.
 /// @param[in] s the string to check.
 /// @param[in] pattern the pattern to check for in string s.

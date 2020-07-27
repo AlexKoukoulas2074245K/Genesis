@@ -2,7 +2,6 @@
 
 in vec2 uv_frag;
 
-uniform sampler2D tex;
 uniform float opaqueness;
 
 out vec4 frag_color;

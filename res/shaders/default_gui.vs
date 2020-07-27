@@ -4,8 +4,6 @@ layout(location = 0) in vec3 position;
 layout(location = 1) in vec2 uv;
 
 uniform mat4 world;
-uniform mat4 view;
-uniform mat4 proj;
 
 out vec2 uv_frag;
 

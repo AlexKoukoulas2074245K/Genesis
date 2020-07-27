@@ -32,6 +32,10 @@ const std::string ShaderLoader::FRAGMENT_SHADER_FILE_EXTENSION = ".fs";
 
 ///------------------------------------------------------------------------------------------------
 
+static void ExtractUniformFromLine(const std::string& line, const GLuint programId, tsl::robin_map<StringId, GLuint, StringIdHasher>& outUniformNamesToLocations);
+
+///------------------------------------------------------------------------------------------------
+
 void ShaderLoader::VInitialize()
 {
 }
@@ -104,7 +108,7 @@ std::unique_ptr<IResource> ShaderLoader::VCreateAndLoadResource(const std::strin
         linkingInfoLog.clear();
         linkingInfoLog.reserve(linkingInfoLogLength);
         GL_CHECK(glGetProgramInfoLog(programId, linkingInfoLogLength, NULL, &linkingInfoLog[0]));
-        Log(LogType::INFO, "While linking shader:\n%s", linkingInfoLog.c_str());
+        Log(LogType::INFO, "While linking shader %s:\n%s", resourcePath.c_str(), linkingInfoLog.c_str());
     }
 #endif
     
@@ -122,7 +126,7 @@ std::unique_ptr<IResource> ShaderLoader::VCreateAndLoadResource(const std::strin
         validateInfoLog.clear();
         validateInfoLog.reserve(validateInfoLogLength);
         GL_CHECK(glGetProgramInfoLog(programId, validateInfoLogLength, NULL, &validateInfoLog[0]));
-        Log(LogType::INFO, "While validating shader:\n%s", validateInfoLog.c_str());
+        Log(LogType::INFO, "While validating shader %s:\n%s", resourcePath.c_str(), validateInfoLog.c_str());
     }
 #endif
     
@@ -132,6 +136,7 @@ std::unique_ptr<IResource> ShaderLoader::VCreateAndLoadResource(const std::strin
     GL_CHECK(glDeleteShader(vertexShaderId));
     GL_CHECK(glDeleteShader(fragmentShaderId));
     
+    Log(LogType::INFO, "Parsing uniforms in shader %s", resourcePath.c_str());
     const auto uniformNamesToLocations = GetUniformNamesToLocationsMap(programId, vertexShaderFileContents, fragmentShaderFileContents);
     return std::make_unique<ShaderResource>(uniformNamesToLocations, programId);
 }
@@ -176,14 +181,7 @@ tsl::robin_map<StringId, GLuint, StringIdHasher> ShaderLoader::GetUniformNamesTo
     {
         if (StringStartsWith(vertexShaderLine, "uniform"))
         {
-            const auto uniformLineSplitBySpace = StringSplit(vertexShaderLine, ' ');
-            
-            // Uniform names will always be the third components in the line
-            // e.g. uniform bool foo. The semicolumn at the end also needs to be trimmed
-            const auto uniformName = uniformLineSplitBySpace[2].substr(0, uniformLineSplitBySpace[2].size() - 1);
-            const auto uniformLocation = GL_NO_CHECK(glGetUniformLocation(programId, uniformName.c_str()));
-            
-            uniformNamesToLocationsMap[StringId(uniformName)] = uniformLocation;
+            ExtractUniformFromLine(vertexShaderLine, programId, uniformNamesToLocationsMap);
         }
     }
     
@@ -192,14 +190,7 @@ tsl::robin_map<StringId, GLuint, StringIdHasher> ShaderLoader::GetUniformNamesTo
     {
         if (StringStartsWith(fragmentShaderLine, "uniform"))
         {
-            const auto uniformLineSplitBySpace = StringSplit(fragmentShaderLine, ' ');
-            
-            // Uniform names will always be the third components in the line
-            // e.g. uniform bool foo
-            const auto uniformName = uniformLineSplitBySpace[2].substr(0, uniformLineSplitBySpace[2].size() - 1);
-            const auto uniformLocation = GL_NO_CHECK(glGetUniformLocation(programId, uniformName.c_str()));
-            
-            uniformNamesToLocationsMap[StringId(uniformName)] = uniformLocation;
+            ExtractUniformFromLine(fragmentShaderLine, programId, uniformNamesToLocationsMap);
         }
     }
     
@@ -208,6 +199,55 @@ tsl::robin_map<StringId, GLuint, StringIdHasher> ShaderLoader::GetUniformNamesTo
 
 ///------------------------------------------------------------------------------------------------
 
+void ExtractUniformFromLine(const std::string& line, const GLuint programId, tsl::robin_map<StringId, GLuint, StringIdHasher>& outUniformNamesToLocations)
+{
+    const auto uniformLineSplitBySpace = StringSplit(line, ' ');
+    
+    // Uniform names will always be the third components in the line
+    // e.g. uniform bool foo
+    auto uniformName = uniformLineSplitBySpace[2].substr(0, uniformLineSplitBySpace[2].size() - 1);
+    
+    // Check for uniform array
+    if (uniformName.at(uniformName.size() - 1) == ']')
+    {
+        uniformName = uniformName.substr(0, uniformName.size() - 1);
+        const auto uniformNameSplitByLeftSquareBracket = StringSplit(uniformName, '[');
+        
+        uniformName = uniformNameSplitByLeftSquareBracket[0];
+        
+        if (StringIsInt(uniformNameSplitByLeftSquareBracket[1]) == false)
+        {
+            ShowMessageBox(MessageBoxType::ERROR, "Error Extracting Uniform", "Could not parse array element count for uniform: " + uniformName);
+        }
+        
+        const auto numberOfElements = std::stoi(uniformNameSplitByLeftSquareBracket[1]);
+        
+        for (int i = 0; i < numberOfElements; ++i)
+        {
+            const auto indexedUniformName = uniformName + "[" + std::to_string(i) + "]";
+            const auto uniformLocation = GL_NO_CHECK(glGetUniformLocation(programId, indexedUniformName.c_str()));
+            outUniformNamesToLocations[StringId(indexedUniformName)] = uniformLocation;
+            
+            if (uniformLocation == -1)
+            {
+                Log(LogType::WARNING, "Unused uniform at location -1: %s", indexedUniformName.c_str());
+            }
+        }
+    }
+    // Normal uniform
+    else
+    {
+        auto uniformLocation = GL_NO_CHECK(glGetUniformLocation(programId, uniformName.c_str()));
+        outUniformNamesToLocations[StringId(uniformName)] = uniformLocation;
+        
+        if (uniformLocation == -1)
+        {
+            Log(LogType::WARNING, "Unused uniform at location -1: %s", uniformName.c_str());
+        }
+    }
+}
+
+///------------------------------------------------------------------------------------------------
 }
 
 }

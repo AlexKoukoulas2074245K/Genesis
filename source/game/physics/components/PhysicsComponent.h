@@ -25,6 +25,7 @@ struct PhysicsComponent final : public genesis::ecs::IComponent
     glm::vec3 mDirection;
     glm::vec3 mCollidableDimensions;
     float mVelocitySpeed;
+    float mRotationalSpeed;
 };
 
 ///-----------------------------------------------------------------------------------------------

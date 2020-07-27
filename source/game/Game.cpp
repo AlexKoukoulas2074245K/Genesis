@@ -61,7 +61,7 @@ static void CreateSphereAtRandomPosition()
         "sphere",
         glm::vec3(genesis::math::RandomFloat(-1.0f, 1.0f), genesis::math::RandomFloat(-1.0f, 1.0f), 0.12f),
         glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.03f, 0.03f, 0.03f),
+        glm::vec3(0.3f, 0.3f, 0.3f),
         StringId("sphere")
     );
     
@@ -77,7 +77,8 @@ static void CreateSphereAtRandomPosition()
     physicsComponent->mCollidableDimensions = transformComponent.mScale * resource.GetDimensions();
     physicsComponent->mDirection = glm::vec3(genesis::math::RandomFloat(-1.0f, 1.0f), genesis::math::RandomFloat(-1.0f, 1.0f), 0.0f);
     physicsComponent->mDirection = glm::normalize(physicsComponent->mDirection);
-    physicsComponent->mVelocitySpeed = 0.2f;
+    //physicsComponent->mVelocitySpeed = 0.2f;
+    physicsComponent->mRotationalSpeed = 0.4f;
     
     world.AddComponent<physics::PhysicsComponent>(sphereEntityId, std::move(physicsComponent));
 }
@@ -85,7 +86,7 @@ static void CreateSphereAtRandomPosition()
 void Game::VOnGameInit()
 {
     RegisterConsoleCommands();
-    for (int i = 0; i < 280; ++i)
+    for (int i = 0; i < 2; ++i)
     {
         CreateSphereAtRandomPosition();
     }

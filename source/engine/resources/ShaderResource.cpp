@@ -66,6 +66,22 @@ bool ShaderResource::SetMatrix4fv
 
 ///------------------------------------------------------------------------------------------------
 
+bool ShaderResource::SetFloatVec4Array(const StringId& uniformName, const std::vector<glm::vec4>& values) const
+{
+    for (auto i = 0U; i < values.size(); ++i)
+    {
+        auto setUniformResult = SetFloatVec4(StringId(uniformName.GetString() + "[" + std::to_string(i) + "]"), values[i]);
+        if (!setUniformResult)
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+///------------------------------------------------------------------------------------------------
+
 bool ShaderResource::SetFloatVec4(const StringId& uniformName, const glm::vec4& vec) const
 {
     if (mShaderUniformNamesToLocations.count(uniformName) > 0)
@@ -83,6 +99,18 @@ bool ShaderResource::SetFloat(const StringId& uniformName, const float value) co
     if (mShaderUniformNamesToLocations.count(uniformName) > 0)
     {
         GL_CHECK(glUniform1f(mShaderUniformNamesToLocations.at(uniformName), value));
+        return true;
+    }
+    return false;
+}
+
+///------------------------------------------------------------------------------------------------
+
+bool ShaderResource::SetInt(const StringId& uniformName, const int value) const
+{
+    if (mShaderUniformNamesToLocations.count(uniformName) > 0)
+    {
+        GL_CHECK(glUniform1i(mShaderUniformNamesToLocations.at(uniformName), value));
         return true;
     }
     return false;

@@ -13,6 +13,7 @@
 #include "IResource.h"
 #include "../common/utils/MathUtils.h"
 #include "../common/utils/StringUtils.h"
+#include "../rendering/systems/RenderingSystem.h"
 
 #include <string>
 #include <tsl/robin_map.h>
@@ -35,6 +36,8 @@ using GLuint = unsigned int;
 
 class ShaderResource final: public IResource
 {
+    friend class rendering::RenderingSystem;
+    
 public:
     ShaderResource() = default;
     ShaderResource
@@ -45,13 +48,15 @@ public:
     ShaderResource& operator = (const ShaderResource&);
     ShaderResource(const ShaderResource&);
     
+private:
     bool SetMatrix4fv(const StringId& uniformName, const glm::mat4& matrix, const GLuint count = 1, const bool transpose = false) const;
+    bool SetFloatVec4Array(const StringId& uniformName, const std::vector<glm::vec4>& values) const;
     bool SetFloatVec4(const StringId& uniformName, const glm::vec4& vec) const;
     bool SetFloat(const StringId& uniformName, const float value) const;
+    bool SetInt(const StringId& uniformName, const int value) const;
 
     GLuint GetProgramId() const;    
 
-private:
     const tsl::robin_map<StringId, GLuint, StringIdHasher>& GetUniformNamesToLocations() const;
 
     void CopyConstruction(const ShaderResource&);

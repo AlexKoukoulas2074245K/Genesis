@@ -276,6 +276,12 @@ void RenderingSystem::RenderEntityInternal
         currentShader->SetMatrix4fv(matrixUniformEntry.first, matrixUniformEntry.second);
     }
 
+    // Set other float vec4 array uniforms
+    for (const auto& vec4arrayUniformEntry: renderableComponent.mShaderUniforms.mShaderFloatVec4ArrayUniforms)
+    {
+        currentShader->SetFloatVec4Array(vec4arrayUniformEntry.first, vec4arrayUniformEntry.second);
+    }
+    
     // Set other float vec4 uniforms
     for (const auto& floatVec4UniformEntry : renderableComponent.mShaderUniforms.mShaderFloatVec4Uniforms)
     {
@@ -287,7 +293,13 @@ void RenderingSystem::RenderEntityInternal
     {
         currentShader->SetFloat(floatUniformEntry.first, floatUniformEntry.second);
     }
-
+    
+    // Set other int uniforms
+    for (const auto& intUniformEntry : renderableComponent.mShaderUniforms.mShaderIntUniforms)
+    {
+        currentShader->SetInt(intUniformEntry.first, intUniformEntry.second);
+    }
+    
     // Perform draw call
     GL_CHECK(glDrawElements(GL_TRIANGLES, currentMesh->GetElementCount(), GL_UNSIGNED_SHORT, (void*)0));
 }

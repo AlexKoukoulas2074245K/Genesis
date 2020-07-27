@@ -18,5 +18,5 @@ void main()
     if (flip_tex_ver) finalUvY = 1.00 - finalUvY;
 	
 	// Get texture color
-    frag_color = texture(tex, vec2(finalUvX, finalUvY));	
+    frag_color = texture(tex, vec2(finalUvX, finalUvY));
 }
