@@ -22,8 +22,10 @@
 #include "../engine/input/utils/InputUtils.h"
 #include "../engine/input/systems/RawInputHandlingSystem.h"
 #include "../engine/rendering/components/CameraSingletonComponent.h"
+#include "../engine/rendering/components/LightStoreSingletonComponent.h"
 #include "../engine/rendering/components/RenderableComponent.h"
 #include "../engine/rendering/utils/FontUtils.h"
+#include "../engine/rendering/utils/LightUtils.h"
 #include "../engine/rendering/utils/MeshUtils.h"
 #include "../engine/rendering/systems/RenderingSystem.h"
 #include "../engine/resources/MeshResource.h"
@@ -49,6 +51,7 @@ void Game::VOnSystemsInit()
     world.AddSystem(std::make_unique<scene::SceneUpdaterSystem>());
     world.AddSystem(std::make_unique<physics::PhysicsCollisionDetectionSystem>());
     world.AddSystem(std::make_unique<physics::PhysicsCollisionResponseSystem>());
+    
     world.AddSystem(std::make_unique<genesis::rendering::RenderingSystem>());
 }
 
@@ -58,7 +61,7 @@ static void CreateSphereAtRandomPosition(const int i)
 {
     const auto sphereEntityId = genesis::rendering::LoadAndCreateModelByName
     (
-        "monkey",
+        "sphere",
         glm::vec3(0.0f - i * 0.5f, 0.0f + i * 0.5f, 0.12f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.3f, 0.3f, 0.3f),
@@ -73,12 +76,17 @@ static void CreateSphereAtRandomPosition(const int i)
     auto& renderableComponent = world.GetComponent<genesis::rendering::RenderableComponent>(sphereEntityId);
     auto& resource = genesis::resources::ResourceLoadingService::GetInstance().GetResource<genesis::resources::MeshResource>(renderableComponent.mMeshResourceId);
     
+    renderableComponent.mMaterial.mAmbient   = glm::vec4(0.1f, 0.1f, 0.1f, 1.0f);
+    renderableComponent.mMaterial.mDiffuse   = glm::vec4(0.3f, 0.3f, 0.3f, 1.0f);
+    renderableComponent.mMaterial.mSpecular  = glm::vec4(0.7f, 0.7f, 0.7f, 1.0f);
+    renderableComponent.mMaterial.mShininess = 32.0f;
+    
     auto physicsComponent = std::make_unique<physics::PhysicsComponent>();
     physicsComponent->mCollidableDimensions = transformComponent.mScale * resource.GetDimensions();
     physicsComponent->mDirection = glm::vec3(genesis::math::RandomFloat(-1.0f, 1.0f), genesis::math::RandomFloat(-1.0f, 1.0f), 0.0f);
     physicsComponent->mDirection = glm::normalize(physicsComponent->mDirection);
     //physicsComponent->mVelocitySpeed = 0.2f;
-    physicsComponent->mRotationalSpeed = 0.0f;
+    //physicsComponent->mRotationalSpeed = 0.3f;
     
     world.AddComponent<physics::PhysicsComponent>(sphereEntityId, std::move(physicsComponent));
 }
@@ -90,15 +98,45 @@ void Game::VOnGameInit()
     {
         CreateSphereAtRandomPosition(i);
     }
+    
+    genesis::rendering::AddLightSource(glm::vec3(0.0f, 0.0f, 1.0f));
+    genesis::rendering::AddLightSource(glm::vec3(0.0f, 10.0f, 0.0f));
+    genesis::rendering::AddLightSource(glm::vec3(2.0f, 2.0f, 0.0f));
+    auto cubeEntity = genesis::rendering::LoadAndCreateModelByName
+    (
+        "cube",
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.1f, 0.1f, 0.1f),
+        StringId("cube")
+    );
+    
+    auto& renderableComponent = genesis::ecs::World::GetInstance().GetComponent<genesis::rendering::RenderableComponent>(cubeEntity);
+    renderableComponent.mMaterial.mAmbient   = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
+    renderableComponent.mMaterial.mDiffuse   = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    renderableComponent.mMaterial.mSpecular  = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    renderableComponent.mMaterial.mShininess = 32.0f;
 }
 
 ///------------------------------------------------------------------------------------------------
+
+static float dtAccum = 0.0f;
 
 void Game::VOnUpdate(const float dt)
 {
     auto& world = genesis::ecs::World::GetInstance();
 
     auto& cameraComponent = world.GetSingletonComponent<genesis::rendering::CameraSingletonComponent>();
+    auto& lightStoreComponent = world.GetSingletonComponent<genesis::rendering::LightStoreSingletonComponent>();
+    
+    dtAccum += dt;
+    lightStoreComponent.mLightPositions[0].x = genesis::math::Sinf(dtAccum/4) * 2;
+    lightStoreComponent.mLightPositions[0].z = genesis::math::Cosf(dtAccum/4) * 2;
+    
+    const auto cubeEntityId = world.FindEntityWithName(StringId("cube"));
+    auto& transformComponent = world.GetComponent<genesis::TransformComponent>(cubeEntityId);
+    transformComponent.mPosition = lightStoreComponent.mLightPositions[0];
+    
     float moveSpeed = 5.0f;
     float lookSpeed = 1.0f;
     //float zoomSpeed = 0.2f;
@@ -159,17 +197,17 @@ void Game::VOnUpdate(const float dt)
             cameraComponent.mYaw = 2 * genesis::math::PI + cameraComponent.mYaw;
         }
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_IN))
+    if (genesis::input::IsActionTypeKeyTapped(genesis::input::InputActionType::CAMERA_ZOOM_IN))
     {
-        auto entityId = world.FindEntityWithName(StringId("sphere"));
-        if (entityId != genesis::ecs::NULL_ENTITY_ID)
-        {
-            world.DestroyEntity(entityId);
-        }
+        auto sphereEntity = world.FindEntityWithName(StringId("sphere"));
+        auto& renderableComponent = world.GetComponent<genesis::rendering::RenderableComponent>(sphereEntity);
+        renderableComponent.mMaterial.mShininess -= 1.0f;
     }
-    if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_OUT))
+    if (genesis::input::IsActionTypeKeyTapped(genesis::input::InputActionType::CAMERA_ZOOM_OUT))
     {
-        CreateSphereAtRandomPosition(0);
+        auto sphereEntity = world.FindEntityWithName(StringId("sphere"));
+        auto& renderableComponent = world.GetComponent<genesis::rendering::RenderableComponent>(sphereEntity);
+        renderableComponent.mMaterial.mShininess += 1.0f;
     }      
 
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);

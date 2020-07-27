@@ -39,6 +39,7 @@ class RenderableComponent;
 class RenderingContextSingletonComponent;
 class ShaderStoreSingletonComponent;
 class WindowSingletonComponent;
+class LightStoreSingletonComponent;
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -55,6 +56,7 @@ private:
         const TransformComponent& entityTransformComponent,
         const RenderableComponent& entityRenderableComponent,        
         const CameraSingletonComponent& globalCameraComponent,
+        const LightStoreSingletonComponent& lightStoreComponent,
         const ShaderStoreSingletonComponent& globalShaderStoreComponent,
         const WindowSingletonComponent& globalWindowComponent,        
         RenderingContextSingletonComponent& renderingContextComponent        
@@ -62,6 +64,7 @@ private:
         
     void InitializeRenderingWindowAndContext() const;
     void InitializeCamera() const;
+    void InitializeLights() const;
     void CompileAndLoadShaders() const;
 
     std::set<std::string> GetAndFilterShaderNames() const;

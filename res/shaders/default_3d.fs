@@ -3,18 +3,17 @@
 uniform sampler2D tex;
 uniform bool flip_tex_hor;
 uniform bool flip_tex_ver;
-
-
-vec3 light_pos = vec3(0.0f, 0.0f, 1.0f);
-const vec4 material_ambient = vec4(0.2f, 0.2f, 0.2f, 1.0f);
-const vec4 material_diffuse = vec4(0.3f, 0.3f, 0.3f, 1.0f);
-const vec4 material_specular = vec4(0.7f, 0.7f, 0.7f, 1.0f);
-const float material_shininess = 32.0f;
-
+uniform vec4 material_ambient;
+uniform vec4 material_diffuse;
+uniform vec4 material_specular;
+uniform float material_shininess;
+uniform int active_light_count;
+uniform vec3 light_positions[32];
+uniform vec3 eye_pos;
 
 in vec2 uv_frag;
 in vec3 normal_interp;
-in vec3 vertex_pos;
+in vec3 frag_pos;
 
 out vec4 frag_color;
 
@@ -32,24 +31,34 @@ void main()
 
     // Normalize normal 
 	vec3 normal = normalize(normal_interp);
-	vec3 light_direction = normalize(light_pos - vertex_pos);
 
-	vec3 eye_pos = normalize(-vertex_pos);
-	vec3 reflected_direction = normalize(-reflect(light_direction, normal));
+	// Calculate view direction
+	vec3 view_direction = normalize(eye_pos - frag_pos);
 
-	vec4 diffuse_color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	vec4 specular_color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-
-	float diffuse_factor = max(dot(normal, light_direction), 0.0f);
-	if (diffuse_factor > 0.0f)
+	vec4 light_accumulator = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	for (int i = 0; i < active_light_count; ++i)
 	{
-		diffuse_color = material_diffuse * diffuse_factor;
-		diffuse_color = clamp(diffuse_color, 0.0f, 1.0f);
+		vec3 light_direction = normalize(light_positions[i]);
 
-		specular_color = material_specular * pow(max(dot(reflected_direction, eye_pos), 0.0f), 0.3 * material_shininess);
-		specular_color = clamp(specular_color, 0.0f, 1.0f);
+		vec4 diffuse_color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		vec4 specular_color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+		float diffuse_factor = max(dot(normal, light_direction), 0.0f);
+		if (diffuse_factor > 0.0f)
+		{
+			diffuse_color = material_diffuse * diffuse_factor;
+			diffuse_color = clamp(diffuse_color, 0.0f, 1.0f);	
+
+			vec3 reflected_direction = normalize(reflect(-light_direction, normal));
+
+			specular_color = material_specular * pow(max(dot(view_direction, reflected_direction), 0.0f), material_shininess);
+			specular_color = clamp(specular_color, 0.0f, 1.0f);
+		}
+		
+
+		light_accumulator.rgb += (diffuse_color + specular_color).rgb;
 	}
 
-	frag_color = tex_color * material_ambient + diffuse_color + specular_color;	
+	frag_color = tex_color * material_ambient + light_accumulator;	
 
 }

@@ -51,7 +51,9 @@ public:
 private:
     bool SetMatrix4fv(const StringId& uniformName, const glm::mat4& matrix, const GLuint count = 1, const bool transpose = false) const;
     bool SetFloatVec4Array(const StringId& uniformName, const std::vector<glm::vec4>& values) const;
+    bool SetFloatVec3Array(const StringId& uniformName, const std::vector<glm::vec3>& values) const;
     bool SetFloatVec4(const StringId& uniformName, const glm::vec4& vec) const;
+    bool SetFloatVec3(const StringId& uniformName, const glm::vec3& vec) const;
     bool SetFloat(const StringId& uniformName, const float value) const;
     bool SetInt(const StringId& uniformName, const int value) const;
 

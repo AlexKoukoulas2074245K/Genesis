@@ -7,6 +7,7 @@
 
 #include "RenderingSystem.h"
 #include "../components/CameraSingletonComponent.h"
+#include "../components/LightStoreSingletonComponent.h"
 #include "../components/RenderableComponent.h"
 #include "../components/RenderingContextSingletonComponent.h"
 #include "../components/ShaderStoreSingletonComponent.h"
@@ -43,10 +44,17 @@ namespace rendering
 
 namespace
 {
-    const StringId WORLD_MARIX_UNIFORM_NAME       = StringId("world");
-    const StringId VIEW_MARIX_UNIFORM_NAME        = StringId("view");
-    const StringId PROJECTION_MARIX_UNIFORM_NAME  = StringId("proj");
-    const StringId NORMAL_MATRIX_UNIFORM_NAME     = StringId("norm");
+    const StringId WORLD_MARIX_UNIFORM_NAME        = StringId("world");
+    const StringId VIEW_MARIX_UNIFORM_NAME         = StringId("view");
+    const StringId PROJECTION_MARIX_UNIFORM_NAME   = StringId("proj");
+    const StringId NORMAL_MATRIX_UNIFORM_NAME      = StringId("norm");
+    const StringId MATERIAL_AMBIENT_UNIFORM_NAME   = StringId("material_ambient");
+    const StringId MATERIAL_DIFFUSE_UNIFORM_NAME   = StringId("material_diffuse");
+    const StringId MATERIAL_SPECULAR_UNIFORM_NAME  = StringId("material_specular");
+    const StringId MATERIAL_SHININESS_UNIFORM_NAME = StringId("material_shininess");
+    const StringId ACTIVE_LIGHT_COUNT_UNIFORM_NAME = StringId("active_light_count");
+    const StringId LIGHT_POSITIONS_UNIFORM_NAME    = StringId("light_positions");
+    const StringId EYE_POSITION_UNIFORM_NAME       = StringId("eye_pos");
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -66,6 +74,7 @@ RenderingSystem::RenderingSystem()
 {
     InitializeRenderingWindowAndContext();
     InitializeCamera();
+    InitializeLights();
     CompileAndLoadShaders();
 }
 
@@ -78,6 +87,7 @@ void RenderingSystem::VUpdate(const float, const std::vector<ecs::EntityId>& ent
     // Get common rendering singleton components
     const auto& windowComponent      = world.GetSingletonComponent<WindowSingletonComponent>();
     const auto& shaderStoreComponent = world.GetSingletonComponent<ShaderStoreSingletonComponent>();
+    const auto& lightStoreComponent  = world.GetSingletonComponent<LightStoreSingletonComponent>();
     auto& cameraComponent            = world.GetSingletonComponent<CameraSingletonComponent>();
     auto& renderingContextComponent  = world.GetSingletonComponent<RenderingContextSingletonComponent>();
     
@@ -156,6 +166,7 @@ void RenderingSystem::VUpdate(const float, const std::vector<ecs::EntityId>& ent
                 transformComponent,
                 renderableComponent,
                 cameraComponent,
+                lightStoreComponent,
                 shaderStoreComponent,
                 windowComponent,
                 renderingContextComponent
@@ -176,6 +187,7 @@ void RenderingSystem::VUpdate(const float, const std::vector<ecs::EntityId>& ent
             transformComponent,
             renderableComponent,            
             cameraComponent,
+            lightStoreComponent,
             shaderStoreComponent,
             windowComponent,            
             renderingContextComponent
@@ -192,7 +204,8 @@ void RenderingSystem::RenderEntityInternal
 (    
     const TransformComponent& transformComponent,
     const RenderableComponent& renderableComponent,    
-    const CameraSingletonComponent& cameraComponent, 
+    const CameraSingletonComponent& cameraComponent,
+    const LightStoreSingletonComponent& lightStoreComponent,
     const ShaderStoreSingletonComponent& shaderStoreComponent,
     const WindowSingletonComponent& windowComponent,    
     RenderingContextSingletonComponent& renderingContextComponent    
@@ -273,6 +286,13 @@ void RenderingSystem::RenderEntityInternal
     currentShader->SetMatrix4fv(VIEW_MARIX_UNIFORM_NAME, cameraComponent.mViewMatrix);
     currentShader->SetMatrix4fv(PROJECTION_MARIX_UNIFORM_NAME, cameraComponent.mProjectionMatrix);    
     currentShader->SetMatrix4fv(NORMAL_MATRIX_UNIFORM_NAME, rotMatrix);
+    currentShader->SetFloatVec4(MATERIAL_AMBIENT_UNIFORM_NAME, renderableComponent.mMaterial.mAmbient);
+    currentShader->SetFloatVec4(MATERIAL_DIFFUSE_UNIFORM_NAME, renderableComponent.mMaterial.mDiffuse);
+    currentShader->SetFloatVec4(MATERIAL_SPECULAR_UNIFORM_NAME, renderableComponent.mMaterial.mSpecular);
+    currentShader->SetFloat(MATERIAL_SHININESS_UNIFORM_NAME, renderableComponent.mMaterial.mShininess);
+    currentShader->SetFloatVec3Array(LIGHT_POSITIONS_UNIFORM_NAME, lightStoreComponent.mLightPositions);
+    currentShader->SetInt(ACTIVE_LIGHT_COUNT_UNIFORM_NAME, lightStoreComponent.mLightPositions.size());
+    currentShader->SetFloatVec3(EYE_POSITION_UNIFORM_NAME, cameraComponent.mPosition);
     
     // Set other matrix uniforms
     for (const auto& matrixUniformEntry: renderableComponent.mShaderUniforms.mShaderMatrixUniforms)
@@ -286,12 +306,24 @@ void RenderingSystem::RenderEntityInternal
         currentShader->SetFloatVec4Array(vec4arrayUniformEntry.first, vec4arrayUniformEntry.second);
     }
     
+    // Set other float vec3 array uniforms
+    for (const auto& vec3arrayUniformEntry: renderableComponent.mShaderUniforms.mShaderFloatVec3ArrayUniforms)
+    {
+        currentShader->SetFloatVec3Array(vec3arrayUniformEntry.first, vec3arrayUniformEntry.second);
+    }
+    
     // Set other float vec4 uniforms
     for (const auto& floatVec4UniformEntry : renderableComponent.mShaderUniforms.mShaderFloatVec4Uniforms)
     {
         currentShader->SetFloatVec4(floatVec4UniformEntry.first, floatVec4UniformEntry.second);
     }
-
+    
+    // Set other float vec3 uniforms
+    for (const auto& floatVec3UniformEntry : renderableComponent.mShaderUniforms.mShaderFloatVec3Uniforms)
+    {
+        currentShader->SetFloatVec3(floatVec3UniformEntry.first, floatVec3UniformEntry.second);
+    }
+    
     // Set other float uniforms
     for (const auto& floatUniformEntry : renderableComponent.mShaderUniforms.mShaderFloatUniforms)
     {
@@ -363,6 +395,13 @@ void RenderingSystem::InitializeRenderingWindowAndContext() const
 void RenderingSystem::InitializeCamera() const
 {        
     ecs::World::GetInstance().SetSingletonComponent<CameraSingletonComponent>(std::make_unique<CameraSingletonComponent>());
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void RenderingSystem::InitializeLights() const
+{
+    ecs::World::GetInstance().SetSingletonComponent<LightStoreSingletonComponent>(std::make_unique<LightStoreSingletonComponent>());
 }
 
 ///-----------------------------------------------------------------------------------------------
