@@ -58,7 +58,7 @@ static void CreateSphereAtRandomPosition(const int i)
 {
     const auto sphereEntityId = genesis::rendering::LoadAndCreateModelByName
     (
-        "cube",
+        "monkey",
         glm::vec3(0.0f - i * 0.5f, 0.0f + i * 0.5f, 0.12f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.3f, 0.3f, 0.3f),
@@ -78,7 +78,7 @@ static void CreateSphereAtRandomPosition(const int i)
     physicsComponent->mDirection = glm::vec3(genesis::math::RandomFloat(-1.0f, 1.0f), genesis::math::RandomFloat(-1.0f, 1.0f), 0.0f);
     physicsComponent->mDirection = glm::normalize(physicsComponent->mDirection);
     //physicsComponent->mVelocitySpeed = 0.2f;
-    physicsComponent->mRotationalSpeed = 0.4f;
+    physicsComponent->mRotationalSpeed = 0.0f;
     
     world.AddComponent<physics::PhysicsComponent>(sphereEntityId, std::move(physicsComponent));
 }

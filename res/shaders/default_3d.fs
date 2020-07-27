@@ -5,11 +5,11 @@ uniform bool flip_tex_hor;
 uniform bool flip_tex_ver;
 
 
-vec3 light_pos = vec3(0.0f, 0.0f, 2.0f);
+vec3 light_pos = vec3(0.0f, 0.0f, 1.0f);
 const vec4 material_ambient = vec4(0.2f, 0.2f, 0.2f, 1.0f);
 const vec4 material_diffuse = vec4(0.3f, 0.3f, 0.3f, 1.0f);
 const vec4 material_specular = vec4(0.7f, 0.7f, 0.7f, 1.0f);
-const float material_shininess = 2.0f;
+const float material_shininess = 32.0f;
 
 
 in vec2 uv_frag;
