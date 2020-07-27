@@ -160,12 +160,14 @@ std::unique_ptr<IResource> MeshLoader::VCreateAndLoadResource(const std::string&
     GLuint vertexArrayObject;
     GLuint vertexBufferObject;
     GLuint uvCoordsBufferObject;
+    GLuint normalsBufferObject;
     GLuint indexBufferObject;
     
     // Create Buffers
     GL_CHECK(glGenVertexArrays(1, &vertexArrayObject));
     GL_CHECK(glGenBuffers(1, &vertexBufferObject));
     GL_CHECK(glGenBuffers(1, &uvCoordsBufferObject));
+    GL_CHECK(glGenBuffers(1, &normalsBufferObject));
     GL_CHECK(glGenBuffers(1, &indexBufferObject));
     
     // Prepare VAO to record buffer state
@@ -186,6 +188,14 @@ std::unique_ptr<IResource> MeshLoader::VCreateAndLoadResource(const std::string&
     // 2nd attribute buffer: tex coords
     GL_CHECK(glEnableVertexAttribArray(1));
     GL_CHECK(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)0));
+    
+    // Bind and buffer NBO
+    GL_CHECK(glBindBuffer(GL_ARRAY_BUFFER, normalsBufferObject));
+    GL_CHECK(glBufferData(GL_ARRAY_BUFFER, final_normals.size() * sizeof(glm::vec3), &final_normals[0], GL_STATIC_DRAW));
+    
+    // 3rd attribute buffer: normals
+    GL_CHECK(glEnableVertexAttribArray(2));
+    GL_CHECK(glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void*)0));
     
     // Bind and Buffer IBO
     GL_CHECK(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject));

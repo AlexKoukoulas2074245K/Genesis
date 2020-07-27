@@ -54,12 +54,12 @@ void Game::VOnSystemsInit()
 
 ///------------------------------------------------------------------------------------------------
 
-static void CreateSphereAtRandomPosition()
+static void CreateSphereAtRandomPosition(const int i)
 {
     const auto sphereEntityId = genesis::rendering::LoadAndCreateModelByName
     (
-        "sphere",
-        glm::vec3(genesis::math::RandomFloat(-1.0f, 1.0f), genesis::math::RandomFloat(-1.0f, 1.0f), 0.12f),
+        "cube",
+        glm::vec3(0.0f - i * 0.5f, 0.0f + i * 0.5f, 0.12f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.3f, 0.3f, 0.3f),
         StringId("sphere")
@@ -88,7 +88,7 @@ void Game::VOnGameInit()
     RegisterConsoleCommands();
     for (int i = 0; i < 2; ++i)
     {
-        CreateSphereAtRandomPosition();
+        CreateSphereAtRandomPosition(i);
     }
 }
 
@@ -169,7 +169,7 @@ void Game::VOnUpdate(const float dt)
     }
     if (genesis::input::IsActionTypeKeyPressed(genesis::input::InputActionType::CAMERA_ZOOM_OUT))
     {
-        CreateSphereAtRandomPosition();
+        CreateSphereAtRandomPosition(0);
     }      
 
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);

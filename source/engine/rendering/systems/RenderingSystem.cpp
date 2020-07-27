@@ -43,9 +43,10 @@ namespace rendering
 
 namespace
 {
-    const StringId WORLD_MARIX_UNIFORM_NAME                   = StringId("world");
-    const StringId VIEW_MARIX_UNIFORM_NAME                    = StringId("view");
-    const StringId PROJECTION_MARIX_UNIFORM_NAME              = StringId("proj");    
+    const StringId WORLD_MARIX_UNIFORM_NAME       = StringId("world");
+    const StringId VIEW_MARIX_UNIFORM_NAME        = StringId("view");
+    const StringId PROJECTION_MARIX_UNIFORM_NAME  = StringId("proj");
+    const StringId NORMAL_MATRIX_UNIFORM_NAME     = StringId("norm");
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -244,9 +245,11 @@ void RenderingSystem::RenderEntityInternal
     {        
         scale.x /= windowComponent.mAspectRatio;        
     }  
-
+    
+    glm::mat4 rotMatrix = glm::mat4_cast(math::EulerAnglesToQuat(rotation));
+    
     world = glm::translate(world, position);
-    world *= glm::mat4_cast(math::EulerAnglesToQuat(rotation));
+    world *= rotMatrix;
     world = glm::scale(world, scale);
        
 
@@ -269,7 +272,8 @@ void RenderingSystem::RenderEntityInternal
     currentShader->SetMatrix4fv(WORLD_MARIX_UNIFORM_NAME, world);
     currentShader->SetMatrix4fv(VIEW_MARIX_UNIFORM_NAME, cameraComponent.mViewMatrix);
     currentShader->SetMatrix4fv(PROJECTION_MARIX_UNIFORM_NAME, cameraComponent.mProjectionMatrix);    
-
+    currentShader->SetMatrix4fv(NORMAL_MATRIX_UNIFORM_NAME, rotMatrix);
+    
     // Set other matrix uniforms
     for (const auto& matrixUniformEntry: renderableComponent.mShaderUniforms.mShaderMatrixUniforms)
     {

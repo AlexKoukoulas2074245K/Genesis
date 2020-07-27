@@ -1,8 +1,8 @@
 #version 330 core
 
-in vec2 uv_frag;
-
 uniform float opaqueness;
+
+in vec2 uv_frag;
 
 out vec4 frag_color;
 

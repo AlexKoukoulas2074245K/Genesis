@@ -2,10 +2,10 @@
 
 in vec2 uv_frag;
 
+out vec4 frag_color;
+
 uniform sampler2D tex;
 uniform vec4 custom_color;
-
-out vec4 frag_color;
 
 void main()
 {
