@@ -44,17 +44,18 @@ namespace rendering
 
 namespace
 {
-    const StringId WORLD_MARIX_UNIFORM_NAME        = StringId("world");
-    const StringId VIEW_MARIX_UNIFORM_NAME         = StringId("view");
-    const StringId PROJECTION_MARIX_UNIFORM_NAME   = StringId("proj");
-    const StringId NORMAL_MATRIX_UNIFORM_NAME      = StringId("norm");
-    const StringId MATERIAL_AMBIENT_UNIFORM_NAME   = StringId("material_ambient");
-    const StringId MATERIAL_DIFFUSE_UNIFORM_NAME   = StringId("material_diffuse");
-    const StringId MATERIAL_SPECULAR_UNIFORM_NAME  = StringId("material_specular");
-    const StringId MATERIAL_SHININESS_UNIFORM_NAME = StringId("material_shininess");
-    const StringId ACTIVE_LIGHT_COUNT_UNIFORM_NAME = StringId("active_light_count");
-    const StringId LIGHT_POSITIONS_UNIFORM_NAME    = StringId("light_positions");
-    const StringId EYE_POSITION_UNIFORM_NAME       = StringId("eye_pos");
+    const StringId WORLD_MARIX_UNIFORM_NAME          = StringId("world");
+    const StringId VIEW_MARIX_UNIFORM_NAME           = StringId("view");
+    const StringId PROJECTION_MARIX_UNIFORM_NAME     = StringId("proj");
+    const StringId NORMAL_MATRIX_UNIFORM_NAME        = StringId("norm");
+    const StringId MATERIAL_AMBIENT_UNIFORM_NAME     = StringId("material_ambient");
+    const StringId MATERIAL_DIFFUSE_UNIFORM_NAME     = StringId("material_diffuse");
+    const StringId MATERIAL_SPECULAR_UNIFORM_NAME    = StringId("material_specular");
+    const StringId MATERIAL_SHININESS_UNIFORM_NAME   = StringId("material_shininess");
+    const StringId ACTIVE_LIGHT_COUNT_UNIFORM_NAME   = StringId("active_light_count");
+    const StringId LIGHT_POSITIONS_UNIFORM_NAME      = StringId("light_positions");
+    const StringId EYE_POSITION_UNIFORM_NAME         = StringId("eye_pos");
+    const StringId IS_AFFECTED_BY_LIGHT_UNIFORM_NAME = StringId("is_affected_by_light");
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -211,7 +212,7 @@ void RenderingSystem::RenderEntityInternal
     RenderingContextSingletonComponent& renderingContextComponent    
 ) const
 {
-    if (!renderableComponent.mVisibility)
+    if (!renderableComponent.mIsVisible)
     {
         return;
     }
@@ -292,6 +293,7 @@ void RenderingSystem::RenderEntityInternal
     currentShader->SetFloat(MATERIAL_SHININESS_UNIFORM_NAME, renderableComponent.mMaterial.mShininess);
     currentShader->SetFloatVec3Array(LIGHT_POSITIONS_UNIFORM_NAME, lightStoreComponent.mLightPositions);
     currentShader->SetInt(ACTIVE_LIGHT_COUNT_UNIFORM_NAME, lightStoreComponent.mLightPositions.size());
+    currentShader->SetInt(IS_AFFECTED_BY_LIGHT_UNIFORM_NAME, renderableComponent.mIsAffectedByLight ? 1 : 0);
     currentShader->SetFloatVec3(EYE_POSITION_UNIFORM_NAME, cameraComponent.mPosition);
     
     // Set other matrix uniforms

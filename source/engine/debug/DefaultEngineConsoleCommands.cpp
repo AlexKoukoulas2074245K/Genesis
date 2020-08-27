@@ -79,6 +79,25 @@ void RegisterDefaultEngineConsoleCommands()
         return debug::ConsoleCommandResult(true);
     });
 
+    debug::RegisterConsoleCommand(StringId("lights_debug"), [](const std::vector<std::string>& commandTextComponents)
+    {
+        static const std::unordered_set<std::string> sAllowedOptions = { "on", "off" };
+
+        const std::string USAGE_STRING = "Usage: lights_debug on|off";
+
+        if (commandTextComponents.size() != 2 || sAllowedOptions.count(StringToLower(commandTextComponents[1])) == 0)
+        {
+            return debug::ConsoleCommandResult(false, USAGE_STRING);
+        }
+
+        const auto& world = ecs::World::GetInstance();
+        auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();
+
+        debugViewStateComponent.mLightDebugDisplayEnabled = StringToLower(commandTextComponents[1]) == "on";
+
+        return debug::ConsoleCommandResult(true);
+    });
+    
     debug::RegisterConsoleCommand(StringId("move_entity_by"), [](const std::vector<std::string>& commandTextComponents)
     {
         const std::string USAGE_STRING = "Usage: move_entity_by \"entity_name\" dx dy dz";

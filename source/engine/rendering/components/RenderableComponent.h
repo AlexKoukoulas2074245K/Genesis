@@ -63,9 +63,10 @@ public:
     MaterialProperties mMaterial;
     ResourceId mMeshResourceId    = 0;
     ResourceId mTextureResourceId = 0;            
-    StringId mShaderNameId        = StringId();        
+    StringId mShaderNameId        = StringId();
+    bool mIsVisible               = true;
     bool mIsGuiComponent          = false;
-    bool mVisibility              = true;    
+    bool mIsAffectedByLight       = false;
 };
 
 ///-----------------------------------------------------------------------------------------------

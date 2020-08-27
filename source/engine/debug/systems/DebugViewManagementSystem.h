@@ -32,10 +32,14 @@ public:
 
 private:
     void HandleFrameStatsDisplay() const;
+    void HandleLightsDebug() const;
     void ClearFrameStatsStrings() const;
+    void ClearDebugLights() const;
     void RenderFpsString() const;
     void RenderEntityCountString() const;
     void RenderSystemUpdateStrings() const;
+    void CreateDebugLights() const;
+    void UpdateDebugLightsPosition() const;
 };
 
 ///-----------------------------------------------------------------------------------------------

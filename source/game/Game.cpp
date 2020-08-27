@@ -80,6 +80,7 @@ static void CreateSphereAtRandomPosition(const int i)
     renderableComponent.mMaterial.mDiffuse   = glm::vec4(0.3f, 0.3f, 0.3f, 1.0f);
     renderableComponent.mMaterial.mSpecular  = glm::vec4(0.7f, 0.7f, 0.7f, 1.0f);
     renderableComponent.mMaterial.mShininess = 32.0f;
+    renderableComponent.mIsAffectedByLight   = true;
     
     auto physicsComponent = std::make_unique<physics::PhysicsComponent>();
     physicsComponent->mCollidableDimensions = transformComponent.mScale * resource.GetDimensions();
@@ -100,22 +101,8 @@ void Game::VOnGameInit()
     }
     
     genesis::rendering::AddLightSource(glm::vec3(0.0f, 0.0f, 1.0f));
-    genesis::rendering::AddLightSource(glm::vec3(0.0f, 10.0f, 0.0f));
+    genesis::rendering::AddLightSource(glm::vec3(0.0f, 4.0f, 0.0f));
     genesis::rendering::AddLightSource(glm::vec3(2.0f, 2.0f, 0.0f));
-    auto cubeEntity = genesis::rendering::LoadAndCreateModelByName
-    (
-        "cube",
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(0.1f, 0.1f, 0.1f),
-        StringId("cube")
-    );
-    
-    auto& renderableComponent = genesis::ecs::World::GetInstance().GetComponent<genesis::rendering::RenderableComponent>(cubeEntity);
-    renderableComponent.mMaterial.mAmbient   = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
-    renderableComponent.mMaterial.mDiffuse   = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    renderableComponent.mMaterial.mSpecular  = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    renderableComponent.mMaterial.mShininess = 32.0f;
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -132,10 +119,6 @@ void Game::VOnUpdate(const float dt)
     dtAccum += dt;
     lightStoreComponent.mLightPositions[0].x = genesis::math::Sinf(dtAccum/4) * 2;
     lightStoreComponent.mLightPositions[0].z = genesis::math::Cosf(dtAccum/4) * 2;
-    
-    const auto cubeEntityId = world.FindEntityWithName(StringId("cube"));
-    auto& transformComponent = world.GetComponent<genesis::TransformComponent>(cubeEntityId);
-    transformComponent.mPosition = lightStoreComponent.mLightPositions[0];
     
     float moveSpeed = 5.0f;
     float lookSpeed = 1.0f;

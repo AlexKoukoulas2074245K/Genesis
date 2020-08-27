@@ -8,6 +8,7 @@ uniform vec4 material_diffuse;
 uniform vec4 material_specular;
 uniform float material_shininess;
 uniform int active_light_count;
+uniform int is_affected_by_light;
 uniform vec3 light_positions[32];
 uniform vec3 eye_pos;
 
@@ -59,6 +60,11 @@ void main()
 		light_accumulator.rgb += (diffuse_color + specular_color).rgb;
 	}
 
-	frag_color = tex_color * material_ambient + light_accumulator;	
+	frag_color = tex_color;
+
+	if (is_affected_by_light == 1)
+	{
+		frag_color = frag_color * material_ambient + light_accumulator;
+	}	
 
 }

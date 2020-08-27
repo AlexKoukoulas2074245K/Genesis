@@ -79,8 +79,12 @@ struct EntityIdHasher
 class IComponent
 {     
 public:
+    IComponent() = default;
     virtual ~IComponent() = default;
-   
+    
+    IComponent(const IComponent&) = delete;
+    IComponent& operator=(const IComponent&) = delete;
+    
 };
 
 ///------------------------------------------------------------------------------------------------

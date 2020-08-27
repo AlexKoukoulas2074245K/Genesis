@@ -7,8 +7,12 @@
 
 #include "DebugViewManagementSystem.h"
 #include "../components/DebugViewStateSingletonComponent.h"
-#include "../../rendering/utils/FontUtils.h"
+#include "../../common/components/TransformComponent.h"
+#include "../../rendering/components/LightStoreSingletonComponent.h"
+#include "../../rendering/components/RenderableComponent.h"
 #include "../../rendering/utils/Colors.h"
+#include "../../rendering/utils/FontUtils.h"
+#include "../../rendering/utils/MeshUtils.h"
 
 ///-----------------------------------------------------------------------------------------------
 
@@ -30,8 +34,11 @@ namespace
     static const glm::vec3 ENTITY_COUNT_NUMBER_POSITION         = glm::vec3(0.75f, 0.7f, 0.0f);
     static const glm::vec3 SYSTEM_NAMES_STARTING_POSITION       = glm::vec3(-0.3f, 0.6f, 0.0f);
     static const glm::vec3 SYSTEM_UPDATE_TIME_STARTING_POSITION = glm::vec3(0.6f, 0.6f, 0.0f);
+    static const glm::vec3 DEBUG_LIGHT_SCALE                    = glm::vec3(0.1f, 0.1f, 0.1f);
 
-    static const StringId TEXT_FONT_NAME = StringId("console_font");    
+    static const StringId TEXT_FONT_NAME         = StringId("console_font");
+    static const StringId DEBUG_LIGHT_ASSET_NAME = StringId("debug_light");
+
     static const float TEXT_SIZE         = 0.06f;
 }
 
@@ -47,7 +54,8 @@ DebugViewManagementSystem::DebugViewManagementSystem()
 
 void DebugViewManagementSystem::VUpdate(const float, const std::vector<ecs::EntityId>&) const
 {
-    HandleFrameStatsDisplay();    
+    HandleFrameStatsDisplay();
+    HandleLightsDebug();
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -75,6 +83,31 @@ void DebugViewManagementSystem::HandleFrameStatsDisplay() const
     else
     {
         ClearFrameStatsStrings();
+    }
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void DebugViewManagementSystem::HandleLightsDebug() const
+{
+    auto& world = ecs::World::GetInstance();
+    auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();
+    
+    const auto& lightStoreComponent = world.GetSingletonComponent<rendering::LightStoreSingletonComponent>();
+    
+    if (debugViewStateComponent.mLightDebugDisplayEnabled)
+    {
+        if (debugViewStateComponent.mDebugLightEntities.size() != lightStoreComponent.mLightPositions.size())
+        {
+            ClearDebugLights();
+            CreateDebugLights();
+        }
+        
+        UpdateDebugLightsPosition();
+    }
+    else if (debugViewStateComponent.mDebugLightEntities.size() != 0)
+    {
+        ClearDebugLights();
     }
 }
 
@@ -113,6 +146,17 @@ void DebugViewManagementSystem::ClearFrameStatsStrings() const
 
         debugViewStateComponent.mSystemNamesAndUpdateTimeStrings.clear();
     }
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void DebugViewManagementSystem::ClearDebugLights() const
+{
+    auto& world = ecs::World::GetInstance();
+    auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();
+    
+    world.DestroyEntities(debugViewStateComponent.mDebugLightEntities);
+    debugViewStateComponent.mDebugLightEntities.clear();
 }
 
 ///-----------------------------------------------------------------------------------------------
@@ -239,6 +283,50 @@ void DebugViewManagementSystem::RenderSystemUpdateStrings() const
         }
         
         systemCounter++;        
+    }
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void DebugViewManagementSystem::CreateDebugLights() const
+{
+    auto& world = ecs::World::GetInstance();
+    auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();
+    const auto& lightStoreComponent = world.GetSingletonComponent<rendering::LightStoreSingletonComponent>();
+    
+    for (auto i = 0U; i < lightStoreComponent.mLightPositions.size(); ++i)
+    {
+        auto cubeEntity = rendering::LoadAndCreateModelByName
+        (
+            DEBUG_LIGHT_ASSET_NAME.GetString(),
+            glm::vec3(0.0f, 0.0f, 0.0f),
+            glm::vec3(0.0f, 0.0f, 0.0f),
+            DEBUG_LIGHT_SCALE,
+            DEBUG_LIGHT_ASSET_NAME
+        );
+        
+        auto& renderableComponent = world.GetComponent<rendering::RenderableComponent>(cubeEntity);
+        renderableComponent.mMaterial.mAmbient   = glm::vec4(0.9f, 0.9f, 0.9f, 1.0f);
+        renderableComponent.mMaterial.mDiffuse   = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        renderableComponent.mMaterial.mSpecular  = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        renderableComponent.mMaterial.mShininess = 32.0f;
+        
+        debugViewStateComponent.mDebugLightEntities.push_back(cubeEntity);
+    }
+}
+
+///-----------------------------------------------------------------------------------------------
+
+void DebugViewManagementSystem::UpdateDebugLightsPosition() const
+{
+    auto& world = ecs::World::GetInstance();
+    auto& debugViewStateComponent = world.GetSingletonComponent<debug::DebugViewStateSingletonComponent>();
+    const auto& lightStoreComponent = world.GetSingletonComponent<rendering::LightStoreSingletonComponent>();
+    
+    for (auto i = 0U; i < lightStoreComponent.mLightPositions.size(); ++i)
+    {
+        auto& debugLightPosition = world.GetComponent<TransformComponent>(debugViewStateComponent.mDebugLightEntities[i]);
+        debugLightPosition.mPosition = lightStoreComponent.mLightPositions[i];
     }
 }
 
