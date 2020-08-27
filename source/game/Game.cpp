@@ -117,8 +117,8 @@ void Game::VOnUpdate(const float dt)
     auto& lightStoreComponent = world.GetSingletonComponent<genesis::rendering::LightStoreSingletonComponent>();
     
     dtAccum += dt;
-    lightStoreComponent.mLightPositions[0].x = genesis::math::Sinf(dtAccum/4) * 2;
-    lightStoreComponent.mLightPositions[0].z = genesis::math::Cosf(dtAccum/4) * 2;
+    lightStoreComponent.mLightPositions[0].x = genesis::math::Sinf(dtAccum/2) * 2;
+    lightStoreComponent.mLightPositions[0].z = genesis::math::Cosf(dtAccum/2) * 2;
     
     float moveSpeed = 5.0f;
     float lookSpeed = 1.0f;

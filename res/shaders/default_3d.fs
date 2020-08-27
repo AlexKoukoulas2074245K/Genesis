@@ -7,7 +7,6 @@ uniform vec4 material_ambient;
 uniform vec4 material_diffuse;
 uniform vec4 material_specular;
 uniform float material_shininess;
-uniform int active_light_count;
 uniform int is_affected_by_light;
 uniform vec3 light_positions[32];
 uniform vec3 eye_pos;
@@ -37,7 +36,7 @@ void main()
 	vec3 view_direction = normalize(eye_pos - frag_pos);
 
 	vec4 light_accumulator = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	for (int i = 0; i < active_light_count; ++i)
+	for (int i = 0; i < 32; ++i)
 	{
 		vec3 light_direction = normalize(light_positions[i]);
 
