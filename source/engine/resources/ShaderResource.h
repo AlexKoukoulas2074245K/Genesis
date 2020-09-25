@@ -55,6 +55,7 @@ private:
     bool SetFloatVec4(const StringId& uniformName, const glm::vec4& vec) const;
     bool SetFloatVec3(const StringId& uniformName, const glm::vec3& vec) const;
     bool SetFloat(const StringId& uniformName, const float value) const;
+    bool SetFloatArray(const StringId& uniformName, const std::vector<float>& values) const;
     bool SetInt(const StringId& uniformName, const int value) const;
 
     GLuint GetProgramId() const;    

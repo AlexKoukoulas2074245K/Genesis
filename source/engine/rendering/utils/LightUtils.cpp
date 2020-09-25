@@ -22,11 +22,13 @@ namespace rendering
 
 void AddLightSource
 (
-    const glm::vec3& lightPosition
+    const glm::vec3& lightPosition,
+    const float lightPower
 )
 {
     auto& lightStoreComponent = ecs::World::GetInstance().GetSingletonComponent<LightStoreSingletonComponent>();
     lightStoreComponent.mLightPositions.emplace_back(lightPosition);
+    lightStoreComponent.mLightPowers.emplace_back(lightPower);
 }
 
 ///------------------------------------------------------------------------------------------------

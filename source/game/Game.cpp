@@ -33,6 +33,7 @@
 #include "../engine/scripting/components/ScriptComponent.h"
 #include "../engine/scripting/service/LuaScriptingService.h"
 #include "../engine/scripting/systems/ScriptingSystem.h"
+#include "../engine/sound/SoundService.h"
 
 ///------------------------------------------------------------------------------------------------
 
@@ -100,9 +101,9 @@ void Game::VOnGameInit()
         CreateSphereAtRandomPosition(i);
     }
     
-    genesis::rendering::AddLightSource(glm::vec3(0.0f, 0.0f, 1.0f));
-    genesis::rendering::AddLightSource(glm::vec3(0.0f, 4.0f, 0.0f));
-    genesis::rendering::AddLightSource(glm::vec3(2.0f, 2.0f, 0.0f));
+    genesis::rendering::AddLightSource(glm::vec3(0.0f, 0.0f, 1.0f), 4.0f);
+    //genesis::rendering::AddLightSource(glm::vec3(0.0f, 4.0f, 0.0f), 4.0f);
+    genesis::rendering::AddLightSource(glm::vec3(2.0f, 2.0f, 0.0f), 4.0f);
 }
 
 ///------------------------------------------------------------------------------------------------
@@ -182,15 +183,20 @@ void Game::VOnUpdate(const float dt)
     }
     if (genesis::input::IsActionTypeKeyTapped(genesis::input::InputActionType::CAMERA_ZOOM_IN))
     {
-        auto sphereEntity = world.FindEntityWithName(StringId("sphere"));
-        auto& renderableComponent = world.GetComponent<genesis::rendering::RenderableComponent>(sphereEntity);
-        renderableComponent.mMaterial.mShininess -= 1.0f;
+        //genesis::sound::SoundService::GetInstance().PlaySfx(StringId("textbox_click"));
+        //auto sphereEntity = world.FindEntityWithName(StringId("sphere"));
+        //auto& renderableComponent = world.GetComponent<genesis::rendering::RenderableComponent>(sphereEntity);
+        lightStoreComponent.mLightPositions[1].y += 0.1f;
+        lightStoreComponent.mLightPositions[1].x += 0.1f;
+        //Log(LogType::INFO, "Light power: %.2f", lightStoreComponent.mLightPowers[1]);
     }
     if (genesis::input::IsActionTypeKeyTapped(genesis::input::InputActionType::CAMERA_ZOOM_OUT))
     {
-        auto sphereEntity = world.FindEntityWithName(StringId("sphere"));
-        auto& renderableComponent = world.GetComponent<genesis::rendering::RenderableComponent>(sphereEntity);
-        renderableComponent.mMaterial.mShininess += 1.0f;
+        //auto sphereEntity = world.FindEntityWithName(StringId("sphere"));
+        //auto& renderableComponent = world.GetComponent<genesis::rendering::RenderableComponent>(sphereEntity);
+        lightStoreComponent.mLightPositions[1].y -= 0.1f;
+        lightStoreComponent.mLightPositions[1].x -= 0.1f;
+        //Log(LogType::INFO, "Light power: %.2f", lightStoreComponent.mLightPowers[1]);
     }      
 
     cameraComponent.mFrontVector.x = genesis::math::Cosf(cameraComponent.mYaw) * genesis::math::Cosf(cameraComponent.mPitch);

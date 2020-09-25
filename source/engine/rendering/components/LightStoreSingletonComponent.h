@@ -29,6 +29,7 @@ class LightStoreSingletonComponent final: public ecs::IComponent
 {
 public:
     std::vector<glm::vec3> mLightPositions;
+    std::vector<float> mLightPowers;
 };
 
 ///-----------------------------------------------------------------------------------------------

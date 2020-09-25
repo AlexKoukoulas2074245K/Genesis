@@ -134,6 +134,22 @@ bool ShaderResource::SetFloat(const StringId& uniformName, const float value) co
 
 ///------------------------------------------------------------------------------------------------
 
+bool ShaderResource::SetFloatArray(const StringId& uniformName, const std::vector<float>& values) const
+{
+    for (auto i = 0U; i < values.size(); ++i)
+    {
+        auto setUniformResult = SetFloat(StringId(uniformName.GetString() + "[" + std::to_string(i) + "]"), values[i]);
+        if (!setUniformResult)
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+///------------------------------------------------------------------------------------------------
+
 bool ShaderResource::SetInt(const StringId& uniformName, const int value) const
 {
     if (mShaderUniformNamesToLocations.count(uniformName) > 0)

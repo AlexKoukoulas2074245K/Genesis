@@ -9,25 +9,27 @@ uniform vec4 material_specular;
 uniform float material_shininess;
 uniform int is_affected_by_light;
 uniform vec3 light_positions[32];
+uniform float light_powers[32];
 uniform vec3 eye_pos;
 
 in vec2 uv_frag;
 in vec3 normal_interp;
 in vec3 frag_pos;
+in vec3 frag_unprojected_pos;
 
 out vec4 frag_color;
 
 void main()
 {
 	// Calculate final uvs
-    float finalUvX = uv_frag.x;
-    if (flip_tex_hor) finalUvX = 1.00f - finalUvX;
+    float final_uv_x = uv_frag.x;
+    if (flip_tex_hor) final_uv_x = 1.00f - final_uv_x;
 
-    float finalUvY = 1.00f - uv_frag.y;
-    if (flip_tex_ver) finalUvY = 1.00f - finalUvY;
+    float final_uv_y = 1.00f - uv_frag.y;
+    if (flip_tex_ver) final_uv_y = 1.00f - final_uv_y;
 	
 	// Get texture color
-    vec4 tex_color = texture(tex, vec2(finalUvX, finalUvY));
+    vec4 tex_color = texture(tex, vec2(final_uv_x, final_uv_y));
 
     // Normalize normal 
 	vec3 normal = normalize(normal_interp);
@@ -55,8 +57,10 @@ void main()
 			specular_color = clamp(specular_color, 0.0f, 1.0f);
 		}
 		
+		float distance = distance(light_positions[i], frag_unprojected_pos);
+		float attenuation = light_powers[i] / (distance * distance);
 
-		light_accumulator.rgb += (diffuse_color + specular_color).rgb;
+		light_accumulator.rgb += (diffuse_color * attenuation + specular_color * attenuation).rgb;
 	}
 
 	frag_color = tex_color;

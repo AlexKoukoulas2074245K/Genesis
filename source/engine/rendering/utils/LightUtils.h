@@ -26,9 +26,11 @@ namespace rendering
 /// Adds a light source to the world.
 ///
 /// @param[in] lightPosition the position of the light
+/// @param[in] lightPower the power of the light
 void AddLightSource
 (
-    const glm::vec3& lightPosition
+    const glm::vec3& lightPosition,
+    const float lightPower
 );
 
 ///------------------------------------------------------------------------------------------------
