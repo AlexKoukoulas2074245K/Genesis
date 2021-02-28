@@ -63,7 +63,7 @@ static void CreateSphereAtRandomPosition(const int i)
     const auto sphereEntityId = genesis::rendering::LoadAndCreateModelByName
     (
         "sphere",
-        glm::vec3(0.0f - i * 0.5f, 0.0f + i * 0.5f, 0.12f),
+        glm::vec3(-1.0f + i * 0.5f, 0.0f, 0.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.3f, 0.3f, 0.3f),
         StringId("sphere")
@@ -96,7 +96,7 @@ static void CreateSphereAtRandomPosition(const int i)
 void Game::VOnGameInit()
 {
     RegisterConsoleCommands();
-    for (int i = 0; i < 2; ++i)
+    for (int i = 0; i < 5; ++i)
     {
         CreateSphereAtRandomPosition(i);
     }

@@ -331,9 +331,26 @@ inline float Arctan2(const float x, const float y)
     return std::atan2(x, y);
 }
 
+///-----------------------------------------------------------------------------------------------
+/// Computes a ray direction from the current mouse coordinates on the focused window values.
+/// @returns the computed ray direction.
+glm::vec3 ComputeMouseRayDirection(const glm::mat4& viewMatrix, const glm::mat4& projMatrix, const float windowWidth, const float windowHeight);
+
+///-----------------------------------------------------------------------------------------------
+/// Computes and returns whether the given ray intersects with the given sphere.
+/// @see https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection
+/// @param[in] rayOrigin the origin of the ray (usually camera position for object picking).
+/// @param[in] rayDirection the direction of the ray.
+/// @param[in] sphereCenter the center of the sphere.
+/// @param[in] sphereRadius the radius of the sphere.
+/// @param[out] t the ray's t at the intersection point, if one actually happened
+/// @returns whether an intersection is taking place.
+bool RayToSphereIntersection(const glm::vec3& rayOrigin, const glm::vec3& rayDirection, const glm::vec3& sphereCenter, const float sphereRadius, float& t);
+
 }
 
 }
+
 
 ///-----------------------------------------------------------------------------------------------
 
